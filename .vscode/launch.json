@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--reload"
+      ],
+      "cwd": "${workspaceFolder}/backend",
+      "envFile": "${workspaceFolder}/backend/.env",
+      "console": "internalConsole",
+      "justMyCode": true
+    },
+    {
+      "name": "Frontend",
+      "type": "pwa-node",
+      "cwd": "${workspaceFolder}/frontend",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "console": "internalConsole",
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Start Frontend + Backend",
+      "configurations": [
+        "Backend",
+        "Frontend"
+      ]
+    }
+  ]
+}

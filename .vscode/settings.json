@@ -1,0 +1,15 @@
+{
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "editor.formatOnSave": true,
+  "eslint.validate": [
+    "javascript",
+    "typescript"
+  ],
+  "python.autoComplete.extraPaths": [
+    "__pypackages__/<major.minor>/lib"
+  ],
+  "python.analysis.extraPaths": [
+    "__pypackages__/<major.minor>/lib"
+  ],
+  "ansible.python.interpreterPath": "/Users/chof/Documents/projects/python-app-template/backend/.venv/bin/python"
+}
