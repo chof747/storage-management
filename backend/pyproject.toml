@@ -1,0 +1,9 @@
+
+[project]
+name = "my_app"
+version = "0.1.0"
+requires-python = ">=3.9"
+dependencies = ["fastapi", "uvicorn[standard]", "sqlalchemy", "pydantic", "python-dotenv", "starlette>=0.46.1"]
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = ["pytest", "flake8", "black", "pre-commit"]
