@@ -1,6 +1,7 @@
 
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional, Annotated
+from typing import Optional
+from app.types import StrHttpUrl
 
 class HardwareItemBase(BaseModel):
     hwtype: str = Field(..., min_length=2, max_length=80, description="Type of hardware")
@@ -8,6 +9,8 @@ class HardwareItemBase(BaseModel):
     secondary_metric: Optional[str] = None
     length: Optional[float] = None
     location: Optional[str] = None
+    reorder: Optional[bool] = False
+    reorder_link: Optional[StrHttpUrl] = None
 
     @field_validator("main_metric")
     def must_start_with_letter(cls, v: str):

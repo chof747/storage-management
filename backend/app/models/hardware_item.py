@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Boolean, Column, Integer, String, Float
 from app.database import Base
 
 class HardwareItem(Base):
@@ -10,3 +10,5 @@ class HardwareItem(Base):
     secondary_metric = Column(String)
     length = Column(Float)
     location = Column(String)
+    reorder = Column(Boolean)
+    reorder_link = Column(String)
