@@ -1,5 +1,5 @@
 {
-  "python.defaultInterpreterPath": ".venv/bin/python",
+  "python.defaultInterpreterPath": "backend/.venv/bin/python",
   "editor.formatOnSave": true,
   "eslint.validate": [
     "javascript",
