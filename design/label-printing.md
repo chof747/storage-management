@@ -17,3 +17,15 @@ Use inkjet/laserjet labels
 - Prints can start at any position on a *label sheet*
 
 [label_small]: https://www.avery-zweckform.com/produkt/universal-etiketten-l4730rev-25/retailers/de/de
+
+## Solution
+
+
+### Labelprinting
+
+The [pylabels](https://pypi.org/project/pylabels/) library is perfectly suited for this:
+
+- can specify label grids
+- Allows sophisticated drawings
+- can use partly used sheets
+
