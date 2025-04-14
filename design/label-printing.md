@@ -20,7 +20,6 @@ Use inkjet/laserjet labels
 
 ## Solution
 
-
 ### Labelprinting
 
 The [pylabels](https://pypi.org/project/pylabels/) library is perfectly suited for this:
@@ -28,4 +27,3 @@ The [pylabels](https://pypi.org/project/pylabels/) library is perfectly suited f
 - can specify label grids
 - Allows sophisticated drawings
 - can use partly used sheets
-
