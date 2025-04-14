@@ -1,46 +1,33 @@
-# Template project for FastAPI/React webapps
+# Storage Management System
 
-This is a template project for my FastAPI and React webapps.
+This is a web-based storage management solution to organise the hardware-items and consumables in my workshop.
 
-It has the following components:
+## Features
 
-- FastAPI backend service with SQLLite integration (via SQLAlchemy)
-- React Frontend with vite containing standard components for
-  - sliding forms
-  - Filtered Tables allowing viewing, editing and deletion of data
-  - A default page for a one entity
-  - A menu bar on the side
-  - A dashboard page with tiles
+**The application will provide the following functionalities:**
 
-This template will be extended on the go.
+- Keep information about the location and specification of hw items and consumables
+- Keep an inventory of all the storage locations and boxes
+- Enable indications for reordering and also keeps the track of ordering links
+- Allows searching for items in the inventory
+- Provides label printing capabilities to easily label bins and storage boxes
+- Provides functionalities to organise and check bill of materials for projects
 
-## How to use it
+**What the application does not provide:**
 
-1. Create a new repository in GitHub and use this repository as the template
-2. Clone the new repo locally
-3. Start modifying it to your needs
+- Tracking the exact numbers of the items in the system (I simply do not need it at that level of granularity)
+- Finding the physical boxes and bins in the workshop
+- Keep track of Filaments for 3d printing (I use [spoolman][spoolman] for this)
+- Keep detail track of electronic parts (I use [partsbox][partsbox] for this)
 
-## How to contribute back
+**For now - maybe later:**
 
-Contributing back is by **Todo: Edit this**
+- Integration into [spoolman][spoolman]
+- Integration into [partsbox][partsbox]
 
-## Local Setup
+[spoolman]: https://github.com/Donkie/Spoolman
+[partsbox]: https://partsbox.com/
 
-Check before if pdm is installed.
+## Installation
 
-On MacOS do
-
-`brew install pdm`
-
-1. Clone the repo
-
-2. Backend:
-
-   - `cd bsackend`
-   - `pdm install`
-   - `pdm run uvicorn app.main:app --reload`
-
-3. Frontend:
-
-   - `npm install`
-   - `npm start`
+**TODO:** write installation procedure
