@@ -18,6 +18,7 @@ export type TableColumn<T> = {
   key: keyof T;
   label: string;
   filterable?: boolean;
+  render?: (value: T[keyof T], row: T) => React.ReactNode;
 };
 
 type FilterableTableProps<T> = {
@@ -98,11 +99,17 @@ function FilterableTable<T>({
           <TableBody>
             {filteredData.map((item) => (
               <TableRow key={getRowId(item)}>
-                {columns.map((col) => (
-                  <TableCell key={col.key as string}>
-                    {String(item[col.key] ?? '')}
-                  </TableCell>
-                ))}
+                {columns.map((col) => {
+                  const value = item[col.key];
+                  return (
+                    <TableCell key={col.key as string}>
+                      {col.render
+                        ? col.render(item[col.key], item)
+                        : String(item[col.key] ?? '')
+                      }
+                    </TableCell>
+                  );
+                })}
                 {(onEdit || onDelete) && (
                   <TableCell align="right">
                     {onEdit && (
