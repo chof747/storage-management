@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import renderTextField from './formitems/textfield';
+import renderNumberField from './formitems/numberfield';
+import renderSelectField from './formitems/selectfield';
+import { renderCheckboxField } from './formitems/checkboxfield';
 import {
   Box,
   TextField,
@@ -6,12 +10,14 @@ import {
   Paper,
   MenuItem,
   CircularProgress,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material';
 
 export type FormField<T> = {
   name: keyof T;
   label: string;
-  type?: 'text' | 'number' | 'select';
+  type?: 'text' | 'number' | 'select' | 'boolean';
   required?: boolean;
   options?: string[];
   loadOptions?: () => Promise<string[]>;
@@ -42,7 +48,7 @@ function ModelForm<T extends Record<string, any>>({
     setForm(initialValues);
   }, [initialValues]);
 
-  // Load async options if needed
+  // Load async select options
   useEffect(() => {
     fields.forEach((field) => {
       if (field.type === 'select' && field.loadOptions && !selectOptions[field.name as string]) {
@@ -62,12 +68,22 @@ function ModelForm<T extends Record<string, any>>({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     const fieldDef = fields.find((f) => f.name === name);
+
+    let newValue: any;
+
+    if (fieldDef?.type === 'number') {
+      newValue = parseFloat(value) || '';
+    } else if (fieldDef?.type === 'boolean' && e.target instanceof HTMLInputElement) {
+      newValue = e.target.checked;
+    } else {
+      newValue = value;
+    }
 
     setForm((prev) => ({
       ...prev,
-      [name]: fieldDef?.type === 'number' ? parseFloat(value) || '' : value,
+      [name]: newValue,
     }));
   };
 
@@ -78,21 +94,17 @@ function ModelForm<T extends Record<string, any>>({
 
     try {
       await onValidSubmit(form as T);
-      console.log("success!")
       onSuccess();
     } catch (err: any) {
-      console.log(err)
       if (err.name === 'ValidationError') {
-        // custom error (e.g. from Zod or manual)
+        // Custom validation
       } else if (err.response?.status === 422) {
         const data = await err.response.json();
-
         const errors: Record<string, string> = {};
         for (const detail of data.detail) {
-          const loc = detail.loc[detail.loc.length - 1]; // e.g. "main_metric"
+          const loc = detail.loc[detail.loc.length - 1];
           errors[loc] = detail.msg;
         }
-
         setFieldErrors(errors);
         setGeneralError("Please correct the highlighted errors.");
       } else if (err.response?.status === 400 || err.response?.status === 500) {
@@ -104,6 +116,25 @@ function ModelForm<T extends Record<string, any>>({
     }
   };
 
+  const renderField = (field: FormField<T>) => {
+    const name = String(field.name);
+    const value = form[field.name] ?? '';
+    const error = fieldErrors[name];
+    const loading = loadingSelects[name] || false;
+    const options = field.options ?? selectOptions[name] ?? [];
+
+    switch (field.type) {
+      case 'select':
+        return renderSelectField(field, value, error, handleChange, loading, options);
+      case 'boolean':
+        return renderCheckboxField(field, Boolean(value), handleChange);
+      case 'number':
+        return renderNumberField(field, value, error, handleChange);
+      case 'text':
+      default:
+        return renderTextField(field, value, error, handleChange);
+    }
+  };
 
   return (
     <Paper sx={{ p: 2 }}>
@@ -124,55 +155,7 @@ function ModelForm<T extends Record<string, any>>({
       )}
       <form onSubmit={handleSubmit}>
         <Box display="flex" flexDirection="column" gap={2}>
-          {fields.map((field) => {
-            const name = String(field.name);
-            const value = form[field.name] ?? '';
-            const loading = loadingSelects[name] || false;
-
-            if (field.type === 'select') {
-              const options = field.options ?? selectOptions[name] ?? [];
-
-              return (
-                <TextField
-                  key={name}
-                  name={name}
-                  label={field.label}
-                  value={value}
-                  onChange={handleChange}
-                  required={field.required}
-                  size="small"
-                  error={Boolean(fieldErrors[name])}
-                  helperText={fieldErrors[name]}
-                  select
-                  disabled={loading}
-                  InputProps={{
-                    endAdornment: loading ? <CircularProgress size={20} /> : undefined,
-                  }}
-                >
-                  {options.map((opt) => (
-                    <MenuItem key={opt} value={opt}>
-                      {opt}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              );
-            }
-
-            return (
-              <TextField
-                key={name}
-                name={name}
-                label={field.label}
-                value={value}
-                onChange={handleChange}
-                required={field.required}
-                type={field.type || 'text'}
-                size="small"
-                error={Boolean(fieldErrors[name])}
-                helperText={fieldErrors[name]}
-              />
-            );
-          })}
+          {fields.map(renderField)}
           <Box>
             <Button variant="contained" type="submit">
               {submitLabel}
