@@ -4,7 +4,7 @@ export interface HardwareItem {
   main_metric: string;
   secondary_metric?: string;
   length?: number;
-  location?: string;
+  storage_element?: string;
   reorder?: boolean;
   reorder_link?: string;
 }

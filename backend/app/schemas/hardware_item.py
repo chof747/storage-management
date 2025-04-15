@@ -8,7 +8,7 @@ class HardwareItemBase(BaseModel):
     main_metric: str = Field(..., min_length=2, max_length=30, description="Main metric")
     secondary_metric: Optional[str] = None
     length: Optional[float] = None
-    location: Optional[str] = None
+    storage_element: Optional[str] = None
     reorder: Optional[bool] = False
     reorder_link: Optional[StrHttpUrl] = None
 

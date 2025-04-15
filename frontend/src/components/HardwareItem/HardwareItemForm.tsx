@@ -18,8 +18,8 @@ const fields: FormField<Record<string, any>>[] = [
   { name: 'secondary_metric', label: 'Secondary Metric' },
   { name: 'length', label: 'Length', type: 'number' },
   {
-    name: 'location',
-    label: 'Location',
+    name: 'storage_element',
+    label: 'Stored in',
     type: 'select',
     loadOptions: fetchLocations,
     required: true,

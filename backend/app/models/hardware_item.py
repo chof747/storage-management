@@ -9,6 +9,6 @@ class HardwareItem(Base):
     main_metric = Column(String, nullable=False)
     secondary_metric = Column(String)
     length = Column(Float)
-    location = Column(String)
+    storage_element = Column(String)
     reorder = Column(Boolean)
     reorder_link = Column(String)
