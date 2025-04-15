@@ -9,7 +9,7 @@ type Props = {
 
 const fetchLocations = async (): Promise<string[]> => {
   const response = await fetch('http://localhost:8000/api/locations');
-  return response.json(); // Assuming API returns: ["Box A", "Box B", "Drawer 2"]
+  return response.json();
 };
 
 const fields: FormField<Record<string, any>>[] = [
@@ -23,6 +23,16 @@ const fields: FormField<Record<string, any>>[] = [
     type: 'select',
     loadOptions: fetchLocations,
     required: true,
+  },
+  {
+    name: 'reorder',
+    label: 'Mark for Reordering',
+    type: 'boolean',
+  },
+  {
+    name: 'reorder_link',
+    label: 'Reorder Link',
+    type: 'text',
   },
 ];
 

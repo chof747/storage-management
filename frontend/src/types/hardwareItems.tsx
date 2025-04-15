@@ -5,4 +5,6 @@ export interface HardwareItem {
   secondary_metric?: string;
   length?: number;
   location?: string;
+  reorder?: boolean;
+  reorder_link?: string;
 }

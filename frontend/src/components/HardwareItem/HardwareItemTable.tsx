@@ -1,5 +1,6 @@
 import FilterableTable, { TableColumn } from '../common/FilterableTable';
 import { HardwareItem } from '../../types/hardwareItems';
+import { ShoppingCart as ReorderIcon } from '@mui/icons-material';
 
 type Props = {
   items: HardwareItem[];
@@ -14,6 +15,17 @@ const columns: TableColumn<HardwareItem>[] = [
   { key: 'secondary_metric', label: 'Secondary' },
   { key: 'length', label: 'Length' },
   { key: 'location', label: 'Location', filterable: true },
+  {
+    key: 'reorder', label: 'Reorder', filterable: true, render: (val, row) => {
+      if (val) {
+        return row.reorder_link
+          ? <a href={row.reorder_link}><ReorderIcon color="warning" /></a>
+          : <ReorderIcon />
+      }
+      else
+        return null;
+    }
+  },
 ];
 
 export default function HardwareItemTable({ items, onEdit, onDelete }: Props) {
