@@ -95,7 +95,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          maxWidth: isMobile ? '100%' : '800px', // Full width on mobile, max 800px on larger screens
+          maxWidth: isMobile ? '100%' : '900px', // Full width on mobile, max 800px on larger screens
           mx: 'auto', // Center content
         }}
       >

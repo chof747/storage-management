@@ -85,7 +85,7 @@ export default function EntityPage<T>({
         </Toolbar>
       </AppBar>
 
-      <Box px={2}>
+      <Box>
         <TableComponent
           items={items}
           onEdit={(item) => {
@@ -97,7 +97,7 @@ export default function EntityPage<T>({
       </Box>
 
       <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <Box width={400} p={2}>
+        <Box width={400} p={2} pt={9}>
           <Typography variant="h6" gutterBottom>
             {selected ? 'Edit Item' : 'Add New Item'}
           </Typography>
