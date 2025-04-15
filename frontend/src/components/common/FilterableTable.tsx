@@ -57,11 +57,15 @@ function FilterableTable<T>({
   };
 
   const filteredData = useMemo(() => {
-    return data.filter((item) =>
-      Object.entries(filters).every(([key, value]) =>
-        String(item[key as keyof T] ?? '').toLowerCase().includes(value.toLowerCase())
-      )
-    );
+    if ((undefined === data.length) || (0 === data.length)) {
+      return []
+    } else {
+      return data.filter((item) =>
+        Object.entries(filters).every(([key, value]) =>
+          String(item[key as keyof T] ?? '').toLowerCase().includes(value.toLowerCase())
+        )
+      );
+    }
   }, [data, filters]);
 
   const openDeleteDialog = (item: T) => {
