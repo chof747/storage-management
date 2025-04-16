@@ -22,7 +22,7 @@ def list_items(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=HardwareItemInDB)
 def create_item(item: HardwareItemCreate, db: Session = Depends(get_db)):
-    db_item = HardwareItem(**item.dict())
+    db_item = HardwareItem(**item.model_dump())
     db.add(db_item)
     db.commit()
     db.refresh(db_item)

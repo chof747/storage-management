@@ -1,5 +1,6 @@
 import ModelForm, { FormField } from '../common/ModelForm';
 import { HardwareItem } from '../../types/hardwareItems'
+import { createPlaceholder } from '../../api/storageElement';
 
 type Props = {
   item: HardwareItem | null;
@@ -7,9 +8,13 @@ type Props = {
   onSuccess: () => void;
 };
 
-const fetchLocations = async (): Promise<string[]> => {
-  const response = await fetch('http://localhost:8000/api/locations');
-  return response.json();
+const fetch_storage = async (): Promise<{ id: any; label: string }[]> => {
+  const response = await fetch('http://localhost:8000/api/storage');
+  const data = await response.json();
+  return data.map((se: any) => ({
+    id: se.id,
+    label: se.name
+  }));
 };
 
 const fields: FormField<Record<string, any>>[] = [
@@ -18,11 +23,20 @@ const fields: FormField<Record<string, any>>[] = [
   { name: 'secondary_metric', label: 'Secondary Metric' },
   { name: 'length', label: 'Length', type: 'number' },
   {
-    name: 'storage_element',
+    name: 'storage_element_id',
     label: 'Stored in',
-    type: 'select',
-    loadOptions: fetchLocations,
-    required: true,
+    type: 'select-create',
+    loadOptions: fetch_storage,
+    createNew: async () => {
+      // Open your modal here or inline prompt
+      const name = prompt("New storage name?");
+      if (null !== name) {
+        const newItem = await createPlaceholder(name);
+        return { id: newItem.id, label: newItem.name };
+      } else {
+        return { id: 0, label: '' };
+      }
+    }
   },
   {
     name: 'reorder',

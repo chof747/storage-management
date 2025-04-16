@@ -14,7 +14,13 @@ const columns: TableColumn<HardwareItem>[] = [
   { key: 'main_metric', label: 'Main Metric', filterable: true },
   { key: 'secondary_metric', label: 'Secondary' },
   { key: 'length', label: 'Length' },
-  { key: 'storage_element', label: 'Stored in', filterable: true },
+  {
+    key: 'storage_element',
+    label: 'Stored in',
+    filterable: true,
+    filterKey: 'storage_element.name',
+    render: (val) => val?.name ?? '–',
+  },
   {
     key: 'reorder', label: 'Reorder', filterable: true, render: (val, row) => {
       if (val) {

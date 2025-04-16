@@ -17,6 +17,16 @@ export const createItem = async (item: StorageElement): Promise<StorageElement> 
   return await res.json();
 };
 
+export const createPlaceholder = async (name: string): Promise<StorageElement> => {
+  const item: StorageElement = {
+    name: name,
+    location: '',
+    position: '',
+    storage_type: 'default'
+  };
+  return createItem(item);
+}
+
 export const updateItem = async (item: StorageElement): Promise<StorageElement> => {
   const res = await fetch(`${API_BASE}/${PATH}/${item.id}`, {
     method: "PUT",

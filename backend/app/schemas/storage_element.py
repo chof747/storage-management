@@ -8,7 +8,7 @@ class StorageElementBase(BaseModel):
     location: str = Field(..., max_length=80, description="Location")
     position: str = Field(..., max_length=80, description="Position within the Location")
     storage_type: str = Field(..., description="Type of Storage")
-    description: Optional[str] = Field(..., description="Description of the element's content")
+    description: Optional[str] = Field(None, description="Description of the element's content")
 
 class StorageElementCreate(StorageElementBase):
     pass
