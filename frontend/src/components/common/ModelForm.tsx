@@ -3,6 +3,7 @@ import renderTextField from './formitems/textfield';
 import renderNumberField from './formitems/numberfield';
 import renderSelectField from './formitems/selectfield';
 import { renderCheckboxField } from './formitems/checkboxfield';
+import renderSelectWithCreate from './formitems/selectWithCreate';
 import {
   Box,
   TextField,
@@ -17,10 +18,11 @@ import {
 export type FormField<T> = {
   name: keyof T;
   label: string;
-  type?: 'text' | 'number' | 'select' | 'boolean';
+  type?: 'text' | 'number' | 'select' | 'select-create' | 'boolean';
   required?: boolean;
-  options?: string[];
-  loadOptions?: () => Promise<string[]>;
+  loadOptions?: () => Promise<{ id: any; label: string }[]>;
+  options?: { id: any; label: string }[];
+  createNew?: () => Promise<{ id: any; label: string }>;
 };
 
 type Props<T> = {
@@ -39,7 +41,7 @@ function ModelForm<T extends Record<string, any>>({
   submitLabel = 'Submit',
 }: Props<T>) {
   const [form, setForm] = useState<Partial<T>>(initialValues);
-  const [selectOptions, setSelectOptions] = useState<Record<string, string[]>>({});
+  const [selectOptions, setSelectOptions] = useState<Record<string, { id: any; label: string }[]>>({});
   const [loadingSelects, setLoadingSelects] = useState<Record<string, boolean>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -51,12 +53,12 @@ function ModelForm<T extends Record<string, any>>({
   // Load async select options
   useEffect(() => {
     fields.forEach((field) => {
-      if (field.type === 'select' && field.loadOptions && !selectOptions[field.name as string]) {
+      if (field.type === 'select-create' && field.loadOptions && !selectOptions[field.name as string]) {
         setLoadingSelects((prev) => ({ ...prev, [field.name as string]: true }));
         field
           .loadOptions()
           .then((opts) => {
-            setSelectOptions((prev) => ({ ...prev, [field.name as string]: opts }));
+            setSelectOptions((prev) => ({ ...prev, [String(field.name)]: opts }));
           })
           .finally(() => {
             setLoadingSelects((prev) => ({ ...prev, [field.name as string]: false }));
@@ -124,8 +126,28 @@ function ModelForm<T extends Record<string, any>>({
     const options = field.options ?? selectOptions[name] ?? [];
 
     switch (field.type) {
-      case 'select':
-        return renderSelectField(field, value, error, handleChange, loading, options);
+      //      case 'select':
+      //        return renderSelectField(field, value, error, handleChange, loading, options);
+      case 'select-create':
+        return renderSelectWithCreate(
+          field,
+          value,
+          error,
+          handleChange,
+          loading,
+          options,
+          (id, label) => {
+            setSelectOptions((prev) => {
+              const key = String(field.name);
+              const existing = prev[key] || [];
+              return {
+                ...prev,
+                [key]: [...existing, { id, label }]
+              };
+            });
+            setForm((prev) => ({ ...prev, [field.name]: id }));
+          }
+        )
       case 'boolean':
         return renderCheckboxField(field, Boolean(value), handleChange);
       case 'number':

@@ -14,10 +14,15 @@ import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ConfirmDialog from './ConfirmDialog';
 import FilterPanel from './FilterPanel';
 
+function getNestedValue(obj: any, path: string): any {
+  return path.split('.').reduce((acc, part) => acc?.[part], obj);
+}
+
 export type TableColumn<T> = {
   key: keyof T;
   label: string;
   filterable?: boolean;
+  filterKey: string;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
 };
 
@@ -56,17 +61,20 @@ function FilterableTable<T>({
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+
+
   const filteredData = useMemo(() => {
-    if ((undefined === data.length) || (0 === data.length)) {
-      return []
-    } else {
-      return data.filter((item) =>
-        Object.entries(filters).every(([key, value]) =>
-          String(item[key as keyof T] ?? '').toLowerCase().includes(value.toLowerCase())
-        )
-      );
-    }
-  }, [data, filters]);
+    if (!data?.length) return [];
+
+    return data.filter((item) =>
+      Object.entries(filters).every(([key, value]) => {
+        const column = columns.find(col => col.key === key);
+        const fieldKey = column?.filterKey || key;
+        const fieldValue = getNestedValue(item, fieldKey);
+        return String(fieldValue ?? '').toLowerCase().includes(value.toLowerCase());
+      })
+    );
+  }, [data, filters, columns]);
 
   const openDeleteDialog = (item: T) => {
     setItemToDelete(item);
