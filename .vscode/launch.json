@@ -16,8 +16,8 @@
       "justMyCode": true
     },
     {
-      "name": "Frontend",
-      "type": "pwa-node",
+      "name": "vite-server",
+      "type": "node",
       "cwd": "${workspaceFolder}/frontend",
       "request": "launch",
       "runtimeExecutable": "npm",
@@ -26,6 +26,13 @@
         "dev"
       ],
       "console": "internalConsole",
+    },
+    {
+      "name": "Frontend (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:1860",
+      "webRoot": "${workspaceFolder}/frontend/src",
     }
   ],
   "compounds": [
@@ -33,7 +40,7 @@
       "name": "Start Frontend + Backend",
       "configurations": [
         "Backend",
-        "Frontend"
+        "vite-server"
       ]
     }
   ]
