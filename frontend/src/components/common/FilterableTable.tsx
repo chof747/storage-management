@@ -22,7 +22,7 @@ export type TableColumn<T> = {
   key: keyof T;
   label: string;
   filterable?: boolean;
-  filterKey: string;
+  filterKey?: string;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
 };
 
