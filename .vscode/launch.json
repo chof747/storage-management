@@ -28,7 +28,7 @@
       "console": "internalConsole",
     },
     {
-      "name": "Frontend (Chrome)",
+      "name": "Frontend",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:1860",
@@ -40,7 +40,8 @@
       "name": "Start Frontend + Backend",
       "configurations": [
         "Backend",
-        "vite-server"
+        "vite-server",
+        "Frontend"
       ]
     }
   ]
