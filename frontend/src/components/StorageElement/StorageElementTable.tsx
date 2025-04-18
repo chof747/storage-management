@@ -5,6 +5,7 @@ type Props = {
   items: StorageElement[];
   onEdit: (item: StorageElement) => void;
   onDelete: (id: number) => void;
+  onRefresh: () => void;
 };
 
 const columns: TableColumn<StorageElement>[] = [

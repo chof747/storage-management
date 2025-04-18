@@ -12,6 +12,8 @@ class HardwareItemBase(BaseModel):
     reorder: Optional[bool] = False
     reorder_link: Optional[StrHttpUrl] = None
     storage_element_id: int = Field(..., description="Link to storage element")
+    queued_for_printing: Optional[bool] = False
+
 
     @field_validator("main_metric")
     def must_start_with_letter(cls, v: str):

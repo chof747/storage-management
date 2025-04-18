@@ -9,4 +9,5 @@ export interface HardwareItem {
   storage_element: StorageElement;
   reorder?: boolean;
   reorder_link?: string;
+  queued_for_printing?: boolean;
 }

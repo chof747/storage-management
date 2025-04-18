@@ -46,3 +46,21 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
     db.delete(db_item)
     db.commit()
     return {"message": "Deleted"}
+
+@router.get("/queueforprinting/{item_id}")
+def queue_for_printing(item_id: int, db: Session = Depends(get_db)):
+    hw_item : HardwareItem = db.query(HardwareItem).get(item_id)
+    if not hw_item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    setattr(hw_item, "queued_for_printing", 1)
+    db.commit()
+    return {"message": f"item {item_id} queued for label printing"}
+
+@router.get("/unqueueforprinting/{item_id}")
+def queue_for_printing(item_id: int, db: Session = Depends(get_db)):
+    hw_item : HardwareItem = db.query(HardwareItem).get(item_id)
+    if not hw_item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    setattr(hw_item, "queued_for_printing", 0)
+    db.commit()
+    return {"message": f"item {item_id} queued for label printing"}

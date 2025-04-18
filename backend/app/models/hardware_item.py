@@ -15,3 +15,4 @@ class HardwareItem(Base):
     reorder_link = Column(String)
     storage_element_id = Column(Integer, ForeignKey("storage_element.id"), nullable=False)
     storage_element = relationship("StorageElement", back_populates="hardware_items")
+    queued_for_printing = Column(Boolean, default=False)

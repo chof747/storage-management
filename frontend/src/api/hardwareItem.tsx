@@ -34,3 +34,12 @@ export const updateItem = async (item: HardwareItem): Promise<HardwareItem> => {
 export const deleteItem = async (id: number): Promise<void> => {
   await fetch(`${API_BASE}/items/${id}`, { method: "DELETE" });
 };
+
+export const toggleItemforPrinting = async (item: HardwareItem): Promise<void> => {
+  const un = item.queued_for_printing ? "un" : ""
+  const res = await fetch(`${API_BASE}/items/${un}queueforprinting/${item.id}`)
+  if (!res.ok) {
+    const error = new Error('Could not toggle printing state')
+    throw error
+  }
+}
