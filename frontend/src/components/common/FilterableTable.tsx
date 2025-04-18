@@ -32,6 +32,7 @@ type FilterableTableProps<T> = {
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   getRowId: (item: T) => string | number;
+  customActions?: (item: T, refresh: () => void) => React.ReactNode;
 };
 
 function FilterableTable<T>({
@@ -40,6 +41,7 @@ function FilterableTable<T>({
   onEdit,
   onDelete,
   getRowId,
+  customActions,
 }: FilterableTableProps<T>) {
   const initialFilterState = columns.reduce((acc, col) => {
     if (col.filterable) acc[col.key as string] = '';
@@ -122,7 +124,7 @@ function FilterableTable<T>({
                     </TableCell>
                   );
                 })}
-                {(onEdit || onDelete) && (
+                {(onEdit || onDelete || customActions) && (
                   <TableCell align="right">
                     {onEdit && (
                       <IconButton color="primary" onClick={() => onEdit(item)}>
@@ -134,6 +136,7 @@ function FilterableTable<T>({
                         <DeleteIcon />
                       </IconButton>
                     )}
+                    {customActions && customActions(item, () => setFilters({ ...filters }))}
                   </TableCell>
                 )}
               </TableRow>

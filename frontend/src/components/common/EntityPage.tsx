@@ -23,6 +23,7 @@ type EntityPageProps<T> = {
     items: T[];
     onEdit: (item: T) => void;
     onDelete: (id: number) => void;
+    onRefresh: () => void;
   }>;
   getItemId: (item: T) => number;
 };
@@ -93,6 +94,7 @@ export default function EntityPage<T>({
             setDrawerOpen(true);
           }}
           onDelete={(id) => handleDelete(id)}
+          onRefresh={loadItems}
         />
       </Box>
 
