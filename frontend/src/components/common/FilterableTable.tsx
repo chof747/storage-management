@@ -122,11 +122,11 @@ function FilterableTable<T>({
           </TableHead>
           <TableBody>
             {filteredData.map((item) => (
-              <TableRow key={getRowId(item)}>
+              <TableRow sx={{ height: 16 }} key={getRowId(item)}>
                 {columns.map((col) => {
                   const value = item[col.key];
                   return (
-                    <TableCell key={col.key as string}>
+                    <TableCell key={col.key as string} sx={{ py: 0.5 }}>
                       {col.render
                         ? col.render(item[col.key], item)
                         : String(item[col.key] ?? '')
@@ -135,7 +135,7 @@ function FilterableTable<T>({
                   );
                 })}
                 {(onEdit || onDelete || customActions) && (
-                  <TableCell align="right">
+                  <TableCell align="right" sx={{ py: 0.5 }}>
                     {onEdit && (
                       <IconButton color="primary" onClick={() => onEdit(item)}>
                         <EditIcon />
