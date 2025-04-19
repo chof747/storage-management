@@ -7,7 +7,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { ResultPage } from '../../types/hardwareItems';
+import { ResultPage } from '../../types/page';
 
 type EntityPageProps<T> = {
   title: string;
@@ -47,7 +47,7 @@ export default function EntityPage<T>({
   const [items, setItems] = useState<T[]>([]);
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(0); // zero-based
-  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selected, setSelected] = useState<T | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
