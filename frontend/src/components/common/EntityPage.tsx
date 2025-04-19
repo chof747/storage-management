@@ -7,10 +7,11 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
+import { ResultPage } from '../../types/hardwareItems';
 
 type EntityPageProps<T> = {
   title: string;
-  fetchItems: () => Promise<T[]>;
+  fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
   createItem: (item: T) => Promise<T>;
   updateItem: (item: T) => Promise<T>;
   deleteItem: (id: number) => Promise<void>;
@@ -24,6 +25,11 @@ type EntityPageProps<T> = {
     onEdit: (item: T) => void;
     onDelete: (id: number) => void;
     onRefresh: () => void;
+    page: number;
+    rowsPerPage: number;
+    total: number;
+    onPageChange: (page: number) => void;
+    onRowsPerPageChange: (rowsPerPage: number) => void;
   }>;
   getItemId: (item: T) => number;
 };
@@ -39,17 +45,21 @@ export default function EntityPage<T>({
   getItemId,
 }: EntityPageProps<T>) {
   const [items, setItems] = useState<T[]>([]);
+  const [total, setTotal] = useState(0)
+  const [page, setPage] = useState(0); // zero-based
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [selected, setSelected] = useState<T | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const loadItems = async () => {
-    const data = await fetchItems();
-    setItems(data);
+    const data = await fetchItems(page * rowsPerPage, rowsPerPage);
+    setItems(data.items);
+    setTotal(data.total);
   };
 
   useEffect(() => {
     loadItems();
-  }, []);
+  }, [page, rowsPerPage]);
 
   const handleSubmit = async (item: T) => {
     if (selected) {
@@ -95,7 +105,16 @@ export default function EntityPage<T>({
           }}
           onDelete={(id) => handleDelete(id)}
           onRefresh={loadItems}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          total={total}
+          onPageChange={setPage}
+          onRowsPerPageChange={(val) => {
+            setRowsPerPage(val);
+            setPage(0);
+          }}
         />
+
       </Box>
 
       <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>

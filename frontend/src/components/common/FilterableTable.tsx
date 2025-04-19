@@ -8,7 +8,7 @@ import {
   TableContainer,
   Paper,
   IconButton,
-  Box,
+  TablePagination,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ConfirmDialog from './ConfirmDialog';
@@ -33,6 +33,11 @@ type FilterableTableProps<T> = {
   onDelete?: (item: T) => void;
   getRowId: (item: T) => string | number;
   customActions?: (item: T, refresh: () => void) => React.ReactNode;
+  page: number;
+  rowsPerPage: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  onRowsPerPageChange: (rowsPerPage: number) => void;
 };
 
 function FilterableTable<T>({
@@ -42,6 +47,11 @@ function FilterableTable<T>({
   onDelete,
   getRowId,
   customActions,
+  total,
+  page,
+  rowsPerPage,
+  onPageChange,
+  onRowsPerPageChange
 }: FilterableTableProps<T>) {
   const initialFilterState = columns.reduce((acc, col) => {
     if (col.filterable) acc[col.key as string] = '';
@@ -144,6 +154,15 @@ function FilterableTable<T>({
           </TableBody>
         </Table>
       </TableContainer>
+
+      <TablePagination
+        component="div"
+        count={total}
+        page={page}
+        onPageChange={(e, newPage) => onPageChange(newPage)}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
+      />
 
       <ConfirmDialog
         open={confirmOpen}
