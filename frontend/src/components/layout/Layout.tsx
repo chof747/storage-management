@@ -93,29 +93,41 @@ export default function Layout({ children, rightPanel }: { children: React.React
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          display: 'flex',
+          flexDirection: 'row',
+          width: { sm: '100%', },
           ml: { sm: `${drawerWidth}px` },
-          maxWidth: isMobile ? '100%' : '900px', // Full width on mobile, max 900px on larger screens
-          mx: 'auto', // Center content
+          gap: 2,
         }}
       >
-        <Toolbar />
-        {children}
-      </Box>
-
-      {/* Optional Right Panel */}
-      {rightPanel && (
+        {/* Centered Content */}
         <Box
           sx={{
-            display: { xs: 'none', md: 'block' }, // hide on mobile
-            flexGrow: 1,
-            minWidth: 50,
+            flex: 1,
+            maxWidth: isMobile ? '100%' : '900px',
           }}
         >
           <Toolbar />
-          {rightPanel}
+          {children}
         </Box>
-      )}
+
+        {/* Optional Right Panel */}
+        {rightPanel && (
+          <Box
+            sx={{
+              display: { xs: 'none', md: 'block' }, // hide on mobile
+              flexGrow: 1,
+              minWidth: 50,
+              maxWidth: 200,
+            }}
+          >
+            <Toolbar />
+            {rightPanel}
+          </Box>
+        )}
+
+      </Box>
+
     </Box>
   );
 }
