@@ -1,6 +1,6 @@
 
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from typing import Optional, List
 from app.types import StrHttpUrl
 from .storage_element import StorageElementInDB
 
@@ -20,7 +20,7 @@ class HardwareItemBase(BaseModel):
         if not v or not v[0].isalpha():
             raise ValueError("Metric one must start with a letter")
         return v
-
+    
 class HardwareItemCreate(HardwareItemBase):
     pass
 
@@ -32,3 +32,8 @@ class HardwareItemInDB(HardwareItemBase):
     storage_element : StorageElementInDB
     class Config:
         orm_mode = True
+
+class HardwareItemPage(BaseModel):
+    items: List[HardwareItemInDB]
+    total: int
+

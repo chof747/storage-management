@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import SessionLocal
 from app.models.hardware_item import HardwareItem
-from app.schemas.hardware_item import HardwareItemCreate, HardwareItemUpdate, HardwareItemInDB
+from app.schemas.hardware_item import HardwareItemCreate, HardwareItemUpdate, HardwareItemInDB, HardwareItemPage
 
 
 router = APIRouter(prefix="/api/items", tags=["Hardware Items"])
@@ -16,9 +16,17 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/", response_model=List[HardwareItemInDB])
-def list_items(db: Session = Depends(get_db)):
-    return db.query(HardwareItem).all()
+@router.get("/", response_model=HardwareItemPage)
+def list_items(
+    limit: int = Query(10, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    db: Session = Depends(get_db)):
+    total = db.query(HardwareItem).count()
+    return {
+        "total": total,
+        "items" : db.query(HardwareItem).offset(offset).limit(limit).all()
+    }
+        
 
 @router.post("/", response_model=HardwareItemInDB)
 def create_item(item: HardwareItemCreate, db: Session = Depends(get_db)):

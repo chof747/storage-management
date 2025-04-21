@@ -1,7 +1,6 @@
 
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
-from app.types import StrHttpUrl
+from typing import List, Optional
 
 class StorageElementBase(BaseModel):
     name: str = Field(..., max_length=80, description="Name of the Element")
@@ -21,3 +20,7 @@ class StorageElementInDB(StorageElementBase):
 
     class Config:
         orm_mode = True
+
+class StorageElementPage(BaseModel):
+    items: List[StorageElementInDB]
+    total: int

@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import SessionLocal
 from app.models import StorageElement
-from app.schemas import StorageElementCreate, StorageElementInDB, StorageElementUpdate
+from app.schemas import StorageElementCreate, StorageElementInDB, StorageElementUpdate, StorageElementPage
 
 
 router = APIRouter(prefix="/api/storage", tags=["Storage Elements"])
@@ -16,9 +16,16 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/", response_model=List[StorageElementInDB])
-def list_items(db: Session = Depends(get_db)):
-    return db.query(StorageElement).all()
+@router.get("/", response_model=StorageElementPage)
+def list_items(
+    limit: int = Query(10, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    db: Session = Depends(get_db)):
+    total = db.query(StorageElement).count()
+    return {
+        "total": total,
+        "items" : db.query(StorageElement).offset(offset).limit(limit).all()
+    }    
 
 @router.post("/", response_model=StorageElementInDB)
 def create_item(item: StorageElementCreate, db: Session = Depends(get_db)):
