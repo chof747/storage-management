@@ -15,7 +15,7 @@ import MenuDrawer from './Menu';
 
 const drawerWidth = 240;
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children, rightPanel }: { children: React.ReactNode, rightPanel?: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -95,13 +95,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          maxWidth: isMobile ? '100%' : '900px', // Full width on mobile, max 800px on larger screens
+          maxWidth: isMobile ? '100%' : '900px', // Full width on mobile, max 900px on larger screens
           mx: 'auto', // Center content
         }}
       >
         <Toolbar />
         {children}
       </Box>
+
+      {/* Optional Right Panel */}
+      {rightPanel && (
+        <Box
+          sx={{
+            display: { xs: 'none', md: 'block' }, // hide on mobile
+            flexGrow: 1,
+            minWidth: 50,
+          }}
+        >
+          <Toolbar />
+          {rightPanel}
+        </Box>
+      )}
     </Box>
   );
 }
