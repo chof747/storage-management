@@ -10,8 +10,8 @@ class PageQueryParameters(BaseModel):
     return query.offset(self.offset).limit(self.limit)
 
 def page_parameters(
-    limit: int | None = None,
-    offset: int | None = None) -> PageQueryParameters:
+    limit: int = Query(10, ge=0, le=100),
+    offset: int = Query(0, ge=0)) -> PageQueryParameters:
   
   return PageQueryParameters(
     limit=limit,
