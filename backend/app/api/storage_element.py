@@ -5,6 +5,7 @@ from typing import List
 from app.database import SessionLocal
 from app.models import StorageElement
 from app.schemas import StorageElementCreate, StorageElementInDB, StorageElementUpdate, StorageElementPage
+from app.api.pagination import page_parameters
 
 
 router = APIRouter(prefix="/api/storage", tags=["Storage Elements"])
@@ -18,13 +19,12 @@ def get_db():
 
 @router.get("/", response_model=StorageElementPage)
 def list_items(
-    limit: int = Query(10, ge=1, le=100),
-    offset: int = Query(0, ge=0),
+    pagination = Depends(page_parameters),
     db: Session = Depends(get_db)):
     total = db.query(StorageElement).count()
     return {
         "total": total,
-        "items" : db.query(StorageElement).offset(offset).limit(limit).all()
+        "items" : pagination(db.query(StorageElement)).all()
     }    
 
 @router.post("/", response_model=StorageElementInDB)

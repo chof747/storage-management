@@ -31,7 +31,7 @@ class HardwareItemInDB(HardwareItemBase):
     id: int
     storage_element : StorageElementInDB
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class HardwareItemPage(BaseModel):
     items: List[HardwareItemInDB]
