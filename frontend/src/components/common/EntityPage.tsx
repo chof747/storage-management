@@ -11,6 +11,7 @@ import { ResultPage } from '../../types/page';
 
 type EntityPageProps<T> = {
   title: string;
+  toolbar: boolean;
   fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
   createItem: (item: T) => Promise<T>;
   updateItem: (item: T) => Promise<T>;
@@ -36,6 +37,7 @@ type EntityPageProps<T> = {
 
 export default function EntityPage<T>({
   title,
+  toolbar,
   fetchItems,
   createItem,
   updateItem,
@@ -80,21 +82,30 @@ export default function EntityPage<T>({
     loadItems();
   };
 
+  const addButton = () => <Button color="inherit" onClick={() => {
+    setSelected(null);
+    setDrawerOpen(true);
+  }}>
+    Add Item
+  </Button>
+
   return (
     <>
-      <AppBar position="static" sx={{ mb: 2 }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            {title}
-          </Typography>
-          <Button color="inherit" onClick={() => {
-            setSelected(null);
-            setDrawerOpen(true);
-          }}>
-            Add Item
-          </Button>
-        </Toolbar>
-      </AppBar>
+
+      {
+        toolbar ?
+          <>
+            <AppBar position="static" sx={{ mb: 2 }}>
+              <Toolbar>
+                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                  {title}
+                </Typography>
+                {addButton()}
+              </Toolbar>
+            </AppBar></>
+          :
+          ""
+      }
 
       <Box>
         <TableComponent
@@ -115,6 +126,11 @@ export default function EntityPage<T>({
           }}
         />
 
+        {
+          !toolbar ?
+            <>{addButton()}</>
+            : ""
+        }
       </Box>
 
       <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>

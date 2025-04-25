@@ -7,6 +7,7 @@ import { ResultPage } from '../../types/page';
 
 export type EntityConfig<T extends Record<string, any>> = {
   title: string;
+  toolbar: boolean;
   fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
   createItem: (item: T) => Promise<T>;
   updateItem: (item: T) => Promise<T>;
@@ -57,6 +58,7 @@ export default function ConfiguredEntityPage<T extends Record<string, any>>({
   return (
     <EntityPage<T>
       title={config.title}
+      toolbar={config.toolbar}
       fetchItems={config.fetchItems}
       createItem={config.createItem}
       updateItem={config.updateItem}
