@@ -75,6 +75,7 @@ export const tableColumns: TableColumn<HardwareItem>[] = [
 
 export const hardwareItemConfig: EntityConfig<HardwareItem> = {
   title: 'Hardware Inventory',
+  toolbar: true,
   fetchItems: getItems,
   createItem,
   updateItem,

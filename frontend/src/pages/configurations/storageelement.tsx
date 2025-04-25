@@ -5,6 +5,7 @@ import { FormField } from '../../components/common/ModelForm';
 import { TableColumn } from '../../components/common/FilterableTable';
 import { IconButton, Tooltip } from '@mui/material';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
+import { SettingsOutlined } from '@mui/icons-material';
 
 export const formFields: FormField<Record<string, any>>[] = [
   { name: 'name', label: 'Name', required: true },
@@ -21,7 +22,7 @@ export const tableColumns: TableColumn<StorageElement>[] = [
   { key: 'location', label: 'Location', filterable: true },
   { key: 'position', label: 'Position' },
   { key: 'storage_type', label: 'Type', filterable: true },
-  { key: 'description', label: 'Description' },
+  //  { key: 'description', label: 'Description' },
 ];
 
 export const storageElementConfig: EntityConfig<StorageElement> = {
@@ -36,5 +37,15 @@ export const storageElementConfig: EntityConfig<StorageElement> = {
   },
   table: {
     columns: tableColumns,
+    customActions: (item: StorageElement, refresh: () => void) => (
+      <Tooltip title="manage storage">
+        <IconButton
+          component="a"
+          href={`/storage/manage?id=${item.id}`}
+          rel="noopener noreferrer">
+          <SettingsOutlined />
+        </IconButton>
+      </Tooltip>
+    ),
   }
 };

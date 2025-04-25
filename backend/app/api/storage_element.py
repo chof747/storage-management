@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
-from typing import List
+from sqlalchemy.orm import Session, Query as SQLQuery
+from typing import List, Optional
 
 from app.database import SessionLocal
 from app.models import StorageElement
@@ -18,13 +18,19 @@ def get_db():
         db.close()
 
 @router.get("/", response_model=StorageElementPage)
+@router.get("/{id}", response_model=StorageElementPage)
 def list_items(
+    id: Optional[int] = None,
     pagination = Depends(page_parameters),
     db: Session = Depends(get_db)):
-    total = db.query(StorageElement).count()
+    
+    q: SQLQuery = db.query(StorageElement)
+    q = q.filter(StorageElement.id == id) if id is not None else q
+
+    total = q.count()
     return {
         "total": total,
-        "items" : pagination(db.query(StorageElement)).all()
+        "items" : pagination(q).all()
     }    
 
 @router.post("/", response_model=StorageElementInDB)

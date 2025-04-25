@@ -9,6 +9,12 @@ export const getItems = async (offset: number, limit: number): Promise<ResultPag
   return await res.json();
 };
 
+export const getItemsByStorage = async (storageId: number,
+  offset: number, limit: number): Promise<ResultPage<HardwareItem>> => {
+  const res = await fetch(`${API_BASE}${PATH}/bystorage/?storage=${storageId}&offset=${offset}&limit=${limit}`);
+  return await res.json();
+};
+
 export const createItem = async (item: HardwareItem): Promise<HardwareItem> => {
   const res = await fetch(`${API_BASE}${PATH}/`, {
     method: "POST",

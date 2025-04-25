@@ -36,7 +36,7 @@ def list_items_bystorage(
     q = db.query(HardwareItem).filter(HardwareItem.storage_element_id == storage)
     return {
         "total": q.count(),
-        "items": q.offset(offset).limit(limit).all()
+        "items": pagination(q).all()
     }
 
         
