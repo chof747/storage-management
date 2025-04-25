@@ -26,7 +26,7 @@ type Props = {
 };
 
 export default function FilterPanel({ filters, onChange, config }: Props) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <>
