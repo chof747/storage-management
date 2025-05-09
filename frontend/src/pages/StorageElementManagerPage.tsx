@@ -9,8 +9,8 @@ import { StorageElement } from '../types/storageElements';
 import { ResultPage } from '../types/page';
 import { HardwareItem } from '../types/hardwareItems';
 import { getItemsByStorage } from '../api/hardwareItem';
-import { hardwareItemConfig } from './configurations/hardwareitem';
-import ConfiguredEntityPage from '../components/common/ConfiguredEntityPage';
+import { createHardwareItemConfig } from './configurations/hardwareitem';
+import ConfiguredEntityPage, { EntityConfig } from '../components/common/ConfiguredEntityPage';
 
 export default function StorageElementManagerPage() {
   const location = useLocation();
@@ -33,9 +33,20 @@ export default function StorageElementManagerPage() {
     loadElement(id)
   }, [id])
 
+  const adaptedHWConfig = (): EntityConfig<HardwareItem> => {
+    const config: EntityConfig<HardwareItem> = createHardwareItemConfig()
+    config.fetchItems = boundGetItemsByStorage(id);
+    config.title = `Items of ${element?.name}`;
+    config.table.columns = config.table.columns.filter(col => col.key !== 'storage_element');
+    config.toolbar = false;
+    config.selectitems = true;
+
+    return config;
+  };
+
   const rightPanel = (
     <>
-      <Divider sx={{ height: 150, my: 1 }} />
+      <Divider sx={{ height: 221, my: 1 }} />
       <Box>
         <Typography variant="subtitle1" gutterBottom>Actions</Typography>
         <IconButton
@@ -48,10 +59,6 @@ export default function StorageElementManagerPage() {
     </>
   );
 
-  hardwareItemConfig.fetchItems = boundGetItemsByStorage(id);
-  hardwareItemConfig.title = `Items of ${element?.name}`;
-  hardwareItemConfig.table.columns = hardwareItemConfig.table.columns.filter(col => col.key !== 'storage_element');
-  hardwareItemConfig.toolbar = false;
 
   const mainContent = (
     <>
@@ -90,7 +97,7 @@ export default function StorageElementManagerPage() {
       <Divider sx={{ backgroundColor: 'grey.400', height: 4, my: 1 }} />
 
       <ConfiguredEntityPage<HardwareItem>
-        config={hardwareItemConfig}
+        config={adaptedHWConfig()}
       ></ConfiguredEntityPage>
     </>
   )

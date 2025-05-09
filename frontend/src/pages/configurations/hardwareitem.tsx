@@ -73,7 +73,7 @@ export const tableColumns: TableColumn<HardwareItem>[] = [
   },
 ];
 
-export const hardwareItemConfig: EntityConfig<HardwareItem> = {
+export const createHardwareItemConfig = (): EntityConfig<HardwareItem> => ({
   title: 'Hardware Inventory',
   toolbar: true,
   fetchItems: getItems,
@@ -84,6 +84,7 @@ export const hardwareItemConfig: EntityConfig<HardwareItem> = {
   form: {
     fields: formFields,
   },
+  selectitems: false,
   table: {
     columns: tableColumns,
     customActions: (item: HardwareItem, refresh: () => void) => (
@@ -96,4 +97,4 @@ export const hardwareItemConfig: EntityConfig<HardwareItem> = {
       </Tooltip>
     )
   }
-};
+});
