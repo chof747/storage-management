@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useImperativeHandle, forwardRef } from 'react';
 import {
   Table,
   TableHead,
@@ -9,6 +9,7 @@ import {
   Paper,
   IconButton,
   TablePagination,
+  Checkbox,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ConfirmDialog from './ConfirmDialog';
@@ -26,6 +27,10 @@ export type TableColumn<T> = {
   render?: (value: T[keyof T], row: T) => React.ReactNode;
 };
 
+export type FilterableTableHandle<T> = {
+  getSelectedItems: () => T[];
+};
+
 type FilterableTableProps<T> = {
   data: T[];
   columns: TableColumn<T>[];
@@ -38,9 +43,11 @@ type FilterableTableProps<T> = {
   total: number;
   onPageChange: (page: number) => void;
   onRowsPerPageChange: (rowsPerPage: number) => void;
+  selectableRows?: boolean;
+  onSelectionChange?: (selectedItems: T[]) => void;
 };
 
-function FilterableTable<T>({
+function FilterableTableInner<T>({
   data,
   columns,
   onEdit,
@@ -51,8 +58,10 @@ function FilterableTable<T>({
   page,
   rowsPerPage,
   onPageChange,
-  onRowsPerPageChange
-}: FilterableTableProps<T>) {
+  onRowsPerPageChange,
+  selectableRows = false,
+  onSelectionChange,
+}: FilterableTableProps<T>, ref: React.Ref<FilterableTableHandle<T>>) {
   const initialFilterState = columns.reduce((acc, col) => {
     if (col.filterable) acc[col.key as string] = '';
     return acc;
@@ -61,6 +70,7 @@ function FilterableTable<T>({
   const [filters, setFilters] = useState(initialFilterState);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
 
   const filterConfig = columns
     .filter((col) => col.filterable)
@@ -73,20 +83,43 @@ function FilterableTable<T>({
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-
-
   const filteredData = useMemo(() => {
     if (!data?.length) return [];
 
     return data.filter((item) =>
       Object.entries(filters).every(([key, value]) => {
-        const column = columns.find(col => col.key === key);
+        const column = columns.find((col) => col.key === key);
         const fieldKey = column?.filterKey || key;
         const fieldValue = getNestedValue(item, fieldKey);
         return String(fieldValue ?? '').toLowerCase().includes(value.toLowerCase());
       })
     );
   }, [data, filters, columns]);
+
+  const updateSelection = (updatedIds: Set<string | number>) => {
+    setSelectedIds(updatedIds);
+    if (onSelectionChange) {
+      const selectedItems = filteredData.filter((item) => updatedIds.has(getRowId(item)));
+      onSelectionChange(selectedItems);
+    }
+  };
+
+  const allSelected = filteredData.length > 0 && filteredData.every((item) => selectedIds.has(getRowId(item)));
+
+  const toggleSelectAll = () => {
+    const updated = allSelected ? new Set<string | number>() : new Set(filteredData.map(getRowId));
+    updateSelection(updated);
+  };
+
+  const toggleSelectRow = (id: string | number) => {
+    const updated = new Set(selectedIds);
+    if (updated.has(id)) {
+      updated.delete(id);
+    } else {
+      updated.add(id);
+    }
+    updateSelection(updated);
+  };
 
   const openDeleteDialog = (item: T) => {
     setItemToDelete(item);
@@ -106,6 +139,10 @@ function FilterableTable<T>({
     setItemToDelete(null);
   };
 
+  useImperativeHandle(ref, () => ({
+    getSelectedItems: () => filteredData.filter((item) => selectedIds.has(getRowId(item))),
+  }));
+
   return (
     <>
       <FilterPanel filters={filters} onChange={updateFilter} config={filterConfig} />
@@ -114,43 +151,57 @@ function FilterableTable<T>({
         <Table>
           <TableHead>
             <TableRow>
+              {selectableRows && (
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={allSelected}
+                    onChange={toggleSelectAll}
+                    indeterminate={!allSelected && selectedIds.size > 0}
+                  />
+                </TableCell>
+              )}
               {columns.map((col) => (
                 <TableCell key={col.key as string}>{col.label}</TableCell>
               ))}
-              {(onEdit || onDelete) && <TableCell align="right">Actions</TableCell>}
+              {(onEdit || onDelete || customActions) && <TableCell align="right">Actions</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData.map((item) => (
-              <TableRow sx={{ height: 16 }} key={getRowId(item)}>
-                {columns.map((col) => {
-                  const value = item[col.key];
-                  return (
-                    <TableCell key={col.key as string} sx={{ py: 0.5 }}>
-                      {col.render
-                        ? col.render(item[col.key], item)
-                        : String(item[col.key] ?? '')
-                      }
+            {filteredData.map((item) => {
+              const id = getRowId(item);
+              return (
+                <TableRow key={id} hover selected={selectedIds.has(id)}>
+                  {selectableRows && (
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={selectedIds.has(id)}
+                        onChange={() => toggleSelectRow(id)}
+                      />
                     </TableCell>
-                  );
-                })}
-                {(onEdit || onDelete || customActions) && (
-                  <TableCell align="right" sx={{ py: 0.5 }}>
-                    {onEdit && (
-                      <IconButton color="primary" onClick={() => onEdit(item)}>
-                        <EditIcon />
-                      </IconButton>
-                    )}
-                    {onDelete && (
-                      <IconButton color="error" onClick={() => openDeleteDialog(item)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
-                    {customActions && customActions(item, () => setFilters({ ...filters }))}
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
+                  )}
+                  {columns.map((col) => (
+                    <TableCell key={col.key as string} sx={{ py: 0.5 }}>
+                      {col.render ? col.render(item[col.key], item) : String(item[col.key] ?? '')}
+                    </TableCell>
+                  ))}
+                  {(onEdit || onDelete || customActions) && (
+                    <TableCell align="right" sx={{ py: 0.5 }}>
+                      {onEdit && (
+                        <IconButton color="primary" onClick={() => onEdit(item)}>
+                          <EditIcon />
+                        </IconButton>
+                      )}
+                      {onDelete && (
+                        <IconButton color="error" onClick={() => openDeleteDialog(item)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
+                      {customActions && customActions(item, () => setFilters({ ...filters }))}
+                    </TableCell>
+                  )}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -176,5 +227,9 @@ function FilterableTable<T>({
     </>
   );
 }
+
+const FilterableTable = forwardRef(FilterableTableInner) as <T>(
+  props: FilterableTableProps<T> & { ref?: React.Ref<FilterableTableHandle<T>> }
+) => ReturnType<typeof FilterableTableInner>;
 
 export default FilterableTable;

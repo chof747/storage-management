@@ -8,6 +8,8 @@ import { ResultPage } from '../../types/page';
 export type EntityConfig<T extends Record<string, any>> = {
   title: string;
   toolbar: boolean;
+  selectitems?: boolean;
+  onSelectionChange?: (selectedItems: T[]) => void;
   fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
   createItem: (item: T) => Promise<T>;
   updateItem: (item: T) => Promise<T>;
@@ -42,6 +44,8 @@ export default function ConfiguredEntityPage<T extends Record<string, any>>({
       total={props.total}
       onRowsPerPageChange={props.onRowsPerPageChange}
       onPageChange={props.onPageChange}
+      selectableRows={config.selectitems ?? false}
+      onSelectionChange={config.onSelectionChange ?? undefined}
     />
   );
 
