@@ -18,14 +18,14 @@ export default function renderSelectWithCreate<T>(
   handleChange: React.ChangeEventHandler,
   loading: boolean,
   options: { id: any; label: string }[],
-  onNewItem: (id: any, label: string) => void
+  onNewItem?: (id: any, label: string) => void
 ) {
   const name = String(field.name);
 
   const handleCreate = async () => {
     if (field.createNew) {
       const result = await field.createNew();
-      onNewItem(result.id, result.label);
+      (onNewItem !== undefined) && onNewItem(result.id, result.label);
     }
   };
 
@@ -43,13 +43,13 @@ export default function renderSelectWithCreate<T>(
       select
       disabled={loading}
       InputProps={{
-        startAdornment: (
+        startAdornment: field.createNew ? (
           <InputAdornment position="start">
             <IconButton size="small" onClick={handleCreate}>
               <AddIcon fontSize="small" />
             </IconButton>
           </InputAdornment>
-        ),
+        ) : undefined,
         endAdornment: loading ? <CircularProgress size={20} /> : undefined,
       }}
     >

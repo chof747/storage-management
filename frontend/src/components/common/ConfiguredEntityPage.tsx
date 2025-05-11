@@ -1,6 +1,6 @@
 // ConfiguredEntityPage.tsx
 import EntityPage from './EntityPage';
-import FilterableTable, { TableColumn } from './FilterableTable';
+import FilterableTable, { FilterableTableHandle, TableColumn } from './FilterableTable';
 import ModelForm, { FormField } from './ModelForm';
 import React from 'react';
 import { ResultPage } from '../../types/page';
@@ -25,12 +25,14 @@ export type EntityConfig<T extends Record<string, any>> = {
 };
 
 export default function ConfiguredEntityPage<T extends Record<string, any>>({
-  config,
+  config, tableref
 }: {
   config: EntityConfig<T>;
+  tableref?: React.Ref<FilterableTableHandle<T>>;
 }) {
   const TableComponent = (props: any) => (
     <FilterableTable<T>
+      ref={tableref}
       data={props.items}
       columns={config.table.columns}
       onEdit={props.onEdit}
