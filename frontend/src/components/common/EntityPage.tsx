@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Ref, useEffect, useState } from 'react';
 import {
   AppBar,
   Box,
@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { ResultPage } from '../../types/page';
+import { FilterableTableHandle } from './FilterableTable';
 
 type EntityPageProps<T> = {
   title: string;
@@ -22,17 +23,14 @@ type EntityPageProps<T> = {
     onSuccess: () => void;
   }>;
   TableComponent: React.ComponentType<{
-    items: T[];
+    fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
     onEdit: (item: T) => void;
     onDelete: (id: number) => void;
-    onRefresh: () => void;
-    page: number;
-    rowsPerPage: number;
-    total: number;
-    onPageChange: (page: number) => void;
-    onRowsPerPageChange: (rowsPerPage: number) => void;
   }>;
   getItemId: (item: T) => number;
+  tableRef?: React.RefObject<FilterableTableHandle<T>>;
+
+
 };
 
 export default function EntityPage<T>({
@@ -44,24 +42,10 @@ export default function EntityPage<T>({
   deleteItem,
   FormComponent,
   TableComponent,
-  getItemId,
+  tableRef,
 }: EntityPageProps<T>) {
-  const [items, setItems] = useState<T[]>([]);
-  const [total, setTotal] = useState(0)
-  const [page, setPage] = useState(0); // zero-based
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selected, setSelected] = useState<T | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const loadItems = async () => {
-    const data = await fetchItems(page * rowsPerPage, rowsPerPage);
-    setItems(data.items);
-    setTotal(data.total);
-  };
-
-  useEffect(() => {
-    loadItems();
-  }, [page, rowsPerPage]);
 
   const handleSubmit = async (item: T) => {
     if (selected) {
@@ -73,13 +57,13 @@ export default function EntityPage<T>({
 
   const handleDelete = async (id: number) => {
     await deleteItem(id);
-    loadItems();
-  };
+    tableRef?.current?.refresh()
+  }
 
   const handleSuccess = () => {
     setDrawerOpen(false);
     setSelected(null);
-    loadItems();
+    tableRef?.current?.refresh();
   };
 
   const addButton = () => <Button color="inherit" onClick={() => {
@@ -109,21 +93,12 @@ export default function EntityPage<T>({
 
       <Box>
         <TableComponent
-          items={items}
+          fetchItems={fetchItems}
           onEdit={(item) => {
             setSelected(item);
             setDrawerOpen(true);
           }}
           onDelete={(id) => handleDelete(id)}
-          onRefresh={loadItems}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          total={total}
-          onPageChange={setPage}
-          onRowsPerPageChange={(val) => {
-            setRowsPerPage(val);
-            setPage(0);
-          }}
         />
 
         {

@@ -28,12 +28,12 @@ export default function ConfiguredEntityPage<T extends Record<string, any>>({
   config, tableref
 }: {
   config: EntityConfig<T>;
-  tableref?: React.Ref<FilterableTableHandle<T>>;
+  tableref?: React.RefObject<FilterableTableHandle<T>>;
 }) {
   const TableComponent = (props: any) => (
     <FilterableTable<T>
       ref={tableref}
-      data={props.items}
+      fetchItems={props.fetchItems}
       columns={config.table.columns}
       onEdit={props.onEdit}
       onDelete={(item) => props.onDelete(config.getItemId(item))}
@@ -41,11 +41,6 @@ export default function ConfiguredEntityPage<T extends Record<string, any>>({
         ? (item, _) => config.table.customActions!(item, props.onRefresh)
         : undefined}
       getRowId={config.getItemId}
-      page={props.page}
-      rowsPerPage={props.rowsPerPage}
-      total={props.total}
-      onRowsPerPageChange={props.onRowsPerPageChange}
-      onPageChange={props.onPageChange}
       selectableRows={config.selectitems ?? false}
       onSelectionChange={config.onSelectionChange ?? undefined}
     />
@@ -72,6 +67,7 @@ export default function ConfiguredEntityPage<T extends Record<string, any>>({
       getItemId={config.getItemId}
       FormComponent={FormComponent}
       TableComponent={TableComponent}
+      tableRef={tableref}
     />
   );
 }

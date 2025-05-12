@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useImperativeHandle, forwardRef } from 'react';
+import React, { useMemo, useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 import {
   Table,
   TableHead,
@@ -14,6 +14,7 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ConfirmDialog from './ConfirmDialog';
 import FilterPanel from './FilterPanel';
+import { ResultPage } from '../../types/page';
 
 function getNestedValue(obj: any, path: string): any {
   return path.split('.').reduce((acc, part) => acc?.[part], obj);
@@ -29,36 +30,31 @@ export type TableColumn<T> = {
 
 export type FilterableTableHandle<T> = {
   getSelectedItems: () => T[];
+  refresh: () => void;
 };
 
 type FilterableTableProps<T> = {
-  data: T[];
   columns: TableColumn<T>[];
+  fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   getRowId: (item: T) => string | number;
   customActions?: (item: T, refresh: () => void) => React.ReactNode;
-  page: number;
-  rowsPerPage: number;
-  total: number;
-  onPageChange: (page: number) => void;
-  onRowsPerPageChange: (rowsPerPage: number) => void;
   selectableRows?: boolean;
   onSelectionChange?: (selectedItems: T[]) => void;
 };
 
+const FilterableTable = forwardRef(FilterableTableInner) as <T>(
+  props: FilterableTableProps<T> & { ref?: React.Ref<FilterableTableHandle<T>> }
+) => ReturnType<typeof FilterableTableInner>;
+
 function FilterableTableInner<T>({
-  data,
   columns,
+  fetchItems,
   onEdit,
   onDelete,
   getRowId,
   customActions,
-  total,
-  page,
-  rowsPerPage,
-  onPageChange,
-  onRowsPerPageChange,
   selectableRows = false,
   onSelectionChange,
 }: FilterableTableProps<T>, ref: React.Ref<FilterableTableHandle<T>>) {
@@ -67,6 +63,10 @@ function FilterableTableInner<T>({
     return acc;
   }, {} as Record<string, string>);
 
+  const [items, setItems] = useState<T[]>([]);
+  const [total, setTotal] = useState(0)
+  const [page, setPage] = useState(0); // zero-based
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filters, setFilters] = useState(initialFilterState);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
@@ -79,14 +79,10 @@ function FilterableTableInner<T>({
       label: col.label,
     }));
 
-  const updateFilter = (key: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
   const filteredData = useMemo(() => {
-    if (!data?.length) return [];
+    if (!items.length) return [];
 
-    return data.filter((item) =>
+    return items.filter((item) =>
       Object.entries(filters).every(([key, value]) => {
         const column = columns.find((col) => col.key === key);
         const fieldKey = column?.filterKey || key;
@@ -94,7 +90,29 @@ function FilterableTableInner<T>({
         return String(fieldValue ?? '').toLowerCase().includes(value.toLowerCase());
       })
     );
-  }, [data, filters, columns]);
+  }, [items, filters, columns]);
+
+  const allSelected = filteredData.length > 0 && filteredData.every((item) => selectedIds.has(getRowId(item)));
+
+  const loadItems = async () => {
+    const data = await fetchItems(page * rowsPerPage, rowsPerPage);
+    setItems(data.items);
+    setTotal(data.total);
+  };
+
+  useEffect(() => {
+    loadItems();
+  }, [page, rowsPerPage, items]);
+
+
+  useImperativeHandle(ref, () => ({
+    getSelectedItems: () => filteredData.filter((item: T) => selectedIds.has(getRowId(item))),
+    refresh: () => loadItems(),
+  }));
+
+  const updateFilter = (key: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
 
   const updateSelection = (updatedIds: Set<string | number>) => {
     setSelectedIds(updatedIds);
@@ -103,8 +121,6 @@ function FilterableTableInner<T>({
       onSelectionChange(selectedItems);
     }
   };
-
-  const allSelected = filteredData.length > 0 && filteredData.every((item) => selectedIds.has(getRowId(item)));
 
   const toggleSelectAll = () => {
     const updated = allSelected ? new Set<string | number>() : new Set(filteredData.map(getRowId));
@@ -139,9 +155,6 @@ function FilterableTableInner<T>({
     setItemToDelete(null);
   };
 
-  useImperativeHandle(ref, () => ({
-    getSelectedItems: () => filteredData.filter((item) => selectedIds.has(getRowId(item))),
-  }));
 
   return (
     <>
@@ -210,9 +223,12 @@ function FilterableTableInner<T>({
         component="div"
         count={total}
         page={page}
-        onPageChange={(e, newPage) => onPageChange(newPage)}
+        onPageChange={(e, newPage) => setPage(newPage)}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
+        onRowsPerPageChange={(e) => {
+          setRowsPerPage(parseInt(e.target.value, 10));
+          setPage(0);
+        }}
       />
 
       <ConfirmDialog
@@ -227,9 +243,5 @@ function FilterableTableInner<T>({
     </>
   );
 }
-
-const FilterableTable = forwardRef(FilterableTableInner) as <T>(
-  props: FilterableTableProps<T> & { ref?: React.Ref<FilterableTableHandle<T>> }
-) => ReturnType<typeof FilterableTableInner>;
 
 export default FilterableTable;
