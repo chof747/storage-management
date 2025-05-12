@@ -51,3 +51,20 @@ export const toggleItemforPrinting = async (item: HardwareItem): Promise<void> =
     throw error
   }
 }
+
+export const moveItemsBetweenStorages = async (itemIds: number[], storageId: number): Promise<void> => {
+  const res = await fetch(`${API_BASE}${PATH}/move`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      items: itemIds,
+      storage_to: storageId
+    })
+  });
+
+  if (!res.ok) {
+    const error = new Error('Could not move items')
+    throw error
+  }
+  return await res.json();
+}

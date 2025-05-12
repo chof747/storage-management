@@ -4,19 +4,23 @@ import { DriveFileMoveOutlined as MoveIcon, DeleteOutlineOutlined as DeleteIcon 
 import { getItems } from '../api/storageElement';
 import { Box, Typography, IconButton, Table, TableRow, TableCell, TableBody, Divider } from '@mui/material';
 import Layout from '../components/layout/Layout';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StorageElement } from '../types/storageElements';
 import { ResultPage } from '../types/page';
 import { HardwareItem } from '../types/hardwareItems';
-import { getItemsByStorage } from '../api/hardwareItem';
+import { getItemsByStorage, moveItemsBetweenStorages } from '../api/hardwareItem';
 import { createHardwareItemConfig } from './configurations/hardwareitem';
 import ConfiguredEntityPage, { EntityConfig } from '../components/common/ConfiguredEntityPage';
+import { FilterableTableHandle } from '../components/common/FilterableTable';
+import MoveItemsDialog from './dialogs/moveitems';
 
 export default function StorageElementManagerPage() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const [element, setElement] = useState<StorageElement>()
   const [id, setId] = useState<number>(Number(params.get('id')));
+  const hwItemsTable = useRef<FilterableTableHandle<HardwareItem>>(null!) as React.RefObject<FilterableTableHandle<HardwareItem>>;
+  const [openMoveDialog, setOpenMoveDialog] = useState(false);
 
   const loadElement = async (id: number) => {
     const elements: ResultPage<StorageElement> = await getItems(0, 1, id)
@@ -44,12 +48,28 @@ export default function StorageElementManagerPage() {
     return config;
   };
 
+  const handleMoveClick = () => {
+    setOpenMoveDialog(true);
+  }
+
+  const handleMoveSubmit = (targetStorageId: number, items: HardwareItem[]) => {
+    setOpenMoveDialog(false);
+    moveItemsBetweenStorages(items.map(item => item.id).filter((id): id is number => id !== undefined),
+      targetStorageId).then(() => {
+        hwItemsTable.current?.refresh();
+      }
+      ).catch((error) => {
+        console.error("Error moving items:", error);
+      }
+      );
+  }
+
   const rightPanel = (
     <>
       <Divider sx={{ height: 221, my: 1 }} />
       <Box>
         <Typography variant="subtitle1" gutterBottom>Actions</Typography>
-        <IconButton
+        <IconButton onClick={handleMoveClick}
           component="label"><MoveIcon />
           <Typography variant="button">
             &nbsp;Move Items</Typography></IconButton><br />
@@ -98,7 +118,15 @@ export default function StorageElementManagerPage() {
 
       <ConfiguredEntityPage<HardwareItem>
         config={adaptedHWConfig()}
+        tableref={hwItemsTable}
       ></ConfiguredEntityPage>
+
+      <MoveItemsDialog
+        onSubmit={handleMoveSubmit}
+        onClose={() => setOpenMoveDialog(false)}
+        selectedItems={hwItemsTable.current?.getSelectedItems() ?? []}
+        open={openMoveDialog}
+      />
     </>
   )
 

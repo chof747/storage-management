@@ -1,21 +1,24 @@
 // hardwareItemConfig.ts
 import { HardwareItem } from '../../types/hardwareItems';
 import { getItems, createItem, updateItem, deleteItem, toggleItemforPrinting } from '../../api/hardwareItem';
-import { createPlaceholder } from '../../api/storageElement';
+import { getItems as getStorageItems, createPlaceholder } from '../../api/storageElement';
 import { FormField } from '../../components/common/ModelForm';
 import { TableColumn } from '../../components/common/FilterableTable';
 import { ShoppingCart as ReorderIcon, PrintOutlined, PrintDisabled } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
+import { StorageElement } from '../../types/storageElements';
 
-const fetch_storage = async (): Promise<{ id: any; label: string }[]> => {
-  const response = await fetch('http://localhost:8000/api/storage');
-  const data = await response.json();
-  return data.items.map((se: any) => ({
+
+export const fetch_storage = async (): Promise<{ id: any; label: string }[]> => {
+  const response = await getStorageItems(0, 100);
+
+  return response.items.map((se: StorageElement) => ({
     id: se.id,
     label: se.name
   }));
 };
+
 
 export const formFields: FormField<Record<string, any>>[] = [
   { name: 'hwtype', label: 'Type', required: true },
@@ -89,7 +92,7 @@ export const createHardwareItemConfig = (): EntityConfig<HardwareItem> => ({
     columns: tableColumns,
     customActions: (item: HardwareItem, refresh: () => void) => (
       <Tooltip title={item.queued_for_printing ? "remove from queue" : "add to queue"}>
-        <IconButton onClick={async () => { await toggleItemforPrinting(item); refresh(); }}>
+        <IconButton onClick={async () => { await toggleItemforPrinting(item); }}>
           {item.queued_for_printing
             ? <PrintDisabled />
             : <PrintOutlined color="secondary" />}
