@@ -1,9 +1,17 @@
 
 [project]
-name = "my_app"
+name = "storage_manager"
 version = "0.1.0"
 requires-python = ">=3.9"
-dependencies = ["fastapi", "uvicorn[standard]", "sqlalchemy", "pydantic", "python-dotenv", "starlette>=0.46.1"]
+dependencies = [
+    "fastapi", 
+    "uvicorn[standard]", 
+    "sqlalchemy", 
+    "pydantic", 
+    "python-dotenv", 
+    "starlette>=0.46.1",
+    "alembic>=1.15.2",
+]
 
 [dependency-groups]
 dev = [
@@ -11,7 +19,6 @@ dev = [
     "flake8",
     "black",
     "pre-commit",
-    "alembic>=1.15.2",
 ]
 
 [tool.pdm.scripts]
@@ -19,5 +26,8 @@ migrate = "alembic upgrade head"
 makemigration = "alembic revision --autogenerate -m"
 
 [tool.pdm]
+package = [{include = "app"},   { include = "alembic" }]
+[tool.setuptools]
+packages = ["app", "alembic"]
 [tool.pdm.dev-dependencies]
 dev = ["pytest", "flake8", "black", "pre-commit"]
