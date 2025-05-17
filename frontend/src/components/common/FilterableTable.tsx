@@ -16,8 +16,19 @@ import ConfirmDialog from './ConfirmDialog';
 import FilterPanel from './FilterPanel';
 import { ResultPage } from '../../types/page';
 
+/*
 function getNestedValue(obj: any, path: string): any {
   return path.split('.').reduce((acc, part) => acc?.[part], obj);
+}
+*/
+
+function getNestedValue<T, R = unknown>(obj: T, path: string): R | undefined {
+  return path.split('.').reduce<unknown>((acc, part) => {
+    if (typeof acc === 'object' && acc !== null && part in acc) {
+      return (acc as Record<string, unknown>)[part];
+    }
+    return undefined;
+  }, obj) as R | undefined;
 }
 
 export type TableColumn<T> = {
@@ -64,7 +75,7 @@ function FilterableTableInner<T>({
   }, {} as Record<string, string>);
 
   const [items, setItems] = useState<T[]>([]);
-  const [total, setTotal] = useState(0)
+  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0); // zero-based
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filters, setFilters] = useState(initialFilterState);
@@ -102,7 +113,7 @@ function FilterableTableInner<T>({
 
   useEffect(() => {
     loadItems();
-  }, [page, rowsPerPage, items]);
+  }, [page, rowsPerPage]);
 
 
   useImperativeHandle(ref, () => ({

@@ -3,9 +3,9 @@ import { FormField } from '../ModelForm';
 
 export default function renderNumberField<T>(
   field: FormField<T>,
-  value: any,
+  value: number,
   error: string | undefined,
   handleChange: React.ChangeEventHandler
 ) {
-  return renderTextField({ ...field, type: 'number' }, value, error, handleChange);
+  return renderTextField({ ...field, type: 'number' }, value.toString(), error, handleChange);
 }

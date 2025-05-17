@@ -8,7 +8,7 @@ import { FormField } from '../ModelForm';
 
 export default function renderSelectField<T>(
   field: FormField<T>,
-  value: any,
+  value: number | string,
   error: string | undefined,
   handleChange: React.ChangeEventHandler,
   loading: boolean,

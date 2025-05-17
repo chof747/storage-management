@@ -5,7 +5,7 @@ import ModelForm, { FormField } from './ModelForm';
 import React from 'react';
 import { ResultPage } from '../../types/page';
 
-export type EntityConfig<T extends Record<string, any>> = {
+export type EntityConfig<T extends object> = {
   title: string;
   toolbar: boolean;
   selectitems?: boolean;
@@ -24,13 +24,26 @@ export type EntityConfig<T extends Record<string, any>> = {
   };
 };
 
-export default function ConfiguredEntityPage<T extends Record<string, any>>({
+type TableComponentProps<T> = {
+  fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
+  onEdit: (item: T) => void;
+  onDelete: (item: number) => void;
+  onRefresh?: () => void;
+};
+
+type FormComponentProps<T> = {
+  item: T | null;
+  onSubmit: (data: T) => Promise<void>;
+  onSuccess: () => void;
+};
+
+export default function ConfiguredEntityPage<T extends object>({
   config, tableref
 }: {
   config: EntityConfig<T>;
   tableref?: React.RefObject<FilterableTableHandle<T>>;
 }) {
-  const TableComponent = (props: any) => (
+  const TableComponent = (props: TableComponentProps<T>) => (
     <FilterableTable<T>
       ref={tableref}
       fetchItems={props.fetchItems}
@@ -38,7 +51,7 @@ export default function ConfiguredEntityPage<T extends Record<string, any>>({
       onEdit={props.onEdit}
       onDelete={(item) => props.onDelete(config.getItemId(item))}
       customActions={config.table.customActions
-        ? (item, _) => config.table.customActions!(item, props.onRefresh)
+        ? (item) => config.table.customActions!(item, props.onRefresh!)
         : undefined}
       getRowId={config.getItemId}
       selectableRows={config.selectitems ?? false}
@@ -46,7 +59,7 @@ export default function ConfiguredEntityPage<T extends Record<string, any>>({
     />
   );
 
-  const FormComponent = ({ item, onSubmit, onSuccess }: any) => (
+  const FormComponent = ({ item, onSubmit, onSuccess }: FormComponentProps<T>) => (
     <ModelForm<T>
       fields={config.form.fields}
       initialValues={item ?? {}}

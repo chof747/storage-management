@@ -6,19 +6,18 @@ import {
   CircularProgress,
   IconButton,
   InputAdornment,
-  Box,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { FormField } from '../ModelForm';
 
 export default function renderSelectWithCreate<T>(
   field: FormField<T>,
-  value: any,
+  value: number | string,
   error: string | undefined,
   handleChange: React.ChangeEventHandler,
   loading: boolean,
-  options: { id: any; label: string }[],
-  onNewItem?: (id: any, label: string) => void
+  options: { id: number; label: string }[],
+  onNewItem?: (id: number, label: string) => void
 ) {
   const name = String(field.name);
 

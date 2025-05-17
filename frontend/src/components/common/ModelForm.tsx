@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import renderTextField from './formitems/textfield';
 import renderNumberField from './formitems/numberfield';
-import renderSelectField from './formitems/selectfield';
 import { renderCheckboxField } from './formitems/checkboxfield';
 import renderSelectWithCreate from './formitems/selectWithCreate';
 import {
   Box,
-  TextField,
   Button,
   Paper,
-  MenuItem,
-  CircularProgress,
-  Checkbox,
-  FormControlLabel,
 } from '@mui/material';
 
 export type FormField<T> = {
@@ -20,12 +14,12 @@ export type FormField<T> = {
   label: string;
   type?: 'text' | 'number' | 'select' | 'select-create' | 'boolean';
   required?: boolean;
-  loadOptions?: () => Promise<{ id: any; label: string }[]>;
-  options?: { id: any; label: string }[];
-  createNew?: () => Promise<{ id: any; label: string }>;
+  loadOptions?: () => Promise<{ id: number; label: string }[]>;
+  options?: { id: number; label: string }[];
+  createNew?: () => Promise<{ id: number; label: string }>;
 };
 
-type Props<T> = {
+export type Props<T> = {
   fields: FormField<T>[];
   initialValues?: Partial<T>;
   onValidSubmit: (data: T) => Promise<void>;
@@ -33,7 +27,17 @@ type Props<T> = {
   submitLabel?: string;
 };
 
-function ModelForm<T extends Record<string, any>>({
+function isErrorWithResponse(err: unknown): err is Error & { response?: Response } {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'message' in err &&
+    typeof (err as { message?: unknown }).message === 'string' &&
+    'response' in err
+  );
+}
+
+function ModelForm<T extends object>({
   fields,
   initialValues = {},
   onValidSubmit,
@@ -41,7 +45,7 @@ function ModelForm<T extends Record<string, any>>({
   submitLabel = 'Submit',
 }: Props<T>) {
   const [form, setForm] = useState<Partial<T>>(initialValues);
-  const [selectOptions, setSelectOptions] = useState<Record<string, { id: any; label: string }[]>>({});
+  const [selectOptions, setSelectOptions] = useState<Record<string, { id: number; label: string }[]>>({});
   const [loadingSelects, setLoadingSelects] = useState<Record<string, boolean>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -70,10 +74,10 @@ function ModelForm<T extends Record<string, any>>({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     const fieldDef = fields.find((f) => f.name === name);
 
-    let newValue: any;
+    let newValue: string | number | boolean | '' = value;
 
     if (fieldDef?.type === 'number') {
       newValue = parseFloat(value) || '';
@@ -97,23 +101,25 @@ function ModelForm<T extends Record<string, any>>({
     try {
       await onValidSubmit(form as T);
       onSuccess();
-    } catch (err: any) {
-      if (err.name === 'ValidationError') {
-        // Custom validation
-      } else if (err.response?.status === 422) {
-        const data = await err.response.json();
-        const errors: Record<string, string> = {};
-        for (const detail of data.detail) {
-          const loc = detail.loc[detail.loc.length - 1];
-          errors[loc] = detail.msg;
+    } catch (err: unknown) {
+      if (isErrorWithResponse(err)) {
+        if (err.name === 'ValidationError') {
+          // Custom validation
+        } else if (err.response?.status === 422) {
+          const data = await err.response.json();
+          const errors: Record<string, string> = {};
+          for (const detail of data.detail) {
+            const loc = detail.loc[detail.loc.length - 1];
+            errors[loc] = detail.msg;
+          }
+          setFieldErrors(errors);
+          setGeneralError("Please correct the highlighted errors.");
+        } else if (err.response?.status === 400 || err.response?.status === 500) {
+          const data = await err.response.json();
+          setGeneralError(data.detail || "Something went wrong.");
+        } else {
+          setGeneralError("Unknown error occurred.");
         }
-        setFieldErrors(errors);
-        setGeneralError("Please correct the highlighted errors.");
-      } else if (err.response?.status === 400 || err.response?.status === 500) {
-        const data = await err.response.json();
-        setGeneralError(data.detail || "Something went wrong.");
-      } else {
-        setGeneralError("Unknown error occurred.");
       }
     }
   };
@@ -131,7 +137,7 @@ function ModelForm<T extends Record<string, any>>({
       case 'select-create':
         return renderSelectWithCreate(
           field,
-          value,
+          (typeof (value) == 'number') ? value : "",
           error,
           handleChange,
           loading,
@@ -147,15 +153,15 @@ function ModelForm<T extends Record<string, any>>({
             });
             setForm((prev) => ({ ...prev, [field.name]: id }));
           }
-        )
+        );
       case 'boolean':
         return renderCheckboxField(field, Boolean(value), handleChange);
       case 'number':
-        return renderNumberField(field, value, error, handleChange);
+        return renderNumberField(field, (typeof (value) == 'number') ? value : 0, error, handleChange);
       case 'text':
       default:
-        return renderTextField(field, value, error, handleChange);
-    }
+        return renderTextField(field, (typeof (value) == 'string') ? value : '', error, handleChange);
+    };
   };
 
   return (

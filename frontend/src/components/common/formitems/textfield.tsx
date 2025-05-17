@@ -4,7 +4,7 @@ import { FormField } from '../ModelForm';
 
 export default function renderTextField<T>(
   field: FormField<T>,
-  value: any,
+  value: string,
   error: string | undefined,
   handleChange: React.ChangeEventHandler
 ) {
