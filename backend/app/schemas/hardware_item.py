@@ -18,12 +18,6 @@ class HardwareItemBase(BaseModel):
     storage_element_id: int = Field(..., description="Link to storage element")
     queued_for_printing: Optional[bool] = False
 
-    @field_validator("main_metric")
-    def must_start_with_letter(cls, v: str):
-        if not v or not v[0].isalpha():
-            raise ValueError("Metric one must start with a letter")
-        return v
-
 
 class HardwareItemCreate(HardwareItemBase):
     pass
