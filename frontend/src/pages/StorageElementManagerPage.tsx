@@ -17,28 +17,28 @@ import MoveItemsDialog from './dialogs/moveitems';
 export default function StorageElementManagerPage() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const [element, setElement] = useState<StorageElement>()
-  const [id, setId] = useState<number>(Number(params.get('id')));
+  const [element, setElement] = useState<StorageElement>();
+  const [id] = useState<number>(Number(params.get('id')));
   const hwItemsTable = useRef<FilterableTableHandle<HardwareItem>>(null!) as React.RefObject<FilterableTableHandle<HardwareItem>>;
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
 
   const loadElement = async (id: number) => {
-    const elements: ResultPage<StorageElement> = await getItems(0, 1, id)
+    const elements: ResultPage<StorageElement> = await getItems(0, 1, id);
     if (1 == elements.total) {
-      setElement(elements.items[0])
+      setElement(elements.items[0]);
     }
-  }
+  };
 
   const boundGetItemsByStorage = (storageId: number) =>
     (offset: number, limit: number): Promise<ResultPage<HardwareItem>> =>
       getItemsByStorage(storageId, offset, limit);
 
   useEffect(() => {
-    loadElement(id)
-  }, [id])
+    loadElement(id);
+  }, [id]);
 
   const adaptedHWConfig = (): EntityConfig<HardwareItem> => {
-    const config: EntityConfig<HardwareItem> = createHardwareItemConfig()
+    const config: EntityConfig<HardwareItem> = createHardwareItemConfig();
     config.fetchItems = boundGetItemsByStorage(id);
     config.title = `Items of ${element?.name}`;
     config.table.columns = config.table.columns.filter(col => col.key !== 'storage_element');
@@ -50,7 +50,7 @@ export default function StorageElementManagerPage() {
 
   const handleMoveClick = () => {
     setOpenMoveDialog(true);
-  }
+  };
 
   const handleMoveSubmit = (targetStorageId: number, items: HardwareItem[]) => {
     setOpenMoveDialog(false);
@@ -62,7 +62,7 @@ export default function StorageElementManagerPage() {
         console.error("Error moving items:", error);
       }
       );
-  }
+  };
 
   const rightPanel = (
     <>
@@ -128,7 +128,7 @@ export default function StorageElementManagerPage() {
         open={openMoveDialog}
       />
     </>
-  )
+  );
 
   return (
     <Layout rightPanel={rightPanel}>

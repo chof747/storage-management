@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { HardwareItem } from "../../types/hardwareItems";
-import { Box, Typography, TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Box, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import renderSelectWithCreate from "../../components/common/formitems/selectWithCreate";
 import { FormField } from "../../components/common/ModelForm";
 import { fetch_storage } from "../configurations/hardwareitem";
@@ -12,7 +12,7 @@ type MoveItemsDialogProps = {
   onSubmit: (targetStorageId: number, items: HardwareItem[]) => void;
 };
 
-const movetoField: FormField<Record<string, any>> = {
+const movetoField: FormField<Record<string, unknown>> = {
   name: 'moveto',
   label: 'Move to',
   type: 'select-create',
@@ -27,7 +27,7 @@ export default function MoveItemsDialog({
   open
 }: MoveItemsDialogProps) {
   const [targetStorageId, setTargetStorageId] = React.useState<number | null>(null);
-  const [options, setOptions] = useState<{ id: any; label: string }[]>([]);
+  const [options, setOptions] = useState<{ id: number; label: string }[]>([]);
 
   useEffect(() => {
     if (movetoField.loadOptions) {

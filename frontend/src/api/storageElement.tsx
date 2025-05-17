@@ -2,7 +2,7 @@ import { ResultPage } from "../types/page";
 import { StorageElement } from "../types/storageElements";
 
 const API_BASE = "http://localhost:8000/api";
-const PATH = "storage"
+const PATH = "storage";
 
 export const getItems = async (offset: number, limit: number, id: number = 0): Promise<ResultPage<StorageElement>> => {
   const res = await fetch(`${API_BASE}/${PATH}/${id > 0 ? id + "/" : ""}?offset=${offset}&limit=${limit}`);
@@ -26,7 +26,7 @@ export const createPlaceholder = async (name: string): Promise<StorageElement> =
     storage_type: 'default'
   };
   return createItem(item);
-}
+};
 
 export const updateItem = async (item: StorageElement): Promise<StorageElement> => {
   const res = await fetch(`${API_BASE}/${PATH}/${item.id}`, {
@@ -36,7 +36,7 @@ export const updateItem = async (item: StorageElement): Promise<StorageElement> 
   });
 
   if (!res.ok) {
-    const error = new Error('Update failed!') as Error & { response?: Response }
+    const error = new Error('Update failed!') as Error & { response?: Response };
     error.response = res;
     throw error;
   }

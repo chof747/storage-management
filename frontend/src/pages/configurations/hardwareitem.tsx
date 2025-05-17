@@ -9,8 +9,11 @@ import { IconButton, Tooltip } from '@mui/material';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
 import { StorageElement } from '../../types/storageElements';
 
+type HardwareItemFormFields = HardwareItem & {
+  storage_element_id?: number;
+};
 
-export const fetch_storage = async (): Promise<{ id: any; label: string }[]> => {
+export const fetch_storage = async (): Promise<{ id: number; label: string }[]> => {
   const response = await getStorageItems(0, 100);
 
   return response.items.map((se: StorageElement) => ({
@@ -20,7 +23,7 @@ export const fetch_storage = async (): Promise<{ id: any; label: string }[]> => 
 };
 
 
-export const formFields: FormField<Record<string, any>>[] = [
+export const formFields: FormField<HardwareItemFormFields>[] = [
   { name: 'hwtype', label: 'Type', required: true },
   { name: 'main_metric', label: 'Main Metric', required: true },
   { name: 'secondary_metric', label: 'Secondary Metric' },
@@ -62,7 +65,7 @@ export const tableColumns: TableColumn<HardwareItem>[] = [
     label: 'Stored in',
     filterable: true,
     filterKey: 'storage_element.name',
-    render: (val: any, item: HardwareItem) => item?.storage_element.name ?? '–',
+    render: (val, item: HardwareItem) => item?.storage_element.name ?? '–',
   },
   {
     key: 'reorder',
@@ -90,7 +93,7 @@ export const createHardwareItemConfig = (): EntityConfig<HardwareItem> => ({
   selectitems: false,
   table: {
     columns: tableColumns,
-    customActions: (item: HardwareItem, refresh: () => void) => (
+    customActions: (item: HardwareItem) => (
       <Tooltip title={item.queued_for_printing ? "remove from queue" : "add to queue"}>
         <IconButton onClick={async () => { await toggleItemforPrinting(item); }}>
           {item.queued_for_printing

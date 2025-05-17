@@ -7,7 +7,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
 import { SettingsOutlined } from '@mui/icons-material';
 
-export const formFields: FormField<Record<string, any>>[] = [
+export const formFields: FormField<StorageElement>[] = [
   { name: 'name', label: 'Name', required: true },
   { name: 'location', label: 'Location', required: true },
   { name: 'position', label: 'Position', required: true },
@@ -35,9 +35,10 @@ export const storageElementConfig: EntityConfig<StorageElement> = {
   form: {
     fields: formFields,
   },
+  toolbar: true,
   table: {
     columns: tableColumns,
-    customActions: (item: StorageElement, refresh: () => void) => (
+    customActions: (item: StorageElement) => (
       <Tooltip title="manage storage">
         <IconButton
           component="a"
