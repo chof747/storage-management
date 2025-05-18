@@ -11,4 +11,9 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always"
   },
+  "python.testing.pytestArgs": [
+    "backend"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
 }
