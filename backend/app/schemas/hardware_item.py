@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
 from app.types import StrHttpUrl
 from .storage_element import StorageElementInDB
@@ -31,8 +31,7 @@ class HardwareItemInDB(HardwareItemBase):
     id: int
     storage_element: StorageElementInDB
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class HardwareItemPage(BaseModel):
