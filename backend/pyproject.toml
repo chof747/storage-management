@@ -19,6 +19,7 @@ dev = [
     "flake8",
     "black",
     "pre-commit",
+    "httpx",
 ]
 
 [tool.pdm.scripts]
