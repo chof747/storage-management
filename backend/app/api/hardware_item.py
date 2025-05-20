@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.database import SessionLocal
+from app.dependencies import get_db
 from app.models.hardware_item import HardwareItem
 from app.schemas.hardware_item import (
     HardwareItemCreate,
@@ -14,14 +14,6 @@ from .pagination import page_parameters
 
 
 router = APIRouter(prefix="/api/items", tags=["Hardware Items"])
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.get("/", response_model=HardwareItemPage)
