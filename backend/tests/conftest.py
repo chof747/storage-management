@@ -1,0 +1,80 @@
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from app.database import Base
+from app.main import app
+from app import dependencies
+from fastapi.testclient import TestClient
+
+from tests.utils.db_seed_loader import load_seeds_from_dir
+from app.models import StorageElement, HardwareItem
+
+# Load .env variables
+load_dotenv()
+APITEST_DATABASE_URL = os.getenv("APITEST_DATABASE_URL", "sqlite:///:memory:")
+
+
+# Create test engine + session
+test_engine = create_engine(
+    APITEST_DATABASE_URL, connect_args={"check_same_thread": False}
+)
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+Base.metadata.create_all(bind=test_engine)
+
+
+def override_get_db():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_test_db():
+    Base.metadata.drop_all(bind=test_engine)
+    Base.metadata.create_all(bind=test_engine)
+
+    load_seeds_from_dir(
+        TestingSessionLocal(),
+        Path(__file__).parent / "seeds",
+        {
+            "storage_element": StorageElement,
+            "hardware_items": HardwareItem,
+        },
+    )
+
+    yield
+
+    Base.metadata.drop_all(bind=test_engine)
+
+
+# Start a transaction and roll back after each test
+@pytest.fixture()
+def db_session():
+    connection = test_engine.connect()
+    transaction = connection.begin()
+    session = TestingSessionLocal(bind=connection)
+
+    yield session
+
+    session.close()
+    transaction.rollback()
+    connection.close()
+
+
+# Use that session in a FastAPI dependency override
+@pytest.fixture()
+def client(db_session: Session):
+    def override_get_db():
+        try:
+            yield db_session
+        finally:
+            pass
+
+    app.dependency_overrides[dependencies.get_db] = override_get_db
+    return TestClient(app)
