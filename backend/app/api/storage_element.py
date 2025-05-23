@@ -44,10 +44,10 @@ def create_item(item: StorageElementCreate, db: Session = Depends(get_db)):
 def update_item(
     item_id: int, item: StorageElementUpdate, db: Session = Depends(get_db)
 ):
-    db_item = db.query(StorageElement).get(item_id)
+    db_item = db.get(StorageElement, item_id)
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
-    for field, value in item.dict(exclude_unset=True).items():
+    for field, value in item.model_dump(exclude_unset=True).items():
         setattr(db_item, field, value)
     db.commit()
     return db_item
@@ -55,7 +55,7 @@ def update_item(
 
 @router.delete("/{item_id}")
 def delete_item(item_id: int, db: Session = Depends(get_db)):
-    db_item = db.query(StorageElement).get(item_id)
+    db_item = db.get(StorageElement, item_id)
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
     db.delete(db_item)

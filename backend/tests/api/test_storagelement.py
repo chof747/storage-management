@@ -1,0 +1,111 @@
+from tests.utils.asserts import assert_dict_contains
+from app.models.storage_element import StorageElement
+
+
+def test_create_storage_element(client, db_session):
+    new_storage_item = {
+        "name": "Elektrik",
+        "location": "Basement",
+        "position": "L0",
+        "storage_type": "Box",
+        "description": "Contains electronic tools",
+    }
+
+    response = client.post("/api/storage/", json=new_storage_item)
+    assert response.status_code == 200, response.content
+
+    data = response.json()
+    print(data)
+    assert data["id"] == 3
+    assert data["location"] == "Basement"
+    assert data["position"] == "L0"
+    assert data["storage_type"] == "Box"
+    assert data["description"] == "Contains electronic tools"
+
+    item = db_session.get(StorageElement, 3)
+    assert data["location"] == item.location
+    assert data["position"] == item.position
+    assert data["storage_type"] == item.storage_type
+    assert data["description"] == item.description
+
+
+def test_list_storage_elements(client):
+    response = client.get("/api/storage/")
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["total"] == 2  # adjust if your seed has more/less
+    items = data["items"]
+    assert len(items) == 2
+
+    assert_dict_contains(
+        "validating storage element attributes",
+        {
+            "id": 1,
+            "name": "WD 1",
+            "location": "Basement/White",
+            "position": "1",
+            "storage_type": "Gridfinity",
+            "description": "White Drawer number 1",
+        },
+        items[0],
+    )
+
+
+def test_list_storage_elements_with_offset_and_limit(client):
+    response = client.get("/api/storage/", params={"offset": 1, "limit": 1})
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["total"] == 2
+    assert len(data["items"]) == 1
+
+    assert_dict_contains(
+        "validating second storage element returned with offset",
+        {
+            "id": 2,
+            "name": "Cabel Tray",
+        },
+        data["items"][0],
+        [
+            "root['location']",
+            "root['position']",
+            "root['storage_type']",
+            "root['description']",
+        ],
+    )
+
+
+def test_get_storage_element_by_id(client):
+    response = client.get("/api/storage/", params={"id": 1})
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["total"] == 1
+    assert data["items"][0]["id"] == 1
+
+
+def test_update_storage_element(client, db_session):
+    update = {
+        "name": "Updated Drawer",
+        "location": "Attic",
+        "position": "99",
+        "storage_type": "Box",
+        "description": "Updated description",
+    }
+    response = client.put("/api/storage/1", json=update)
+    assert response.status_code == 200
+
+    element = db_session.get(StorageElement, 1)
+    for key, value in update.items():
+        assert getattr(element, key) == value
+
+
+def test_delete_storage_element(client):
+    response = client.delete("/api/storage/2")
+    assert response.status_code == 200
+
+    response = client.get("/api/storage/")
+    data = response.json()
+    assert data["total"] == 1
+    assert all(element["id"] != 2 for element in data["items"])
