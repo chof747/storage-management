@@ -11,7 +11,6 @@ from app import dependencies
 from fastapi.testclient import TestClient
 
 from tests.utils.db_seed_loader import load_seeds_from_dir
-from app.models import StorageElement, HardwareItem
 
 # Load .env variables
 load_dotenv()
@@ -23,7 +22,6 @@ test_engine = create_engine(
     APITEST_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
-Base.metadata.create_all(bind=test_engine)
 
 
 def override_get_db():
@@ -36,8 +34,13 @@ def override_get_db():
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
+
+    print("Tables before drop_all:", Base.metadata.tables.keys())
     Base.metadata.drop_all(bind=test_engine)
+    print("Tables before create_all:", Base.metadata.tables.keys())
     Base.metadata.create_all(bind=test_engine)
+
+    from app.models import StorageElement, HardwareItem
 
     load_seeds_from_dir(
         TestingSessionLocal(),

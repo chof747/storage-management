@@ -1,3 +1,4 @@
+from backend.tests.conftest import TestingSessionLocal
 from tests.utils.asserts import assert_dict_contains
 
 
@@ -126,4 +127,27 @@ def test_update_hwitem_value(client):
         json=new_values,
     )
 
+    print(response.content)
     assert response.status_code == 200
+
+
+def test_delete_hwitem(client):
+    response = client.delete("/api/items/2")
+    assert response.status_code == 200
+
+    response = client.get("/api/items")
+    data = response.json()
+    total = data["total"]
+    items = data["items"]
+    assert total == 1
+    assert not any(i["id"] == 2 for i in items)
+
+
+def test_queue_and_unqueue_for_printing(client, db_session):
+    response = client.get("/api/items/queueforprinting/2")
+    assert response.status_code == 200
+
+    from app.models.hardware_item import HardwareItem
+
+    item = db_session.get(HardwareItem, 2)
+    assert item.queued_for_printing
