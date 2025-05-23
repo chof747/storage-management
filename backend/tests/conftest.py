@@ -40,7 +40,7 @@ def setup_test_db():
     print("Tables before create_all:", Base.metadata.tables.keys())
     Base.metadata.create_all(bind=test_engine)
 
-    from app.models import StorageElement, HardwareItem
+    from app.models import StorageElement, HardwareItem, StorageType
 
     load_seeds_from_dir(
         TestingSessionLocal(),
@@ -48,6 +48,7 @@ def setup_test_db():
         {
             "storage_element": StorageElement,
             "hardware_items": HardwareItem,
+            "storage_type": StorageType,
         },
     )
 

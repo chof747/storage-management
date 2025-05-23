@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, Query as SQLQuery
 from typing import List, Optional
 
-from app.database import SessionLocal
+from app.dependencies import get_db
 from app.models import StorageType
 from app.schemas import (
     StorageTypeCreate,
@@ -14,14 +14,6 @@ from app.api.pagination import page_parameters
 
 
 router = APIRouter(prefix="/api/storagetype", tags=["Storage Types"])
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.get("/", response_model=StorageTypePage)
@@ -50,10 +42,10 @@ def create_item(item: StorageTypeCreate, db: Session = Depends(get_db)):
 
 @router.put("/{item_id}", response_model=StorageTypeInDB)
 def update_item(item_id: int, item: StorageTypeUpdate, db: Session = Depends(get_db)):
-    db_item = db.query(StorageType).get(item_id)
+    db_item = db.get(StorageType, item_id)
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
-    for field, value in item.dict(exclude_unset=True).items():
+    for field, value in item.model_dump(exclude_unset=True).items():
         setattr(db_item, field, value)
     db.commit()
     return db_item
@@ -61,7 +53,7 @@ def update_item(item_id: int, item: StorageTypeUpdate, db: Session = Depends(get
 
 @router.delete("/{item_id}")
 def delete_item(item_id: int, db: Session = Depends(get_db)):
-    db_item = db.query(StorageType).get(item_id)
+    db_item = db.get(StorageType, item_id)
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
     db.delete(db_item)

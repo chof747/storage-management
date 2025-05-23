@@ -26,7 +26,9 @@ class StorageTypeCreate(StorageTypeBase):
 
 
 class StorageTypeUpdate(StorageTypeBase):
-    pass
+    name: Optional[str] = None
+    printing_strategy: Optional[str] = None
+    description: Optional[str] = None
 
 
 class StorageTypeInDB(StorageTypeBase):
