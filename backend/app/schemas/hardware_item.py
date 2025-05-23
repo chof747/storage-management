@@ -24,7 +24,13 @@ class HardwareItemCreate(HardwareItemBase):
 
 
 class HardwareItemUpdate(HardwareItemBase):
-    pass
+    hwtype: Optional[str] = None
+    main_metric: Optional[str] = None
+    secondary_metric: Optional[str] = None
+    length: Optional[float] = None
+    reorder: Optional[bool] = None
+    storage_element_id: Optional[int] = None
+    queued_for_printing: Optional[bool] = None
 
 
 class HardwareItemInDB(HardwareItemBase):

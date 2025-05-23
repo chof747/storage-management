@@ -30,6 +30,7 @@ dev = [
 [tool.pdm.scripts]
 migrate = "alembic upgrade head"
 makemigration = "alembic revision --autogenerate -m"
+init_db = "python -m app.scripts.init_db"
 
 [tool.pdm]
 package = [{include = "app"},   { include = "alembic" }]
