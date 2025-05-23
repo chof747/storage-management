@@ -86,7 +86,7 @@ def queue_for_printing(item_id: int, db: Session = Depends(get_db)):
 def move_items(request: HardwareItemsMoveRequest, db: Session = Depends(get_db)):
 
     for item_id in request.items:
-        hw_item: HardwareItem = db.query(HardwareItem).get(item_id)
+        hw_item: HardwareItem = db.get(HardwareItem, item_id)
         if not hw_item:
             raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
         setattr(hw_item, "storage_element_id", request.storage_to)
