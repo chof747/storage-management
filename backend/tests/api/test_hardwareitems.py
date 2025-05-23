@@ -1,5 +1,5 @@
-from backend.tests.conftest import TestingSessionLocal
 from tests.utils.asserts import assert_dict_contains
+from app.models.hardware_item import HardwareItem
 
 
 def test_create_hardware_items(client):
@@ -114,7 +114,7 @@ def test_list_hardware_items_with_offset_and_limit(client):
     )
 
 
-def test_update_hwitem_value(client):
+def test_update_hwitem_value(client, db_session):
     new_values = {
         "hwtype": "Bolt",
         "main_metric": "M4",
@@ -130,6 +130,13 @@ def test_update_hwitem_value(client):
     print(response.content)
     assert response.status_code == 200
 
+    item = db_session.get(HardwareItem, 1)
+    assert item.hwtype == "Bolt"
+    assert item.main_metric == "M4"
+    assert item.length == 15.0
+    assert not item.reorder
+    assert not item.queued_for_printing
+
 
 def test_delete_hwitem(client):
     response = client.delete("/api/items/2")
@@ -144,10 +151,24 @@ def test_delete_hwitem(client):
 
 
 def test_queue_and_unqueue_for_printing(client, db_session):
+
     response = client.get("/api/items/queueforprinting/2")
     assert response.status_code == 200
 
-    from app.models.hardware_item import HardwareItem
-
     item = db_session.get(HardwareItem, 2)
     assert item.queued_for_printing
+
+    response = client.get("/api/items/unqueueforprinting/1")
+    assert response.status_code == 200
+
+    item = db_session.get(HardwareItem, 1)
+    assert not item.queued_for_printing
+
+
+def test_move_hwitems(client, db_session):
+    response = client.post("/api/items/move", json={"storage_to": 2, "items": [1, 2]})
+
+    assert response.status_code == 200
+
+    items = db_session.query(HardwareItem).filter(HardwareItem.id.in_([1, 2])).all()
+    assert all(item.storage_element_id == 2 for item in items)
