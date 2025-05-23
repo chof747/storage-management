@@ -20,17 +20,21 @@ dev = [
     "black",
     "pre-commit",
     "httpx",
+    "pytest",
+    "flake8",
+    "black",
+    "pre-commit",
+    "deepdiff>=8.5.0",
 ]
 
 [tool.pdm.scripts]
 migrate = "alembic upgrade head"
 makemigration = "alembic revision --autogenerate -m"
+init_db = "python -m app.scripts.init_db"
 
 [tool.pdm]
 package = [{include = "app"},   { include = "alembic" }]
 [tool.setuptools]
 packages = ["app", "alembic"]
-[tool.pdm.dev-dependencies]
-dev = ["pytest", "flake8", "black", "pre-commit"]
 [tool.pytest.ini_options]
 pythonpath = ["."]
