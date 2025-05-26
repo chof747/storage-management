@@ -8,6 +8,7 @@ import {
   Button,
   Paper,
 } from '@mui/material';
+import renderSelectField from './formitems/selectfield';
 
 export type FormField<T> = {
   name: keyof T;
@@ -57,7 +58,7 @@ function ModelForm<T extends object>({
   // Load async select options
   useEffect(() => {
     fields.forEach((field) => {
-      if (field.type === 'select-create' && field.loadOptions && !selectOptions[field.name as string]) {
+      if ((field.type === 'select-create' || field.type === 'select') && field.loadOptions && !selectOptions[field.name as string]) {
         setLoadingSelects((prev) => ({ ...prev, [field.name as string]: true }));
         field
           .loadOptions()
@@ -132,8 +133,10 @@ function ModelForm<T extends object>({
     const options = field.options ?? selectOptions[name] ?? [];
 
     switch (field.type) {
-      //      case 'select':
-      //        return renderSelectField(field, value, error, handleChange, loading, options);
+      case 'select':
+        const v = (typeof value === "string" || typeof value == "number") ? value : ""
+        const opts = options.map(item => item.label);
+        return renderSelectField(field, v, error, handleChange, loading, opts);
       case 'select-create':
         return renderSelectWithCreate(
           field,
