@@ -4,7 +4,9 @@ import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import HardwareItemPage from './pages/HardwareItemPage';
 import StorageElementPage from './pages/StorageElementPage';
+import StorageTypePage from './pages/StorageTypePage';
 import StorageElementManagerPage from './pages/StorageElementManagerPage';
+
 
 export default function AppRoutes() {
   const routes = useRoutes([
@@ -38,6 +40,14 @@ export default function AppRoutes() {
         StorageElementManagerPage()
       ),
     },
+    {
+      path: '/storage_type',
+      element: (
+        <Layout>
+          <StorageTypePage />
+        </Layout>
+      )
+    }
   ]);
 
   return routes;
