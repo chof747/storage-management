@@ -29,6 +29,7 @@ dev = [
 
 [tool.pdm.scripts]
 migrate = "alembic upgrade head"
+migrationtest = "alembic/migration_test.sh"
 makemigration = "alembic revision --autogenerate -m"
 init_db = "python -m app.scripts.init_db"
 
