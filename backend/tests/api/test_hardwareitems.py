@@ -72,10 +72,11 @@ def test_list_hardware_items(client):
             "name": "WD 1",
             "location": "Basement/White",
             "position": "1",
-            "storage_type": "Gridfinity",
+            "storage_type_id": 1,
             "description": "White Drawer number 1",
         },
         items[0]["storage_element"],
+        exclude_paths="root['storage_type']",
     )
 
 

@@ -46,9 +46,9 @@ def setup_test_db():
         TestingSessionLocal(),
         Path(__file__).parent / "seeds",
         {
+            "storage_type": StorageType,
             "storage_element": StorageElement,
             "hardware_items": HardwareItem,
-            "storage_type": StorageType,
         },
     )
 

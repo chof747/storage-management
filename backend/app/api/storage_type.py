@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, Query as SQLQuery
 from typing import List, Optional
@@ -56,6 +57,10 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
     db_item = db.get(StorageType, item_id)
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
-    db.delete(db_item)
-    db.commit()
+    try:
+        db.delete(db_item)
+        db.commit()
+    except IntegrityError as e:
+        raise HTTPException(status_code=409, detail="Delete violates constraints")
+
     return {"message": "Deleted"}
