@@ -19,7 +19,7 @@ export const fetch_print_strategies = async (): Promise<{ id: number; label: str
 export const formFields: FormField<StorageType>[] = [
   { name: 'name', label: 'Name', required: true },
   { name: 'printing_strategy', label: 'Printing Strategy', type: 'select', loadOptions: fetch_print_strategies, required: true },
-  { name: 'description', label: 'Description', required: true },
+  { name: 'description', label: 'Description', required: false },
 ];
 
 

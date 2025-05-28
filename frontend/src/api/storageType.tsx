@@ -22,8 +22,6 @@ export const createPlaceholder = async (name: string): Promise<StorageType> => {
   const item: StorageType = {
     id: 0,
     name: name,
-    printing_strategy: '',
-    description: ''
   };
   return createItem(item);
 };

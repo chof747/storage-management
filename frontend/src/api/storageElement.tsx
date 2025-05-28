@@ -23,7 +23,7 @@ export const createPlaceholder = async (name: string): Promise<StorageElement> =
     name: name,
     location: '',
     position: '',
-    storage_type: 'default'
+    storage_type_id: 1
   };
   return createItem(item);
 };
@@ -45,4 +45,5 @@ export const updateItem = async (item: StorageElement): Promise<StorageElement> 
 
 export const deleteItem = async (id: number): Promise<void> => {
   await fetch(`${API_BASE}/${PATH}/${id}`, { method: "DELETE" });
+
 };
