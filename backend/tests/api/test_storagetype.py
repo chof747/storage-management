@@ -106,3 +106,11 @@ def test_delete_storage_type(client, db_session):
     data = response.json()
     assert data["total"] == 1
     assert all(e["id"] != 2 for e in data["items"])
+
+
+def test_create_storagetype_placeholder(client, db_session):
+    placeholder = {"name": "Project Box"}
+    response = client.post("/api/storagetype/", json=placeholder)
+
+    print(response.content)
+    assert response.status_code == 200
