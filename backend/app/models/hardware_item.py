@@ -11,7 +11,6 @@ class HardwareItem(Base):
     main_metric = Column(String, nullable=False)
     secondary_metric = Column(String)
     length = Column(Float)
-    storage_element = Column(String)
     reorder = Column(Boolean)
     reorder_link = Column(String)
     storage_element_id = Column(

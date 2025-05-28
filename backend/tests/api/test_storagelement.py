@@ -1,3 +1,4 @@
+from app.models.storage_type import StorageType
 from tests.utils.asserts import assert_dict_contains
 from app.models.storage_element import StorageElement
 
@@ -7,7 +8,7 @@ def test_create_storage_element(client, db_session):
         "name": "Elektrik",
         "location": "Basement",
         "position": "L0",
-        "storage_type": "Box",
+        "storage_type_id": 2,
         "description": "Contains electronic tools",
     }
 
@@ -19,14 +20,18 @@ def test_create_storage_element(client, db_session):
     assert data["id"] == 3
     assert data["location"] == "Basement"
     assert data["position"] == "L0"
-    assert data["storage_type"] == "Box"
+    assert data["storage_type_id"] == 2
     assert data["description"] == "Contains electronic tools"
+    assert data["storage_type"]["name"] == "Box"
 
     item = db_session.get(StorageElement, 3)
     assert data["location"] == item.location
     assert data["position"] == item.position
-    assert data["storage_type"] == item.storage_type
+    assert data["storage_type_id"] == item.storage_type_id
     assert data["description"] == item.description
+
+    item = db_session.get(StorageType, 2)
+    assert data["storage_type"]["name"] == item.name
 
 
 def test_list_storage_elements(client):
@@ -45,8 +50,14 @@ def test_list_storage_elements(client):
             "name": "WD 1",
             "location": "Basement/White",
             "position": "1",
-            "storage_type": "Gridfinity",
+            "storage_type_id": 1,
             "description": "White Drawer number 1",
+            "storage_type": {
+                "id": 1,
+                "name": "Gridfinity Tray",
+                "printing_strategy": "Gridfinity",
+                "description": "A samla tray of gridfinity",
+            },
         },
         items[0],
     )
@@ -70,8 +81,9 @@ def test_list_storage_elements_with_offset_and_limit(client):
         [
             "root['location']",
             "root['position']",
-            "root['storage_type']",
+            "root['storage_type_id']",
             "root['description']",
+            "root['storage_type']",
         ],
     )
 
@@ -90,7 +102,7 @@ def test_update_storage_element(client, db_session):
         "name": "Updated Drawer",
         "location": "Attic",
         "position": "99",
-        "storage_type": "Box",
+        "storage_type_id": 2,
         "description": "Updated description",
     }
     response = client.put("/api/storage/1", json=update)
