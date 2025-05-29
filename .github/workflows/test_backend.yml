@@ -33,8 +33,8 @@ jobs:
 
       - name: List collected tests
         working-directory: backend
-        run: pdm run pytest --collect-only --verbose > collected_tests.txt
-
+        run: pdm run pytest --collect-only --verbose
+        
       - name: Run tests
         working-directory: backend
         run: pdm run pytest
