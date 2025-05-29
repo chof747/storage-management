@@ -18,7 +18,7 @@ dev = [
     "pytest",
     "flake8",
     "black",
-    "pre-commit",
+    "pre-commit>=4.2.0",
     "httpx",
     "pytest",
     "flake8",

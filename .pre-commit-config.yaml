@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run pytest from backend/
+        entry: bash -c "cd backend && pdm run pytest"
+        language: system
+        types: [python]
