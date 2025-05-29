@@ -14,7 +14,12 @@ from tests.utils.db_seed_loader import load_seeds_from_dir
 
 # Load .env variables
 load_dotenv()
-APITEST_DATABASE_URL = os.getenv("APITEST_DATABASE_URL", "sqlite:///:memory:")
+APITEST_DATABASE_PATH = os.getenv("APITEST_DATABASE_PATH", None)
+if APITEST_DATABASE_PATH:
+    path = Path(__file__).parent.parent.parent / APITEST_DATABASE_PATH
+    APITEST_DATABASE_URL = "sqlite:///" + path.as_posix()
+else:
+    APITEST_DATABASE_URL = "sqlite:///:memory:"
 
 
 # Create test engine + session
@@ -35,6 +40,7 @@ def override_get_db():
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
 
+    print(APITEST_DATABASE_URL)
     print("Tables before drop_all:", Base.metadata.tables.keys())
     Base.metadata.drop_all(bind=test_engine)
     print("Tables before create_all:", Base.metadata.tables.keys())
@@ -67,7 +73,8 @@ def db_session():
     yield session
 
     session.close()
-    transaction.rollback()
+    if hasattr(transaction, "is_active") and transaction.is_active:
+        transaction.rollback()
     connection.close()
 
 
