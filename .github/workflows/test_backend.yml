@@ -32,6 +32,7 @@ jobs:
         run: echo "APITEST_DATABASE_PATH=data/backend/api_test.db" > ./backend/.env
 
       - name: List collected tests
+        working-directory: backend
         run: pdm run pytest --collect-only --verbose > collected_tests.txt
 
       - name: Run tests
