@@ -35,7 +35,10 @@ init_db = "python -m app.scripts.init_db"
 
 [tool.pdm]
 package = [{include = "app"},   { include = "alembic" }]
+
 [tool.setuptools]
 packages = ["app", "alembic"]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
+norecursedirs = ["__pypackages__"]
