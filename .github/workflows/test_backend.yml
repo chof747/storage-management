@@ -28,13 +28,9 @@ jobs:
           pip install pdm
           pdm install -G dev
 
-      - name: Create .env file
-        run: echo "APITEST_DATABASE_PATH=data/backend/api_test.db" > ./backend/.env
+#      - name: Create .env file
+#        run: echo "APITEST_DATABASE_PATH=data/backend/api_test.db" > ./backend/.env
 
-      - name: List collected tests
-        working-directory: backend
-        run: pdm run pytest --collect-only --verbose
-        
       - name: Run tests
         working-directory: backend
         run: pdm run pytest

@@ -19,7 +19,7 @@ if APITEST_DATABASE_PATH:
     path = Path(__file__).parent.parent.parent / APITEST_DATABASE_PATH
     APITEST_DATABASE_URL = "sqlite:///" + path.as_posix()
 else:
-    APITEST_DATABASE_URL = "sqlite:///memory"
+    APITEST_DATABASE_URL = "sqlite:///:memory:"
 
 
 # Create test engine + session
