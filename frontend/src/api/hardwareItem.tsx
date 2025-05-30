@@ -1,7 +1,7 @@
 import { HardwareItem } from "../types/hardwareItems";
 import { ResultPage } from "../types/page";
+import { API_BASE } from "./endpoint";
 
-const API_BASE = "http://localhost:8000/api";
 const PATH = '/items';
 
 export const getItems = async (offset: number, limit: number): Promise<ResultPage<HardwareItem>> => {

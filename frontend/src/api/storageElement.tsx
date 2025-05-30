@@ -1,7 +1,7 @@
 import { ResultPage } from "../types/page";
 import { StorageElement } from "../types/storageElements";
+import { API_BASE } from "./endpoint";
 
-const API_BASE = "http://localhost:8000/api";
 const PATH = "storage";
 
 export const getItems = async (offset: number, limit: number, id: number = 0): Promise<ResultPage<StorageElement>> => {

@@ -1,7 +1,7 @@
 import { ResultPage } from "../types/page";
 import { StorageType } from "../types/storageType";
+import { API_BASE } from "./endpoint";
 
-const API_BASE = "http://localhost:8000/api";
 const PATH = "storagetype";
 
 export const getItems = async (offset: number, limit: number, id: number = 0): Promise<ResultPage<StorageType>> => {
