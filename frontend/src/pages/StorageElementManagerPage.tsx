@@ -102,7 +102,7 @@ export default function StorageElementManagerPage() {
               <Typography variant="overline" >Type</Typography>
             </TableCell>
             <TableCell>
-              <Typography variant="body1">{element?.storage_type}</Typography>
+              <Typography variant="body1">{element?.storage_type?.name}</Typography>
             </TableCell>
           </TableRow>
           <TableRow>
