@@ -109,13 +109,11 @@ function ModelForm<T extends object>({
     setFieldErrors({});
 
     try {
+      setGeneralMessage(null);
       await onValidSubmit(form as T);
       onSuccess(doAnother);
       if (doAnother) {
         setGeneralMessage("Element Created. Continue with next");
-      }
-      else {
-        setGeneralMessage(null);
       }
     } catch (err: unknown) {
       if (isErrorWithResponse(err)) {
