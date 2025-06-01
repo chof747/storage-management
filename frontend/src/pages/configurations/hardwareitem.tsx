@@ -17,7 +17,7 @@ export const fetch_storage = async (): Promise<{ id: number; label: string }[]> 
   const response = await getStorageItems(0, 100);
 
   return response.items.map((se: StorageElement) => ({
-    id: se.id,
+    id: se.id || 0,
     label: se.name
   }));
 };
@@ -37,7 +37,7 @@ export const formFields: FormField<HardwareItemFormFields>[] = [
       const name = prompt("New storage name?");
       if (name !== null) {
         const newItem = await createPlaceholder(name);
-        return { id: newItem.id, label: newItem.name };
+        return { id: newItem.id || 0, label: newItem.name };
       }
       return { id: 0, label: '' };
     }
