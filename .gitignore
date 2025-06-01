@@ -2,3 +2,4 @@ data/
 *.code-workspace
 .env
 **/test.db
+frontend/public/config.json
