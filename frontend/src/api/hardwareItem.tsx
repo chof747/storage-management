@@ -3,20 +3,22 @@ import { ResultPage } from "../types/page";
 import { getApiBase } from "./endpoint";
 
 const PATH = '/items';
-const API_BASE = await getApiBase()
 
 export const getItems = async (offset: number, limit: number): Promise<ResultPage<HardwareItem>> => {
+  const API_BASE = await getApiBase()
   const res = await fetch(`${API_BASE}${PATH}/?offset=${offset}&limit=${limit}`);
   return await res.json();
 };
 
 export const getItemsByStorage = async (storageId: number,
   offset: number, limit: number): Promise<ResultPage<HardwareItem>> => {
+  const API_BASE = await getApiBase()
   const res = await fetch(`${API_BASE}${PATH}/bystorage/?storage=${storageId}&offset=${offset}&limit=${limit}`);
   return await res.json();
 };
 
 export const createItem = async (item: HardwareItem): Promise<HardwareItem> => {
+  const API_BASE = await getApiBase()
   const res = await fetch(`${API_BASE}${PATH}/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -32,6 +34,7 @@ export const createItem = async (item: HardwareItem): Promise<HardwareItem> => {
 };
 
 export const updateItem = async (item: HardwareItem): Promise<HardwareItem> => {
+  const API_BASE = await getApiBase()
   const res = await fetch(`${API_BASE}${PATH}/${item.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -47,10 +50,12 @@ export const updateItem = async (item: HardwareItem): Promise<HardwareItem> => {
 };
 
 export const deleteItem = async (id: number): Promise<void> => {
+  const API_BASE = await getApiBase()
   await fetch(`${API_BASE}${PATH}/${id}`, { method: "DELETE" });
 };
 
 export const toggleItemforPrinting = async (item: HardwareItem): Promise<void> => {
+  const API_BASE = await getApiBase()
   const un = item.queued_for_printing ? "un" : "";
   const res = await fetch(`${API_BASE}${PATH}/${un}queueforprinting/${item.id}`);
   if (!res.ok) {
@@ -60,6 +65,7 @@ export const toggleItemforPrinting = async (item: HardwareItem): Promise<void> =
 };
 
 export const moveItemsBetweenStorages = async (itemIds: number[], storageId: number): Promise<void> => {
+  const API_BASE = await getApiBase()
   const res = await fetch(`${API_BASE}${PATH}/move`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
