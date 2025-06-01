@@ -3,15 +3,19 @@
 # Use official Python image
 FROM python:3.11-slim
 
+# Install PDM and dependencies
+RUN pip install pdm
+
+
 # Set working directory
 WORKDIR /app
 
 # Copy app
-COPY . .
+COPY ./pyproject.toml ./pdm.lock ./
+RUN pdm install --no-editable --no-self
 
-# Install PDM and dependencies
-RUN pip install pdm \
-  && pdm install --prod \
+COPY . .
+RUN pdm install --prod \
   && rm -rf /root/.cache
 
 # Expose the port Uvicorn will run on
