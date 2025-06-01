@@ -220,20 +220,21 @@ function ModelForm<T extends object>({
                 {submitLabel}
               </Button>
             </Box>
-            <FormGroup>
-              <FormControlLabel control={
-                <Checkbox checked={doAnother}
+            {(Object.keys(initialValues).length === 0) && (
+              <FormGroup>
+                <FormControlLabel control={
+                  <Checkbox checked={doAnother}
+                    sx={{
+                      '& svg': {
+                        fontSize: '1rem',     // Smaller icon
+                      },
+                    }}
+                    onChange={toggleAddAnother}
+                  />} label="Add another"
                   sx={{
-                    '& svg': {
-                      fontSize: '1rem',     // Smaller icon
-                    },
-                  }}
-                  onChange={toggleAddAnother}
-                />} label="Add another"
-                sx={{
-                  fontSize: '0.7rem',         // Smaller font size for label
-                }} />
-            </FormGroup>
+                    fontSize: '0.7rem',         // Smaller font size for label
+                  }} />
+              </FormGroup>)}
           </Box>
         </Box>
       </form>
