@@ -1,6 +1,6 @@
-// src/api/endpoint.tsx
+import { loadConfig, AppConfig } from '../config';
 
-const host = import.meta.env.VITE_API_ENDPOINT_HOST || "localhost";
-const port = import.meta.env.VITE_API_ENDPOINT_PORT || "8000";
-
-export const API_BASE = `http://${host}:${port}/api`;
+export async function getApiBase(): Promise<string> {
+  const config: AppConfig = await loadConfig();
+  return `http://${config.API_ENDPOINT_HOST}:${config.API_ENDPOINT_PORT}/api`;
+}

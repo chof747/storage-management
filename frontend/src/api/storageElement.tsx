@@ -1,8 +1,9 @@
 import { ResultPage } from "../types/page";
 import { StorageElement } from "../types/storageElements";
-import { API_BASE } from "./endpoint";
+import { getApiBase } from "./endpoint";
 
 const PATH = "storage";
+const API_BASE = await getApiBase()
 
 export const getItems = async (offset: number, limit: number, id: number = 0): Promise<ResultPage<StorageElement>> => {
   const res = await fetch(`${API_BASE}/${PATH}/${id > 0 ? id + "/" : ""}?offset=${offset}&limit=${limit}`);
