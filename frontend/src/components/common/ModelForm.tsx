@@ -6,6 +6,9 @@ import renderSelectWithCreate from './formitems/selectWithCreate';
 import {
   Box,
   Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
   Paper,
 } from '@mui/material';
 import renderSelectField from './formitems/selectfield';
@@ -24,7 +27,7 @@ export type Props<T> = {
   fields: FormField<T>[];
   initialValues?: Partial<T>;
   onValidSubmit: (data: T) => Promise<void>;
-  onSuccess: () => void;
+  onSuccess: (doanother: boolean) => void;
   submitLabel?: string;
 };
 
@@ -46,9 +49,11 @@ function ModelForm<T extends object>({
   submitLabel = 'Submit',
 }: Props<T>) {
   const [form, setForm] = useState<Partial<T>>(initialValues);
+  const [doAnother, setDoAnother] = useState<boolean>(false);
   const [selectOptions, setSelectOptions] = useState<Record<string, { id: number; label: string }[]>>({});
   const [loadingSelects, setLoadingSelects] = useState<Record<string, boolean>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const [generalMessage, setGeneralMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -94,14 +99,22 @@ function ModelForm<T extends object>({
     }));
   };
 
+  const toggleAddAnother = () => {
+    setDoAnother(!doAnother)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setGeneralError(null);
     setFieldErrors({});
 
     try {
+      setGeneralMessage(null);
       await onValidSubmit(form as T);
-      onSuccess();
+      onSuccess(doAnother);
+      if (doAnother) {
+        setGeneralMessage("Element Created. Continue with next");
+      }
     } catch (err: unknown) {
       if (isErrorWithResponse(err)) {
         if (err.name === 'ValidationError') {
@@ -182,19 +195,50 @@ function ModelForm<T extends object>({
           }}
         >
           {generalError}
+        </Box>)}
+      {generalMessage && (
+        <Box
+          sx={{
+            backgroundColor: '#edfde8',
+            border: '1px solid #cef5c1',
+            color: '#5ba942',
+            fontSize: '0.875rem',
+            p: 1,
+            mb: 2,
+            borderRadius: 1,
+          }}
+        >
+          {generalMessage}
         </Box>
       )}
       <form onSubmit={handleSubmit}>
         <Box display="flex" flexDirection="column" gap={2}>
           {fields.map(renderField)}
-          <Box>
-            <Button variant="contained" type="submit">
-              {submitLabel}
-            </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box>
+              <Button variant="contained" type="submit">
+                {submitLabel}
+              </Button>
+            </Box>
+            {(Object.keys(initialValues).length === 0) && (
+              <FormGroup>
+                <FormControlLabel control={
+                  <Checkbox checked={doAnother}
+                    sx={{
+                      '& svg': {
+                        fontSize: '1rem',     // Smaller icon
+                      },
+                    }}
+                    onChange={toggleAddAnother}
+                  />} label="Add another"
+                  sx={{
+                    fontSize: '0.7rem',         // Smaller font size for label
+                  }} />
+              </FormGroup>)}
           </Box>
         </Box>
       </form>
-    </Paper>
+    </Paper >
   );
 }
 

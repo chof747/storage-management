@@ -34,7 +34,7 @@ type TableComponentProps<T> = {
 type FormComponentProps<T> = {
   item: T | null;
   onSubmit: (data: T) => Promise<void>;
-  onSuccess: () => void;
+  onSuccess: (doAnother: boolean) => void;
 };
 
 export default function ConfiguredEntityPage<T extends object>({

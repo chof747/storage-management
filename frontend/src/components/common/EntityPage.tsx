@@ -20,7 +20,7 @@ type EntityPageProps<T> = {
   FormComponent: React.ComponentType<{
     item: T | null;
     onSubmit: (item: T) => Promise<void>;
-    onSuccess: () => void;
+    onSuccess: (doAnother: boolean) => void;
   }>;
   TableComponent: React.ComponentType<{
     fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
@@ -60,8 +60,8 @@ export default function EntityPage<T>({
     tableRef?.current?.refresh();
   };
 
-  const handleSuccess = () => {
-    setDrawerOpen(false);
+  const handleSuccess = (doAnother: boolean) => {
+    setDrawerOpen(doAnother);
     setSelected(null);
     tableRef?.current?.refresh();
   };
