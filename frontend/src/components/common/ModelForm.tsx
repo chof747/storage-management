@@ -6,6 +6,9 @@ import renderSelectWithCreate from './formitems/selectWithCreate';
 import {
   Box,
   Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
   Paper,
 } from '@mui/material';
 import renderSelectField from './formitems/selectfield';
@@ -24,7 +27,7 @@ export type Props<T> = {
   fields: FormField<T>[];
   initialValues?: Partial<T>;
   onValidSubmit: (data: T) => Promise<void>;
-  onSuccess: () => void;
+  onSuccess: (doanother: boolean) => void;
   submitLabel?: string;
 };
 
@@ -46,6 +49,7 @@ function ModelForm<T extends object>({
   submitLabel = 'Submit',
 }: Props<T>) {
   const [form, setForm] = useState<Partial<T>>(initialValues);
+  const [doAnother, setDoAnother] = useState<boolean>(false);
   const [selectOptions, setSelectOptions] = useState<Record<string, { id: number; label: string }[]>>({});
   const [loadingSelects, setLoadingSelects] = useState<Record<string, boolean>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
@@ -94,6 +98,10 @@ function ModelForm<T extends object>({
     }));
   };
 
+  const toggleAddAnother = () => {
+    setDoAnother(!doAnother)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setGeneralError(null);
@@ -101,7 +109,7 @@ function ModelForm<T extends object>({
 
     try {
       await onValidSubmit(form as T);
-      onSuccess();
+      onSuccess(doAnother);
     } catch (err: unknown) {
       if (isErrorWithResponse(err)) {
         if (err.name === 'ValidationError') {
@@ -187,6 +195,12 @@ function ModelForm<T extends object>({
       <form onSubmit={handleSubmit}>
         <Box display="flex" flexDirection="column" gap={2}>
           {fields.map(renderField)}
+          <FormGroup>
+            <FormControlLabel control={
+              <Checkbox checked={doAnother}
+                onChange={toggleAddAnother}
+              />} label="Add another" />
+          </FormGroup>
           <Box>
             <Button variant="contained" type="submit">
               {submitLabel}
