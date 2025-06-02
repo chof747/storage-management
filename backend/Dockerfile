@@ -12,7 +12,7 @@ WORKDIR /app
 
 # Copy app
 COPY ./pyproject.toml ./pdm.lock ./
-RUN pdm install --no-editable --no-self
+RUN pdm install --no-editable --no-self --prod
 
 COPY . .
 RUN pdm install --prod \
