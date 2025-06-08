@@ -23,7 +23,7 @@ class TestPrintingStrategy(PrintStrategyBase):
             shapes.String(
                 2,
                 height - 12,
-                f"{item['phase']}:",
+                f"{item['hwtype']}:",
                 fontName="Helvetica",
                 fontSize=10,
             )
@@ -33,7 +33,7 @@ class TestPrintingStrategy(PrintStrategyBase):
             shapes.String(
                 2,
                 2,
-                f"{item['tester']}",
+                f"{item['main_metric']}",
                 fontName="Helvetica",
                 fontSize=12,
             )

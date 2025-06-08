@@ -13,9 +13,10 @@ def test_gridfinity_printer(db_session, pdf_text):
     sheet.start_at(20, 5)
     printer = Printer(strategy, [sheet])
 
-    items = db_session.query(HardwareItem)
-
-    added = printer.add([i.as_dict() for i in items])
+    items = db_session.query(HardwareItem).all()
+    for i in items:
+        i.queued_for_printing = True
+    added = printer.add(items)
     assert 2 == added
 
     document: BytesIO = printer.print()
@@ -34,3 +35,6 @@ def test_gridfinity_printer(db_session, pdf_text):
             ).as_posix()
         )
         raise
+
+    # check if
+    assert any(not i.queued_for_printing for i in db_session.query(HardwareItem).all())

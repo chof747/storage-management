@@ -1,6 +1,7 @@
 from typing import Dict, List, Union
 from .label_sheet import LabelSheet
 from .print_strategy import PrintStrategyBase
+from app.models.printable import Printable
 from labels import Sheet
 from io import BytesIO
 
@@ -18,23 +19,25 @@ class Printer:
     def __init__(self, strategy: PrintStrategyBase, sheets: List[LabelSheet] = []):
         self.__strategy = strategy
         self.__sheets = sheets
-        self.__items: List[Dict[str, str]] = []
+        self.__items: List[Printable] = []
         self.__maxlabels = sum(sheet.available_labels for sheet in sheets)
 
-    def add(self, items: List[Dict[str, str]]) -> int:
+    def add(self, items: List[Printable]) -> int:
         """Adds items to the list of items to print
 
         Args:
-            items (List[Dict[str, str]]): the items to add
+            items (List[Printable]): the items to add - items must be instances of Printable
+                                     and the queued_for_printing field must be True
 
         Returns:
             int: number of added items
         """
-        new_count = len(items)
+        to_be_added = [i for i in items if i.queued_for_printing]
+        new_count = len(to_be_added)
         if new_count + len(self.__items) > self.__maxlabels:
             raise IndexError("Too many items for the specified sheets!")
 
-        self.__items.extend(items)
+        self.__items.extend(to_be_added)
         return new_count
 
     def print(self, output: str | None = None) -> Union[BytesIO, None]:
@@ -50,7 +53,7 @@ class Printer:
 
         for item in self.__items:
             # TODO: Add copies to printing strategy and use this in max_label count function
-            document.add_label(item)
+            document.add_label(item.as_dict())
             left_labels_on_sheet = left_labels_on_sheet - 1
             if 0 == left_labels_on_sheet:
                 sheet_num = sheet_num + 1
@@ -59,8 +62,14 @@ class Printer:
         result = BytesIO() if output is None else output
         document.save(result)
 
+        self.__unset_all_from_printing_queue()
+
         return result if output is None else output
 
     def __new_sheet(self, document, sheet_num):
         document.partial_page(sheet_num + 1, self.__sheets[sheet_num].used_labels)
         return self.__sheets[sheet_num].available_labels
+
+    def __unset_all_from_printing_queue(self):
+        for item in self.__items:
+            item.unset_for_printing()
