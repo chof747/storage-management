@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:0c22b22f83ef2694bee132449fb632c975ca7d5016a500d318a06a14bb4f4bc4"
+content_hash = "sha256:4fde5e5dc943edbffb45cdf351161ba6b367fef7f67f0a871b94037abac11171"
 
 [[metadata.targets]]
 requires_python = ">=3.9"
@@ -423,6 +423,20 @@ groups = ["dev"]
 files = [
     {file = "iniconfig-2.1.0-py3-none-any.whl", hash = "sha256:9deba5723312380e77435581c6bf4935c94cbfab9b1ed33ef8d238ea168eb760"},
     {file = "iniconfig-2.1.0.tar.gz", hash = "sha256:3abbd2e30b36733fee78f9c7f7308f2d0050e88f0087fd25c2645f63c773e1c7"},
+]
+
+[[package]]
+name = "jinja2"
+version = "3.1.6"
+requires_python = ">=3.7"
+summary = "A very fast and expressive template engine."
+groups = ["default"]
+dependencies = [
+    "MarkupSafe>=2.0",
+]
+files = [
+    {file = "jinja2-3.1.6-py3-none-any.whl", hash = "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67"},
+    {file = "jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d"},
 ]
 
 [[package]]
@@ -863,6 +877,21 @@ groups = ["default"]
 files = [
     {file = "pylabels-1.2.1-py2.py3-none-any.whl", hash = "sha256:32cad77ff07bac765a2ba9379c81b26fd679693aa4b24a640e5e53b2f3fec7af"},
     {file = "pylabels-1.2.1.tar.gz", hash = "sha256:299b4f97b6266427cc5acdb99b4699a8b6f381242f2d73513b892fa8857a073f"},
+]
+
+[[package]]
+name = "pypdf2"
+version = "3.0.1"
+requires_python = ">=3.6"
+summary = "A pure-python PDF library capable of splitting, merging, cropping, and transforming PDF files"
+groups = ["dev"]
+dependencies = [
+    "dataclasses; python_version < \"3.7\"",
+    "typing-extensions>=3.10.0.0; python_version < \"3.10\"",
+]
+files = [
+    {file = "PyPDF2-3.0.1.tar.gz", hash = "sha256:a74408f69ba6271f71b9352ef4ed03dc53a31aa404d29b5d31f53bfecfee1440"},
+    {file = "pypdf2-3.0.1-py3-none-any.whl", hash = "sha256:d16e4205cfee272fbdc0568b68d82be796540b1537508cef59388f839c191928"},
 ]
 
 [[package]]
