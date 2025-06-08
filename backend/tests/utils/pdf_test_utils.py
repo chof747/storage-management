@@ -1,5 +1,5 @@
 from pytest import fixture
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 
 @fixture

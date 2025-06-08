@@ -28,7 +28,7 @@ dev = [
     "black",
     "pre-commit",
     "deepdiff>=8.5.0",
-    "PyPDF2>=3.0.1",
+    "pypdf>=5.6.0",
 ]
 
 [tool.pdm.scripts]
