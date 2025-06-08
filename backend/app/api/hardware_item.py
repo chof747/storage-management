@@ -67,7 +67,7 @@ def queue_for_printing(item_id: int, db: Session = Depends(get_db)):
     hw_item: HardwareItem = db.get(HardwareItem, item_id)
     if not hw_item:
         raise HTTPException(status_code=404, detail="Item not found")
-    setattr(hw_item, "queued_for_printing", 1)
+    hw_item.set_for_printing()
     db.commit()
     return {"message": f"item {item_id} queued for label printing"}
 
@@ -77,7 +77,7 @@ def queue_for_printing(item_id: int, db: Session = Depends(get_db)):
     hw_item: HardwareItem = db.get(HardwareItem, item_id)
     if not hw_item:
         raise HTTPException(status_code=404, detail="Item not found")
-    setattr(hw_item, "queued_for_printing", 0)
+    hw_item.unset_for_printing()
     db.commit()
     return {"message": f"item {item_id} queued for label printing"}
 
