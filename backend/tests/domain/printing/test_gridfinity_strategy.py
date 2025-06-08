@@ -4,14 +4,13 @@ from app.domain.printing import Printer, LabelSheet, PrintStrategyBase
 from io import BytesIO
 from tests.utils.pdf_test_utils import pdf_text
 from app.models import HardwareItem
+from app.schemas.label_printing import LabelSheet as LabelSheetDefinition, StartPosition
 
 
 def test_gridfinity_printer(db_session, pdf_text):
 
-    strategy = PrintStrategyBase.create_printing_strategy("Gridfinity")
-    sheet = LabelSheet(1, strategy.labelspecs)
-    sheet.start_at(20, 5)
-    printer = Printer(strategy, [sheet])
+    sheet_defs = [LabelSheetDefinition(start_pos=StartPosition(row=20, col=5))]
+    printer = Printer.create_printer("Gridfinity", sheet_defs)
 
     items = db_session.query(HardwareItem).all()
     for i in items:

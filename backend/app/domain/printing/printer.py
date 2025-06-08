@@ -4,6 +4,7 @@ from .print_strategy import PrintStrategyBase
 from app.models.printable import Printable
 from labels import Sheet
 from io import BytesIO
+from app.schemas.label_printing import LabelSheet as LabelSheetDefinition
 
 
 class Printer:
@@ -15,6 +16,26 @@ class Printer:
     It is receiving a set of items as dictionaries, a starring position and is then
     creating a pdf with the labels filled
     """
+
+    @classmethod
+    def create_printer(
+        cls, strategy: str, sheet_definitions: List[LabelSheetDefinition]
+    ):
+        """Create a printer based on a specific printing strategy and
+        starting positions for sheets
+        """
+
+        printing_strategy = PrintStrategyBase.create_printing_strategy(strategy)
+
+        sheets: List[LabelSheet] = []
+        n = 1
+        for sheet_def in sheet_definitions:
+            sheet = LabelSheet(n, printing_strategy.labelspecs)
+            sheet.start_at(sheet_def.start_pos.row, sheet_def.start_pos.col)
+            sheets.append(sheet)
+            n = n + 1
+
+        return Printer(printing_strategy, sheets)
 
     def __init__(self, strategy: PrintStrategyBase, sheets: List[LabelSheet] = []):
         self.__strategy = strategy

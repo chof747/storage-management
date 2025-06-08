@@ -17,3 +17,5 @@ from .storage_type import (
     StorageTypePage,
 )
 from .user import UserCreate
+
+from .label_printing import LabelPrintRequest
