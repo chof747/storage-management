@@ -9,6 +9,7 @@ class PrintStrategyBase(ABC, metaclass=StrategyMeta):
     name: str  # name of the strategy
     labelspecs: Specification | None = None  # Add this line for label specs
     draw_border: bool = False
+    copies: int = 1
 
     @classmethod
     def create_printing_strategy(
