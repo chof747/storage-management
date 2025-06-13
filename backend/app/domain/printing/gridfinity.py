@@ -35,6 +35,7 @@ class GridfinityPrinter(PrintStrategyBase):
     )
 
     draw_border = False
+    copies = 2
 
     font_size = 12
     top_margin = 2

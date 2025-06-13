@@ -21,9 +21,9 @@ def test_gridfinity_printer(db_session, pdf_text):
     document: BytesIO = printer.print()
     text = pdf_text(document)
     try:
-        assert "M3" in text
-        assert "BH" in text
-        assert "5" in text
+        assert 4 == text.count("M3")
+        assert 2 == text.count("BH")
+        assert 2 == text.count("5.0")
     except AssertionError:
         printer.print(
             (
