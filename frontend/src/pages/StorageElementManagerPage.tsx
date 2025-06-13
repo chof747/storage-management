@@ -24,6 +24,8 @@ export default function StorageElementManagerPage() {
   const [id] = useState<number>(Number(params.get('id')));
   const hwItemsTable = useRef<FilterableTableHandle<HardwareItem>>(null!) as React.RefObject<FilterableTableHandle<HardwareItem>>;
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
+  const [refreshToken, setRefreshToken] = useState(0);
+
 
   const loadElement = async (id: number) => {
     const elements: ResultPage<StorageElement> = await getItems(0, 1, id);
@@ -41,7 +43,9 @@ export default function StorageElementManagerPage() {
   }, [id]);
 
   const adaptedHWConfig = (): EntityConfig<HardwareItem> => {
-    const config: EntityConfig<HardwareItem> = createHardwareItemConfig();
+    const config: EntityConfig<HardwareItem> = createHardwareItemConfig(
+      refreshToken, setRefreshToken
+    );
     config.fetchItems = boundGetItemsByStorage(id);
     config.title = `Items of ${element?.name}`;
     config.table.columns = config.table.columns.filter(col => col.key !== 'storage_element');
