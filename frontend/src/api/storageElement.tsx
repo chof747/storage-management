@@ -52,3 +52,8 @@ export const deleteItem = async (id: number): Promise<void> => {
   await fetch(`${API_BASE}/${PATH}/${id}`, { method: "DELETE" });
 
 };
+
+export const markAllForPrinting = async (id: number): Promise<void> => {
+  const API_BASE = await getApiBase()
+  await fetch(`${API_BASE}/${PATH}/markallforprinting/${id}`, { method: "POST" })
+}
