@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuDrawer from './Menu';
+import LabelPrintFeature from '../../features/labelprint/LabelPrinting';
 
 const drawerWidth = 240;
 
@@ -36,98 +37,101 @@ export default function Layout({ children, rightPanel }: { children: React.React
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
+    <>
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
 
-      {/* Top bar */}
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2 }}
+        {/* Top bar */}
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap>
+              Web App
+            </Typography>
+          </Toolbar>
+        </AppBar>
+
+        {/* Mobile Drawer */}
+        {isMobile && (
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{ keepMounted: true }}
+            sx={{
+              display: { xs: 'block', sm: 'none' },
+              '& .MuiDrawer-paper': { width: drawerWidth },
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Web App
-          </Typography>
-        </Toolbar>
-      </AppBar>
+            {drawer}
+          </Drawer>
+        )}
 
-      {/* Mobile Drawer */}
-      {isMobile && (
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { width: drawerWidth },
-          }}
-        >
-          {drawer}
-        </Drawer>
-      )}
-
-      {/* Desktop Drawer */}
-      {!isMobile && (
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      )}
+        {/* Desktop Drawer */}
+        {!isMobile && (
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' },
+            }}
+            open
+          >
+            {drawer}
+          </Drawer>
+        )}
 
 
-      {/* Main content area */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          display: 'flex',
-          flexDirection: 'row',
-          width: { sm: '100%', },
-          ml: { sm: `${drawerWidth}px` },
-          gap: 2,
-        }}
-      >
-        {/* Centered Content */}
+        {/* Main content area */}
         <Box
+          component="main"
           sx={{
-            flex: 1,
-            maxWidth: isMobile ? '100%' : '900px',
+            flexGrow: 1,
+            p: 3,
+            display: 'flex',
+            flexDirection: 'row',
+            width: { sm: '100%', },
+            ml: { sm: `${drawerWidth}px` },
+            gap: 2,
           }}
         >
-          <Toolbar />
-          {children}
-        </Box>
-
-        {/* Optional Right Panel */}
-        {rightPanel && (
+          {/* Centered Content */}
           <Box
             sx={{
-              display: { xs: 'none', md: 'block' }, // hide on mobile
-              flexGrow: 1,
-              minWidth: 50,
-              maxWidth: 200,
+              flex: 1,
+              maxWidth: isMobile ? '100%' : '900px',
             }}
           >
             <Toolbar />
-            {rightPanel}
+            {children}
           </Box>
-        )}
+
+          {/* Optional Right Panel */}
+          {rightPanel && (
+            <Box
+              sx={{
+                display: { xs: 'none', md: 'block' }, // hide on mobile
+                flexGrow: 1,
+                minWidth: 50,
+                maxWidth: 200,
+              }}
+            >
+              <Toolbar />
+              {rightPanel}
+            </Box>
+          )}
+
+        </Box>
 
       </Box>
-
-    </Box>
+      <LabelPrintFeature />
+    </>
   );
 }
