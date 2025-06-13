@@ -105,8 +105,8 @@ export const createHardwareItemConfig = (
           setRefreshToken(prev => prev + 1);
         }}>
           {item.queued_for_printing
-            ? <PrintDisabled />
-            : <PrintOutlined color="secondary" />}
+            ? <PrintOutlined color="secondary" />
+            : <PrintDisabled />}
         </IconButton>
       </Tooltip>
     )
