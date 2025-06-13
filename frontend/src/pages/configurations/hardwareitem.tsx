@@ -8,6 +8,8 @@ import { ShoppingCart as ReorderIcon, PrintOutlined, PrintDisabled } from '@mui/
 import { IconButton, Tooltip } from '@mui/material';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
 import { StorageElement } from '../../types/storageElements';
+import { useState } from 'react';
+import { ref } from 'process';
 
 type HardwareItemFormFields = HardwareItem & {
   storage_element_id?: number;
@@ -21,7 +23,6 @@ export const fetch_storage = async (): Promise<{ id: number; label: string }[]> 
     label: se.name
   }));
 };
-
 
 export const formFields: FormField<HardwareItemFormFields>[] = [
   { name: 'hwtype', label: 'Type', required: true },
@@ -79,7 +80,10 @@ export const tableColumns: TableColumn<HardwareItem>[] = [
   },
 ];
 
-export const createHardwareItemConfig = (): EntityConfig<HardwareItem> => ({
+export const createHardwareItemConfig = (
+  refreshToken: number,
+  setRefreshToken: React.Dispatch<React.SetStateAction<number>>
+): EntityConfig<HardwareItem> => ({
   title: 'Hardware Inventory',
   toolbar: true,
   fetchItems: getItems,
@@ -93,9 +97,13 @@ export const createHardwareItemConfig = (): EntityConfig<HardwareItem> => ({
   selectitems: false,
   table: {
     columns: tableColumns,
+    refreshToken: refreshToken,
     customActions: (item: HardwareItem) => (
       <Tooltip title={item.queued_for_printing ? "remove from queue" : "add to queue"}>
-        <IconButton onClick={async () => { await toggleItemforPrinting(item); }}>
+        <IconButton onClick={async () => {
+          await toggleItemforPrinting(item);
+          setRefreshToken(prev => prev + 1);
+        }}>
           {item.queued_for_printing
             ? <PrintDisabled />
             : <PrintOutlined color="secondary" />}

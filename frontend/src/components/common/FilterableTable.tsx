@@ -53,6 +53,7 @@ type FilterableTableProps<T> = {
   customActions?: (item: T, refresh: () => void) => React.ReactNode;
   selectableRows?: boolean;
   onSelectionChange?: (selectedItems: T[]) => void;
+  refreshToken?: number;
 };
 
 const FilterableTable = forwardRef(FilterableTableInner) as <T>(
@@ -68,6 +69,7 @@ function FilterableTableInner<T>({
   customActions,
   selectableRows = false,
   onSelectionChange,
+  refreshToken,
 }: FilterableTableProps<T>, ref: React.Ref<FilterableTableHandle<T>>) {
   const initialFilterState = columns.reduce((acc, col) => {
     if (col.filterable) acc[col.key as string] = '';
@@ -113,7 +115,7 @@ function FilterableTableInner<T>({
 
   useEffect(() => {
     loadItems();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, refreshToken]);
 
 
   useImperativeHandle(ref, () => ({

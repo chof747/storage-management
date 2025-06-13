@@ -21,6 +21,7 @@ export type EntityConfig<T extends object> = {
   table: {
     columns: TableColumn<T>[];
     customActions?: (item: T, refresh: () => void) => React.ReactNode;
+    refreshToken?: number;
   };
 };
 
@@ -29,6 +30,7 @@ type TableComponentProps<T> = {
   onEdit: (item: T) => void;
   onDelete: (item: number) => void;
   onRefresh?: () => void;
+  refreshToken?: number;
 };
 
 type FormComponentProps<T> = {
@@ -56,7 +58,7 @@ export default function ConfiguredEntityPage<T extends object>({
       getRowId={config.getItemId}
       selectableRows={config.selectitems ?? false}
       onSelectionChange={config.onSelectionChange ?? undefined}
-    />
+      refreshToken={props.refreshToken} />
   );
 
   const FormComponent = ({ item, onSubmit, onSuccess }: FormComponentProps<T>) => (
