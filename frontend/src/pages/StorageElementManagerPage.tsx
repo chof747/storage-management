@@ -1,6 +1,7 @@
 // StorageManagerPage.tsx
 import { useLocation } from 'react-router-dom';
-import { DriveFileMoveOutlined as MoveIcon, DeleteOutlineOutlined as DeleteIcon } from '@mui/icons-material';
+import { DriveFileMoveOutlined as MoveIcon } from '@mui/icons-material';
+import LabelPrintingIcon from '@mui/icons-material/LocalPrintshopTwoTone';
 import { getItems } from '../api/storageElement';
 import { Box, Typography, IconButton, Table, TableRow, TableCell, TableBody, Divider } from '@mui/material';
 import Layout from '../components/layout/Layout';
@@ -13,6 +14,8 @@ import { createHardwareItemConfig } from './configurations/hardwareitem';
 import ConfiguredEntityPage, { EntityConfig } from '../components/common/ConfiguredEntityPage';
 import { FilterableTableHandle } from '../components/common/FilterableTable';
 import MoveItemsDialog from './dialogs/moveitems';
+import { openLabelPrintDialog } from "../features/labelprint/useLabelPrintDialog";
+
 
 export default function StorageElementManagerPage() {
   const location = useLocation();
@@ -73,8 +76,13 @@ export default function StorageElementManagerPage() {
           component="label"><MoveIcon />
           <Typography variant="button">
             &nbsp;Move Items</Typography></IconButton><br />
-        <IconButton><DeleteIcon /></IconButton>
-        {/* Add more icons and labels as needed */}
+        <IconButton
+          component="label"
+          onClick={() => openLabelPrintDialog(element?.storage_type?.printing_strategy)}>
+          <LabelPrintingIcon />
+          <Typography variant='button'>
+            &nbsp;Print Labels</Typography></IconButton><br />
+
       </Box>
     </>
   );

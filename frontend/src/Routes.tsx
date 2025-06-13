@@ -9,6 +9,8 @@ import StorageElementManagerPage from './pages/StorageElementManagerPage';
 
 
 export default function AppRoutes() {
+  const EmptyPage = () => null;
+
   const routes = useRoutes([
     {
       path: '/',
@@ -47,7 +49,15 @@ export default function AppRoutes() {
           <StorageTypePage />
         </Layout>
       )
-    }
+    },
+    {
+      path: '/label-printing',
+      element: (
+        <Layout>
+          <EmptyPage />
+        </Layout>
+      )
+    },
   ]);
 
   return routes;
