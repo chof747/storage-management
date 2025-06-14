@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
 
 jobs:
   build-and-push-backend:
@@ -12,7 +17,23 @@ jobs:
       contents: read
       packages: write
 
+    env:
+      BRANCH_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref_name }}
+
     steps:
+      - name: Decide tag
+        id: tag
+        run: |
+          if [[ "$BRANCH_NAME" == "main" ]]; then
+            TAG=latest
+          elif [[ "$BRANCH_NAME" == release/* ]]; then
+            TAG=test
+          else
+            echo "Invalid branch"
+            exit 1
+          fi
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -33,7 +54,7 @@ jobs:
           file: ./backend/Dockerfile
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/storagemanager_backend:latest
+          tags: ghcr.io/${{ github.repository_owner }}/storagemanager_frontend:${{ steps.tag.outputs.TAG }}
 
   build-and-push-frontend:
     runs-on: ubuntu-latest
