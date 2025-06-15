@@ -13,6 +13,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuDrawer from './Menu';
 import LabelPrintFeature from '../../features/labelprint/LabelPrinting';
+import { Helmet } from "react-helmet"
 
 const drawerWidth = 240;
 
@@ -38,6 +39,10 @@ export default function Layout({ children, rightPanel }: { children: React.React
 
   return (
     <>
+      <Helmet>
+        <title>Storage Manager</title>
+        <link rel="icon" href="/logo.png" />
+      </Helmet>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
 
@@ -53,7 +58,7 @@ export default function Layout({ children, rightPanel }: { children: React.React
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap>
-              Web App
+              Storage Manager
             </Typography>
           </Toolbar>
         </AppBar>
