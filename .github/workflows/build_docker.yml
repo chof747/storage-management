@@ -11,6 +11,26 @@ on:
         required: true
 
 jobs:
+  determine-build-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.set-tag.outputs.tag }}
+    steps:
+      - name: Compute tag
+        id: set-tag
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          if [[ "$BRANCH" == "main" ]]; then
+            TAG="latest"
+          elif [[ "$BRANCH" == release/* ]]; then
+            TAG="test"
+          else
+            echo "Unsupported branch: $BRANCH"
+            exit 1
+          fi
+          echo "TAG=$TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
   build-and-push-backend:
     runs-on: ubuntu-latest
     permissions:
@@ -21,23 +41,6 @@ jobs:
       BRANCH_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref_name }}
 
     steps:
-      - name: Decide tag
-        id: tag
-        run: |
-          if [[ "$BRANCH_NAME" == "main" ]]; then
-            TAG=latest
-          elif [[ "$BRANCH_NAME" == release/* ]]; then
-            TAG=test
-          else
-            echo "Invalid branch"
-            exit 1
-          fi
-          echo "TAG=$TAG" >> $GITHUB_OUTPUT
-
-      - name: Show chosen tag
-        run: | 
-          echo "Using tag: ${{ steps.tag.outputs.TAG }}"
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -58,7 +61,7 @@ jobs:
           file: ./backend/Dockerfile
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/storagemanager_frontend:${{ steps.tag.outputs.TAG }}
+          tags: ghcr.io/${{ github.repository_owner }}/storagemanager_backend:${{ needs.determine-build-tag.outputs.tag }}
 
   build-and-push-frontend:
     runs-on: ubuntu-latest
@@ -87,4 +90,4 @@ jobs:
           file: ./frontend/Dockerfile
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/storagemanager_frontend:latest
+          tags: ghcr.io/${{ github.repository_owner }}/storagemanager_frontend:${{ needs.determine-build-tag.outputs.tag }}
