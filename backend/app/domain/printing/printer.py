@@ -74,7 +74,7 @@ class Printer:
 
         for item in self.__items:
             # TODO: Add copies to printing strategy and use this in max_label count function
-            document.add_label(item.as_dict())
+            document.add_label(item.as_dict(), self.__strategy.copies)
             left_labels_on_sheet = left_labels_on_sheet - 1
             if 0 == left_labels_on_sheet:
                 sheet_num = sheet_num + 1

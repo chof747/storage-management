@@ -1,16 +1,30 @@
-
-version: "3.9"
 services:
   backend:
-    image: ghcr.io/chof747/storagemanager_backend:latest
+    image: ghcr.io/chof747/storagemanager_backend:test
     ports:
       - "8000:8000"
     volumes:
-      - ${BACKEND_DB_PATH}:/data/db.db
+      - ./data/backend/:/data
     environment:
-      - DATABASE_URL=sqlite:////data/db.db
+      - DATABASE_URL=sqlite:////data/test.db 
+    networks:
+      storage_manager:
+        aliases:
+          - storeman_backend
+
 
   frontend:
-    image: ghcr.io/chof747/storagemanager_frontend:latest
+    image: ghcr.io/chof747/storagemanager_frontend:test
+    volumes:
+      - ./frontend/.env:/app/.env
+      - ./frontend/public/config.json:/usr/share/nginx/html/config.json
     ports:
-      - "1850:3000"
+      - "3010:80"
+    env_file:
+      - ./frontend/.env
+    networks:
+      storage_manager:
+        aliases:
+          - storeman_frontend
+networks:
+  storage_manager:

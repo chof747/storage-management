@@ -34,10 +34,8 @@ jobs:
       contents: read
       packages: write
 
-    env:
-      BRANCH_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref_name }}
-
     steps:
+
       - name: Checkout code
         uses: actions/checkout@v4
 
