@@ -35,18 +35,6 @@ jobs:
       packages: write
 
     steps:
-      - name: Decide tag
-        id: tag
-        run: |
-          if [[ "$BRANCH_NAME" == "main" ]]; then
-            TAG=latest
-          elif [[ "$BRANCH_NAME" == release/* ]]; then
-            TAG=test
-          else
-            echo "Invalid branch"
-            exit 1
-          fi
-          echo "TAG=$TAG" >> $GITHUB_OUTPUT
 
       - name: Checkout code
         uses: actions/checkout@v4
