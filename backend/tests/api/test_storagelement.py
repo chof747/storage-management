@@ -1,6 +1,6 @@
 from app.models.storage_type import StorageType
 from tests.utils.asserts import assert_dict_contains
-from app.models.storage_element import StorageElement
+from app.models import StorageElement, HardwareItem
 
 
 def test_create_storage_element(client, db_session):
@@ -121,3 +121,32 @@ def test_delete_storage_element(client):
     data = response.json()
     assert data["total"] == 1
     assert all(element["id"] != 2 for element in data["items"])
+
+
+def test_mark_all_for_printing(client, db_session):
+
+    # prepare
+    item = db_session.get(HardwareItem, 1)
+    item.queued_for_printing = False
+    db_session.commit()
+
+    # check if all is set to False
+    items = (
+        db_session.query(HardwareItem)
+        .join(StorageElement)
+        .filter(StorageElement.id == 1)
+        .all()
+    )
+    assert any(not item.queued_for_printing for item in items)
+
+    response = client.post("/api/storage/markallforprinting/1")
+    assert 200 == response.status_code
+
+    # now check everything is set to true
+    items = (
+        db_session.query(HardwareItem)
+        .join(StorageElement)
+        .filter(StorageElement.id == 1)
+        .all()
+    )
+    assert any(item.queued_for_printing for item in items)

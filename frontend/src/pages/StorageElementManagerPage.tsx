@@ -2,7 +2,8 @@
 import { useLocation } from 'react-router-dom';
 import { DriveFileMoveOutlined as MoveIcon } from '@mui/icons-material';
 import LabelPrintingIcon from '@mui/icons-material/LocalPrintshopTwoTone';
-import { getItems } from '../api/storageElement';
+import MarkAllForPrinting from '@mui/icons-material/BookmarksOutlined';
+import { getItems, markAllForPrinting } from '../api/storageElement';
 import { Box, Typography, IconButton, Table, TableRow, TableCell, TableBody, Divider } from '@mui/material';
 import Layout from '../components/layout/Layout';
 import { useEffect, useRef, useState } from 'react';
@@ -24,7 +25,6 @@ export default function StorageElementManagerPage() {
   const [id] = useState<number>(Number(params.get('id')));
   const hwItemsTable = useRef<FilterableTableHandle<HardwareItem>>(null!) as React.RefObject<FilterableTableHandle<HardwareItem>>;
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
-  const [refreshToken, setRefreshToken] = useState(0);
 
 
   const loadElement = async (id: number) => {
@@ -44,7 +44,7 @@ export default function StorageElementManagerPage() {
 
   const adaptedHWConfig = (): EntityConfig<HardwareItem> => {
     const config: EntityConfig<HardwareItem> = createHardwareItemConfig(
-      refreshToken, setRefreshToken
+      hwItemsTable
     );
     config.fetchItems = boundGetItemsByStorage(id);
     config.title = `Items of ${element?.name}`;
@@ -86,7 +86,17 @@ export default function StorageElementManagerPage() {
           <LabelPrintingIcon />
           <Typography variant='button'>
             &nbsp;Print Labels</Typography></IconButton><br />
-
+        <IconButton
+          component="label"
+          onClick={async () => {
+            if ((element !== undefined) && (element.id !== undefined)) {
+              await markAllForPrinting(element.id);
+              hwItemsTable.current.refresh();
+            }
+          }}>
+          <MarkAllForPrinting />
+          <Typography variant='button' align='left'>
+            &nbsp;Mark all<br />&nbsp;for printing</Typography></IconButton><br />
       </Box>
     </>
   );

@@ -13,7 +13,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuDrawer from './Menu';
 import LabelPrintFeature from '../../features/labelprint/LabelPrinting';
-import { Helmet } from "react-helmet"
+import { Helmet } from "react-helmet-async"
 
 const drawerWidth = 240;
 
