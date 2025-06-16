@@ -91,7 +91,7 @@ export default function StorageElementManagerPage() {
           onClick={async () => {
             if ((element !== undefined) && (element.id !== undefined)) {
               await markAllForPrinting(element.id);
-              setRefreshToken(prev => prev + 1)
+              hwItemsTable.current.refresh();
             }
           }}>
           <MarkAllForPrinting />
