@@ -3,7 +3,7 @@ import { HardwareItem } from '../../types/hardwareItems';
 import { getItems, createItem, updateItem, deleteItem, toggleItemforPrinting } from '../../api/hardwareItem';
 import { getItems as getStorageItems, createPlaceholder } from '../../api/storageElement';
 import { FormField } from '../../components/common/ModelForm';
-import { TableColumn } from '../../components/common/FilterableTable';
+import { FilterableTableHandle, TableColumn } from '../../components/common/FilterableTable';
 import { ShoppingCart as ReorderIcon, PrintOutlined, PrintDisabled } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
@@ -82,7 +82,8 @@ export const tableColumns: TableColumn<HardwareItem>[] = [
 
 export const createHardwareItemConfig = (
   refreshToken: number,
-  setRefreshToken: React.Dispatch<React.SetStateAction<number>>
+  setRefreshToken: React.Dispatch<React.SetStateAction<number>>,
+  tableref: React.RefObject<FilterableTableHandle<HardwareItem>>
 ): EntityConfig<HardwareItem> => ({
   title: 'Hardware Inventory',
   toolbar: true,
@@ -102,7 +103,7 @@ export const createHardwareItemConfig = (
       <Tooltip title={item.queued_for_printing ? "remove from queue" : "add to queue"}>
         <IconButton onClick={async () => {
           await toggleItemforPrinting(item);
-          setRefreshToken(prev => prev + 1);
+          tableref.current?.refresh();
         }}>
           {item.queued_for_printing
             ? <PrintOutlined color="secondary" />
