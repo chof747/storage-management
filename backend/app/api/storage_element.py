@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, Query as SQLQuery
 from typing import List, Optional
 
 from app.dependencies import get_db
-from app.models import StorageElement
+from app.models import StorageElement, HardwareItem
 from app.schemas import (
     StorageElementCreate,
     StorageElementInDB,
@@ -11,7 +11,6 @@ from app.schemas import (
     StorageElementPage,
 )
 from app.api.pagination import page_parameters
-
 
 router = APIRouter(prefix="/api/storage", tags=["Storage Elements"])
 
@@ -61,3 +60,19 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
     db.delete(db_item)
     db.commit()
     return {"message": "Deleted"}
+
+
+@router.post("/markallforprinting/{item_id}")
+def mark_all_for_printing(item_id: int, db: Session = Depends(get_db)):
+    items = (
+        db.query(HardwareItem)
+        .join(HardwareItem.storage_element)
+        .filter(StorageElement.id == item_id)
+        .all()
+    )
+
+    for item in items:
+        item.queued_for_printing = True
+    db.commit()
+
+    return {"message": f"{len(items)} marked for printing"}
