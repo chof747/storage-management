@@ -81,8 +81,6 @@ export const tableColumns: TableColumn<HardwareItem>[] = [
 ];
 
 export const createHardwareItemConfig = (
-  refreshToken: number,
-  setRefreshToken: React.Dispatch<React.SetStateAction<number>>,
   tableref: React.RefObject<FilterableTableHandle<HardwareItem>>
 ): EntityConfig<HardwareItem> => ({
   title: 'Hardware Inventory',
@@ -98,7 +96,6 @@ export const createHardwareItemConfig = (
   selectitems: false,
   table: {
     columns: tableColumns,
-    refreshToken: refreshToken,
     customActions: (item: HardwareItem) => (
       <Tooltip title={item.queued_for_printing ? "remove from queue" : "add to queue"}>
         <IconButton onClick={async () => {
