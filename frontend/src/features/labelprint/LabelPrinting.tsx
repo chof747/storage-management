@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import LabelPrintDialog from "../../components/dialogs/LabelPrintDialog";
 import { printLabels } from "../../api/printLabels";
 import { setLabelPrintTrigger } from "./useLabelPrintDialog";
@@ -10,7 +9,7 @@ const LabelPrintFeature: React.FC = () => {
 
   const openDialog = useCallback((defaultStrategy?: string) => {
     if (defaultStrategy)
-      setDefaultStrategy(defaultStrategy)
+      setDefaultStrategy(defaultStrategy);
     setOpen(true);
   }, []);
 

@@ -2,7 +2,7 @@
 import ConfiguredEntityPage from '../components/common/ConfiguredEntityPage';
 import { createHardwareItemConfig } from './configurations/hardwareitem';
 import { HardwareItem } from '../types/hardwareItems';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { FilterableTableHandle } from '../components/common/FilterableTable';
 
 

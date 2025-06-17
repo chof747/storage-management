@@ -37,7 +37,7 @@ const LabelPrintDialog: React.FC<LabelPrintDialogProps> = ({ open, onClose, onSu
           setStrategy(data[0]);
         } else if (defaultStrategy) {
           //set default strategy only here as then the values are filled
-          setStrategy(defaultStrategy)
+          setStrategy(defaultStrategy);
         }
       });
     }

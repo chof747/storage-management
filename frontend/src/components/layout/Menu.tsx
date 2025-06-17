@@ -5,11 +5,9 @@ import { Inventory, Home } from "@mui/icons-material";
 import LabelPrinting from '@mui/icons-material/LocalPrintshopTwoTone';
 import CategoryIcon from '@mui/icons-material/Category';
 import { openLabelPrintDialog } from "../../features/labelprint/useLabelPrintDialog";
-import { useNavigate } from "react-router-dom";
 import MenuActionItem from "./menu/MenuActionItem";
 
 export const MenuDrawer = () => {
-  const navigate = useNavigate();
 
   return (
     <List>
