@@ -37,3 +37,66 @@ def test_gridfinity_printer(db_session, pdf_text):
 
     # check if
     assert any(not i.queued_for_printing for i in db_session.query(HardwareItem).all())
+
+
+def test_gridfinity_no_secondary(db_session, pdf_text):
+
+    sheet_defs = [LabelSheetDefinition(start_pos=StartPosition(row=20, col=5))]
+    printer = Printer.create_printer("Gridfinity", sheet_defs)
+
+    item = HardwareItem()
+    item.main_metric = "MM"
+    item.length = 3
+    item.set_for_printing()
+    printer.add([item])
+
+    document: BytesIO = printer.print()
+    text = pdf_text(document)
+    try:
+        assert 2 == text.count("MM")
+        assert 2 == text.count("3")
+        assert 0 == text.count("/")
+    except AssertionError:
+        printer.print(
+            (
+                Path(__file__).parent.parent.parent.parent.parent
+                / "data"
+                / "test_results"
+                / "test_gridfinity.pdf"
+            ).as_posix()
+        )
+        raise
+
+    # check if
+    assert any(not i.queued_for_printing for i in db_session.query(HardwareItem).all())
+
+
+def test_gridfinity_no_length(db_session, pdf_text):
+
+    sheet_defs = [LabelSheetDefinition(start_pos=StartPosition(row=20, col=5))]
+    printer = Printer.create_printer("Gridfinity", sheet_defs)
+
+    item = HardwareItem()
+    item.main_metric = "MM"
+    item.secondary_metric = "BH"
+    item.set_for_printing()
+    printer.add([item])
+
+    document: BytesIO = printer.print()
+    text = pdf_text(document)
+    try:
+        assert 2 == text.count("MM/BH")
+        assert 0 == text.count("None")
+    except AssertionError:
+        printer.print(
+            (
+                Path(__file__).parent.parent.parent.parent.parent
+                / "data"
+                / "test_results"
+                / "test_gridfinity.pdf"
+            ).as_posix()
+        )
+        raise
+
+    # check if
+    assert any(not i.queued_for_printing for i in db_session.query(HardwareItem).all())
