@@ -38,9 +38,11 @@ class GridfinityPrinter(PrintStrategyBase):
     copies = 2
 
     font_size = 12
+    min_font_size = 8
     top_margin = 2
     bottom_margin = 3
-    left_margin = 7
+    left_margin = 2
+    font_name = "Helvetica"
 
     def compile_lines(self, item: Dict[str, str]) -> Tuple[str, str]:
         text = LABEL_TEMPLATE.render(item=item)
@@ -51,13 +53,16 @@ class GridfinityPrinter(PrintStrategyBase):
 
         line1, line2 = self.compile_lines(item)
 
+        font_size = self.shrink_font_if_needed(
+            line1, self.font_size, self.min_font_size, width, self.font_name
+        )
         label.add(
             shapes.String(
                 self.left_margin,
                 height - self.font_size - self.top_margin,
                 line1,
-                fontName="Helvetica",
-                fontSize=self.font_size,
+                fontName=self.font_name,
+                fontSize=font_size,
             )
         )
 

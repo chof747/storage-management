@@ -39,8 +39,7 @@ def test_shrinking_text(newprintingtrategy):
     fs = 12
     min_fs = 9
     fn = "Helvetica"
-    mg = 2
-    max_tw = newprintingtrategy.labelspecs.label_width - 2 * mg
+    max_tw = newprintingtrategy.labelspecs.label_width
 
     def generate_text_that_is_too_long() -> str:
         n = 3
@@ -58,10 +57,19 @@ def test_shrinking_text(newprintingtrategy):
 
     line = generate_text_that_is_too_long()
     print(line)
-    font_size = newprintingtrategy.shrink_font_if_needed(line, fs, min_fs, mg, fn)
-
+    font_size = newprintingtrategy.shrink_font_if_needed(
+        line, fs, min_fs, newprintingtrategy.labelspecs.label_width, fn
+    )
     assert font_size < fs
 
+    line = "A"
+    font_size = newprintingtrategy.shrink_font_if_needed(
+        line, fs, min_fs, newprintingtrategy.labelspecs.label_width, fn
+    )
+    assert font_size == fs
+
     line = generate_random_text(1000)
-    font_size = newprintingtrategy.shrink_font_if_needed(line, fs, min_fs, mg, fn)
+    font_size = newprintingtrategy.shrink_font_if_needed(
+        line, fs, min_fs, newprintingtrategy.labelspecs.label_width, fn
+    )
     assert font_size == min_fs

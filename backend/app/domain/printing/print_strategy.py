@@ -29,7 +29,12 @@ class PrintStrategyBase(ABC, metaclass=StrategyMeta):
         pass
 
     def shrink_font_if_needed(
-        self, text: str, start_size: float, min_size: float, margin: int, font_name: str
+        self,
+        text: str,
+        start_size: float,
+        min_size: float,
+        width: float,
+        font_name: str,
     ) -> float:
         """Shrinks a text on a label as needed
 
@@ -45,12 +50,15 @@ class PrintStrategyBase(ABC, metaclass=StrategyMeta):
         Returns:
             float: new font size to apply to fit the text
         """
-        text_space = self.labelspecs.label_width - margin * 2
         font_size = start_size
+        print(f'Text = "{text}"')
+        print(f"text space = {width}")
         while True:
-            text_width = stringWidth(text, font_name, start_size)
+            print(f"{font_size}")
+            text_width = stringWidth(text, font_name, font_size)
+            print(f"text width = {text_width}")
 
-            if text_width <= text_space:
+            if text_width <= width:
                 break
             elif font_size <= min_size:
                 return min_size
