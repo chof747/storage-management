@@ -25,7 +25,9 @@ class PrintStrategyBase(ABC, metaclass=StrategyMeta):
         pass
 
     @abstractmethod
-    def draw_label(self, label: Drawing, width: int, height: int, item: Dict[str, str]):
+    def draw_label(
+        self, label: Drawing, width: int, height: int, item: Dict[str, str | None]
+    ):
         pass
 
     def shrink_font_if_needed(

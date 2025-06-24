@@ -18,7 +18,9 @@ class TestPrintingStrategy(PrintStrategyBase):
         corner_radius=2,
     )
 
-    def draw_label(self, label: Drawing, width: int, height: int, item: Dict[str, str]):
+    def draw_label(
+        self, label: Drawing, width: int, height: int, item: Dict[str, str | None]
+    ):
         label.add(
             shapes.String(
                 2,
