@@ -7,8 +7,10 @@ from jinja2 import Environment
 
 j2env = Environment()
 LABEL_TEMPLATE = j2env.from_string(
-    """{{ item.main_metric }}/{{ item.secondary_metric|default('') }}
-{{ item.length }}"""
+    """{{ item.main_metric }}{% if item.secondary_metric %}/{{ item.secondary_metric }}{% endif %}
+{% if item.length %}{{item.length|default('') }}{% endif %}"""
+    #    """{{ item.main_metric }}/{{ item.secondary_metric|default('') }}
+    # {{ item.length|default('') }}"""
 )
 
 
@@ -38,26 +40,33 @@ class GridfinityPrinter(PrintStrategyBase):
     copies = 2
 
     font_size = 12
+    min_font_size = 8
     top_margin = 2
     bottom_margin = 3
-    left_margin = 7
+    left_margin = 2
+    font_name = "Helvetica"
 
-    def compile_lines(self, item: Dict[str, str]) -> Tuple[str, str]:
+    def compile_lines(self, item: Dict[str, str | None]) -> Tuple[str, str]:
         text = LABEL_TEMPLATE.render(item=item)
         (line1, line2) = text.split("\n")
         return line1, line2
 
-    def draw_label(self, label: Drawing, width: int, height: int, item: Dict[str, str]):
+    def draw_label(
+        self, label: Drawing, width: int, height: int, item: Dict[str, str | None]
+    ):
 
         line1, line2 = self.compile_lines(item)
 
+        font_size = self.shrink_font_if_needed(
+            line1, self.font_size, self.min_font_size, width, self.font_name
+        )
         label.add(
             shapes.String(
                 self.left_margin,
                 height - self.font_size - self.top_margin,
                 line1,
-                fontName="Helvetica",
-                fontSize=self.font_size,
+                fontName=self.font_name,
+                fontSize=font_size,
             )
         )
 
