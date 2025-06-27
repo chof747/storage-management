@@ -4,13 +4,16 @@ This is a web-based storage management solution to organise the hardware-items a
 
 ## Features
 
-**The application will provide the following functionalities:**
+**The application provides the following functionalities:**
 
 - Keep information about the location and specification of hw items and consumables
 - Keep an inventory of all the storage locations and boxes
 - Enable indications for reordering and also keeps the track of ordering links
 - Allows searching for items in the inventory
 - Provides label printing capabilities to easily label bins and storage boxes
+
+**The application will provide:**
+
 - Provides functionalities to organise and check bill of materials for projects
 
 **What the application does not provide:**
