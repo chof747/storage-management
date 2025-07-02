@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:92e2af641b35088ed41c82e3ed58a779081e7ab62fbd0f583cf86e2fe44cd638"
+content_hash = "sha256:fbec69b46de49c1b6fafadcc09f27d4f90c374f15a25ce8011ac45d58e2fd2dd"
 
 [[metadata.targets]]
 requires_python = ">=3.9"
@@ -179,6 +179,18 @@ groups = ["dev"]
 files = [
     {file = "distlib-0.3.9-py2.py3-none-any.whl", hash = "sha256:47f8c22fd27c27e25a65601af709b38e4f0a45ea4fc2e710f65755fa8caaaf87"},
     {file = "distlib-0.3.9.tar.gz", hash = "sha256:a60f20dea646b8a33f3e7772f74dc0b2d0772d2837ee1342a00645c81edf9403"},
+]
+
+[[package]]
+name = "dotenv"
+version = "0.9.9"
+summary = "Deprecated package"
+groups = ["default"]
+dependencies = [
+    "python-dotenv",
+]
+files = [
+    {file = "dotenv-0.9.9-py2.py3-none-any.whl", hash = "sha256:29cf74a087b31dafdb5a446b6d7e11cbce8ed2741540e2339c69fbef92c94ce9"},
 ]
 
 [[package]]

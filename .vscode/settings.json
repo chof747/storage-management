@@ -1,5 +1,5 @@
 {
-  "python.defaultInterpreterPath": ".venv/bin/python",
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
   "editor.formatOnSave": true,
   "python.autoComplete.extraPaths": [
     "__pypackages__/<major.minor>/lib"
