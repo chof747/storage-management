@@ -20,6 +20,7 @@ class LabelFont(BaseModel):
     family: str
     size: int
     min_size: int
+    line_gap: int
 
 
 class LabelMargins(BaseModel):

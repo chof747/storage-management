@@ -21,6 +21,10 @@ class PrintStrategyBase(ABC, metaclass=StrategyMeta):
                 return subclass(*args, **kwargs)
         raise ValueError(f"No printing strategy with name '{name}' found.")
 
+    @classmethod
+    def clear_registry(cls):
+        cls._registry.clear()
+
     def __call__(self, item: Dict[str, str]) -> str:
         pass
 
@@ -70,4 +74,6 @@ class PrintStrategyBase(ABC, metaclass=StrategyMeta):
 
 
 def get_all_printing_strategies() -> list[str]:
-    return [cls.name for cls in PrintStrategyBase._registry]
+    return [
+        cls.name for cls in PrintStrategyBase._registry if not cls.name.startswith("__")
+    ]

@@ -17,6 +17,7 @@ label_font:
   family: Helvetica
   size: 12
   min_size: 9
+  line_gap: 2
 
 label_margins:
   top_margin: 2
