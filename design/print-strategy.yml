@@ -1,0 +1,38 @@
+printing_strategy:
+  name: Gridfinity
+
+  label_specification:
+    sheet_width: 210
+    sheet_height: 297
+    label_width: 17.8
+    label_height: 10
+    columns: 10
+    rows: 27
+    left_margin: 5
+    top_margin: 14
+    corner_radius: 2
+    row_gap: 0
+    column_gap: 2
+
+  label_font:
+    family: Helvetica
+    size: 12
+    min_size: 9
+
+  label_margins:
+    top_margin: 2
+    bottom_margin: 3
+    left_margin: 2
+    right_margin: 0
+
+  label_content:
+    template: |
+      {{ item.main_metric }}{% if item.secondary_metric %}/{{ item.secondary_metric }}{% endif %}
+      {% if item.length %}{{item.length|default('') }}{% endif %}
+    draw_border: false
+    resize_font:
+      - true
+      - false
+
+  finish:
+    copies: 2

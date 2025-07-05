@@ -9,8 +9,6 @@ j2env = Environment()
 LABEL_TEMPLATE = j2env.from_string(
     """{{ item.main_metric }}{% if item.secondary_metric %}/{{ item.secondary_metric }}{% endif %}
 {% if item.length %}{{item.length|default('') }}{% endif %}"""
-    #    """{{ item.main_metric }}/{{ item.secondary_metric|default('') }}
-    # {{ item.length|default('') }}"""
 )
 
 
