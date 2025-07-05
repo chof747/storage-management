@@ -7,7 +7,7 @@ def test_create_storage_type(client, db_session):
     new_type = {
         "name": "Crate",
         "description": "plastic storage crate",
-        "printing_strategy": "Gridfinity",
+        "printing_strategy": "Storage Box",
     }
     response = client.post("/api/storagetype/", json=new_type)
     assert response.status_code == 200, response.content
@@ -35,7 +35,7 @@ def test_list_storage_types(client):
             "id": 1,
             "name": "Gridfinity Tray",
             "description": "A samla tray of gridfinity",
-            "printing_strategy": "Gridfinity",
+            "printing_strategy": "Storage Box",
         },
         data["items"][0],
     )
@@ -58,7 +58,7 @@ def test_get_storage_type_by_id(client):
     data = response.json()
     assert data["total"] == 1
     assert data["items"][0]["id"] == 1
-    assert data["items"][0]["printing_strategy"] == "Gridfinity"
+    assert data["items"][0]["printing_strategy"] == "Storage Box"
 
 
 def test_update_storage_type(client, db_session):

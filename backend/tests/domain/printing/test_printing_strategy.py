@@ -1,6 +1,10 @@
 from pytest import fixture
 
-from app.domain.printing import get_all_printing_strategies, PrintStrategyBase
+from app.domain.printing import (
+    get_all_printing_strategies,
+    PrintStrategyBase,
+    StorageBoxPrinter,
+)
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from tests.utils.helpers import generate_random_text
 
@@ -15,7 +19,6 @@ def newprintingtrategy() -> PrintStrategyBase:
 def test_get_default_printing_strategies():
     strategies = get_all_printing_strategies()
 
-    assert "Gridfinity" in strategies
     assert "Storage Box" in strategies
 
 
@@ -28,7 +31,7 @@ def test_get_new_printing_strategy(newprintingtrategy):
 
 
 def test_default_border(newprintingtrategy):
-    strategy = PrintStrategyBase.create_printing_strategy("Gridfinity")
+    strategy = PrintStrategyBase.create_printing_strategy("Storage Box")
     assert False == strategy.draw_border
 
     assert newprintingtrategy.draw_border
