@@ -8,8 +8,6 @@ import { ShoppingCart as ReorderIcon, PrintOutlined, PrintDisabled } from '@mui/
 import { IconButton, Tooltip } from '@mui/material';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
 import { StorageElement } from '../../types/storageElements';
-import { useState } from 'react';
-import { ref } from 'process';
 
 type HardwareItemFormFields = HardwareItem & {
   storage_element_id?: number;

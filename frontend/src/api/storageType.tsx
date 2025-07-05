@@ -6,13 +6,13 @@ const PATH = "storagetype";
 
 
 export const getItems = async (offset: number, limit: number, id: number = 0): Promise<ResultPage<StorageType>> => {
-  const API_BASE = await getApiBase()
+  const API_BASE = await getApiBase();
   const res = await fetch(`${API_BASE}/${PATH}/${id > 0 ? id + "/" : ""}?offset=${offset}&limit=${limit}`);
   return await res.json();
 };
 
 export const createItem = async (item: StorageType): Promise<StorageType> => {
-  const API_BASE = await getApiBase()
+  const API_BASE = await getApiBase();
   const res = await fetch(`${API_BASE}/${PATH}/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -22,7 +22,6 @@ export const createItem = async (item: StorageType): Promise<StorageType> => {
 };
 
 export const createPlaceholder = async (name: string): Promise<StorageType> => {
-  const API_BASE = await getApiBase()
   const item: StorageType = {
     id: 0,
     name: name,
@@ -31,7 +30,7 @@ export const createPlaceholder = async (name: string): Promise<StorageType> => {
 };
 
 export const updateItem = async (item: StorageType): Promise<StorageType> => {
-  const API_BASE = await getApiBase()
+  const API_BASE = await getApiBase();
   const res = await fetch(`${API_BASE}/${PATH}/${item.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -47,6 +46,6 @@ export const updateItem = async (item: StorageType): Promise<StorageType> => {
 };
 
 export const deleteItem = async (id: number): Promise<void> => {
-  const API_BASE = await getApiBase()
+  const API_BASE = await getApiBase();
   await fetch(`${API_BASE}/${PATH}/${id}`, { method: "DELETE" });
 };

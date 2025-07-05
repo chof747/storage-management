@@ -24,6 +24,6 @@ export async function loadConfig(): Promise<AppConfig> {
     return {
       API_ENDPOINT_HOST: "localhost",
       API_ENDPOINT_PORT: 8000
-    }
+    };
   }
 }

@@ -22,5 +22,7 @@ class StorageBoxPrinter(PrintStrategyBase):
         corner_radius=0,
     )
 
-    def draw_label(self, label: Drawing, width: int, height: int, item: Dict[str, str]):
+    def draw_label(
+        self, label: Drawing, width: int, height: int, item: Dict[str, str | None]
+    ):
         pass

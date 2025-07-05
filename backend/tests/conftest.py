@@ -9,6 +9,7 @@ from app.database import Base
 from app.main import app
 from app import dependencies
 from fastapi.testclient import TestClient
+from app.domain.printing import PrintStrategyBase
 
 from tests.utils.db_seed_loader import load_seeds_from_dir
 
@@ -61,6 +62,12 @@ def setup_test_db():
     yield
 
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture()
+def clear_registries():
+    PrintStrategyBase.clear_registry()
+    yield
 
 
 # Start a transaction and roll back after each test

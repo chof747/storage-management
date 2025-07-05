@@ -55,7 +55,7 @@ def test_list_storage_elements(client):
             "storage_type": {
                 "id": 1,
                 "name": "Gridfinity Tray",
-                "printing_strategy": "Gridfinity",
+                "printing_strategy": "Storage Box",
                 "description": "A samla tray of gridfinity",
             },
         },

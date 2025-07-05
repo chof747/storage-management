@@ -1,6 +1,6 @@
 // hardwareItemConfig.ts
 import { StorageType } from '../../types/storageType';
-import { getItems, createItem, updateItem, deleteItem } from '../../api/storageType'
+import { getItems, createItem, updateItem, deleteItem } from '../../api/storageType';
 import { FormField } from '../../components/common/ModelForm';
 import { TableColumn } from '../../components/common/FilterableTable';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
@@ -8,7 +8,7 @@ import { getPrintStrategies } from '../../api/printStrategy';
 
 export const fetch_print_strategies = async (): Promise<{ id: number; label: string }[]> => {
   const response = await getPrintStrategies();
-  var i = 0;
+  let i = 0;
   return response.map((ps: string) => ({
     id: i++,
     label: ps

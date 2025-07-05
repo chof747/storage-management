@@ -100,8 +100,8 @@ function ModelForm<T extends object>({
   };
 
   const toggleAddAnother = () => {
-    setDoAnother(!doAnother)
-  }
+    setDoAnother(!doAnother);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,29 +147,33 @@ function ModelForm<T extends object>({
 
     switch (field.type) {
       case 'select':
-        const v = (typeof value === "string" || typeof value == "number") ? value : ""
-        const opts = options.map(item => item.label);
-        return renderSelectField(field, v, error, handleChange, loading, opts);
+        {
+          const v = (typeof value === "string" || typeof value == "number") ? value : "";
+          const opts = options.map(item => item.label);
+          return renderSelectField(field, v, error, handleChange, loading, opts);
+        }
       case 'select-create':
-        return renderSelectWithCreate(
-          field,
-          (typeof (value) == 'number') ? value : "",
-          error,
-          handleChange,
-          loading,
-          options,
-          (id, label) => {
-            setSelectOptions((prev) => {
-              const key = String(field.name);
-              const existing = prev[key] || [];
-              return {
-                ...prev,
-                [key]: [...existing, { id, label }]
-              };
-            });
-            setForm((prev) => ({ ...prev, [field.name]: id }));
-          }
-        );
+        {
+          return renderSelectWithCreate(
+            field,
+            (typeof (value) == 'number') ? value : "",
+            error,
+            handleChange,
+            loading,
+            options,
+            (id, label) => {
+              setSelectOptions((prev) => {
+                const key = String(field.name);
+                const existing = prev[key] || [];
+                return {
+                  ...prev,
+                  [key]: [...existing, { id, label }]
+                };
+              });
+              setForm((prev) => ({ ...prev, [field.name]: id }));
+            }
+          );
+        }
       case 'boolean':
         return renderCheckboxField(field, Boolean(value), handleChange);
       case 'number':

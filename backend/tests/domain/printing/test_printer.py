@@ -1,6 +1,11 @@
 from pathlib import Path
 from pytest import raises, fixture
-from app.domain.printing import Printer, LabelSheet, PrintStrategyBase
+from app.domain.printing import (
+    Printer,
+    LabelSheet,
+    PrintStrategyBase,
+    StorageBoxPrinter,
+)
 from io import BytesIO
 from tests.utils.pdf_test_utils import pdf_text
 from app.models import HardwareItem
@@ -29,7 +34,7 @@ def simple_items():
 
 def test_printer_add_items(simple_items):
 
-    strategy = PrintStrategyBase.create_printing_strategy("Gridfinity")
+    strategy = PrintStrategyBase.create_printing_strategy("Storage Box")
     sheet = LabelSheet(1, strategy.labelspecs)
 
     printer = Printer(strategy, [sheet])

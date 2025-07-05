@@ -1,4 +1,4 @@
-# app/scripts/init_db.py
+# app/scripts/init.py
 
 from app.database import Base, engine
 import app.models  # required to register models
