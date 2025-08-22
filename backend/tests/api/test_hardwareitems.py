@@ -7,9 +7,45 @@ def test_create_hardware_items(client):
 
     new_hwitem = {
         "hwtype": "Screw",
+        "label": "Main srew",
         "main_metric": "M3",
         "secondary_metric": "BH",
         "length": 5.0,
+        "storage_element_id": 1,
+        "reorder": False,
+        "reorder_link": "http://reorder.com",
+        "detailed_description": "Really useful",
+    }
+
+    create_response = client.post(
+        "/api/items/",
+        json=new_hwitem,
+    )
+    data = create_response.json()
+    print(data)
+
+    assert create_response.status_code == 200
+    assert data["id"] == 3
+    assert data["storage_element"]["id"] == 1
+
+    assert_dict_contains(
+        "checking created hardware item values",
+        new_hwitem,
+        data,
+        exclude_paths=[
+            "root['queued_for_printing']",
+            "root['id']",
+            "root['storage_element']",
+        ],
+    )
+
+
+def test_create_hardware_items_minimum(client):
+    """Test Creation of a Hardware Item"""
+
+    new_hwitem = {
+        "hwtype": "Screw",
+        "main_metric": "M3",
         "storage_element_id": 1,
         "reorder": False,
     }
@@ -31,9 +67,13 @@ def test_create_hardware_items(client):
         data,
         exclude_paths=[
             "root['reorder_link']",
+            "root['secondary_metric']",
+            "root['length']",
             "root['queued_for_printing']",
             "root['id']",
             "root['storage_element']",
+            "root['label']",
+            "root['detailed_description']",
         ],
     )
 
@@ -53,11 +93,13 @@ def test_list_hardware_items(client):
         {
             "id": 1,
             "hwtype": "Screws",
+            "label": "Button Head Screw",
             "main_metric": "M3",
             "secondary_metric": "BH",
             "length": 5.0,
             "reorder": True,
             "reorder_link": "http://amazon.de",
+            "detailed_description": "Metal screws with button heads",
             "storage_element_id": 1,
             "queued_for_printing": True,
         },
@@ -102,11 +144,13 @@ def test_list_hardware_items_with_offset_and_limit(client):
         {
             "id": 2,
             "hwtype": "Washer",
+            "label": "Metall washer",
             "main_metric": "M3",
             "secondary_metric": "",
             "length": 0.5,
             "reorder": False,
             "reorder_link": None,
+            "detailed_description": "",
             "storage_element_id": 1,
             "queued_for_printing": False,
         },
@@ -122,6 +166,7 @@ def test_update_hwitem_value(client, db_session):
         "length": 15.0,
         "reorder": False,
         "queued_for_printing": False,
+        "label": "Important!",
     }
     response = client.put(
         "/api/items/1",
@@ -135,6 +180,7 @@ def test_update_hwitem_value(client, db_session):
     assert item.hwtype == "Bolt"
     assert item.main_metric == "M4"
     assert item.length == 15.0
+    assert item.label == "Important!"
     assert not item.reorder
     assert not item.queued_for_printing
 

@@ -24,6 +24,7 @@ export const fetch_storage = async (): Promise<{ id: number; label: string }[]> 
 
 export const formFields: FormField<HardwareItemFormFields>[] = [
   { name: 'hwtype', label: 'Type', required: true },
+  { name: 'label', label: 'Label' },
   { name: 'main_metric', label: 'Main Metric', required: true },
   { name: 'secondary_metric', label: 'Secondary Metric' },
   { name: 'length', label: 'Length', type: 'number' },
@@ -51,11 +52,17 @@ export const formFields: FormField<HardwareItemFormFields>[] = [
     label: 'Reorder Link',
     type: 'text',
   },
+  {
+    name: 'detailed_description',
+    label: 'Description',
+    type: 'text'
+  }
 ];
 
 export const tableColumns: TableColumn<HardwareItem>[] = [
   { key: 'id', label: 'ID' },
   { key: 'hwtype', label: 'Type', filterable: true },
+  { key: 'label', label: 'Label' },
   { key: 'main_metric', label: 'Main Metric', filterable: true },
   { key: 'secondary_metric', label: 'Secondary' },
   { key: 'length', label: 'Length' },
