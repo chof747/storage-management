@@ -38,6 +38,7 @@ migrate = "alembic upgrade head"
 migrationtest = "alembic/migration_test.sh"
 makemigration = "alembic revision --autogenerate -m"
 init_db = "python -m app.scripts.init_db"
+serve= "uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
 [tool.pdm]
 package = [{include = "app"},   { include = "alembic" }]
