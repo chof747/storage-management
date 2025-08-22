@@ -9,11 +9,13 @@ class HardwareItem(Base, Printable):
 
     id = Column(Integer, primary_key=True, index=True)
     hwtype = Column(String, nullable=False)
+    label = Column(String)
     main_metric = Column(String, nullable=False)
     secondary_metric = Column(String)
     length = Column(Float)
     reorder = Column(Boolean)
     reorder_link = Column(String)
+    detailed_description = Column(String)
     storage_element_id = Column(
         Integer, ForeignKey("storage_element.id"), nullable=False
     )

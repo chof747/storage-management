@@ -1,3 +1,3 @@
-id,hwtype,main_metric,secondary_metric,length,reorder,reorder_link,storage_element_id,queued_for_printing
-1,Screws,M3,BH,5.0,1,http://amazon.de,1,1
-2,Washer,M3,,0.5,0,NULL,1,0
+id,hwtype,label,main_metric,secondary_metric,length,reorder,reorder_link,detailed_description,storage_element_id,queued_for_printing
+1,Screws,Button Head Screw,M3,BH,5.0,1,http://amazon.de,Metal screws with button heads,1,1
+2,Washer,Metall washer,M3,,0.5,0,NULL,,1,0
