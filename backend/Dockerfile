@@ -21,5 +21,7 @@ RUN pdm install --prod \
 # Expose the port Uvicorn will run on
 EXPOSE 8000
 
-# Command to run the app with hot reload disabled (for production)
-CMD ["pdm", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+COPY ./docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
