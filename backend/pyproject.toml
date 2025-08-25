@@ -16,6 +16,7 @@ dependencies = [
     "jinja2>=3.1.6",
     "pyyaml>=6.0.2",
     "dotenv>=0.9.9",
+    "requests>=2.32.5",
 ]
 
 [dependency-groups]
@@ -49,3 +50,6 @@ packages = ["app", "alembic"]
 [tool.pytest.ini_options]
 pythonpath = ["."]
 norecursedirs = ["__pypackages__"]
+markers = [
+  "integration: mark a test as an integration test"
+]
