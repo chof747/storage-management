@@ -7,7 +7,6 @@ from app.models.partsbox_item import PartsboxItem
 
 
 class PartsboxService:
-    load_dotenv()
 
     BASE_URL = os.getenv("PARTSBOX_BASE_URL", "https://partsbox.com/api")
     API_KEY = os.getenv("PARTSBOX_API_KEY", "")
