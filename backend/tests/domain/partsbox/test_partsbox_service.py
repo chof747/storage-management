@@ -1,3 +1,4 @@
+import time
 import pytest
 from unittest.mock import patch, MagicMock
 from app.domain.partsbox.partsbox_service import PartsboxService
@@ -67,3 +68,44 @@ def test_fetch_parts_real_service():
     assert hasattr(parts[0], "name")
     assert hasattr(parts[0], "total_stock")
     assert hasattr(parts[0], "storage_place")
+
+
+@patch("app.domain.partsbox.partsbox_service.requests.get")
+def test_fetch_parts_cache(mock_get, mock_partsbox_data):
+    parts_data, storage_data = mock_partsbox_data
+
+    # Mock the API responses
+    parts_response_mock = MagicMock()
+    parts_response_mock.json.return_value = parts_data
+    parts_response_mock.raise_for_status = MagicMock()
+
+    storage_response_mock = MagicMock()
+    storage_response_mock.json.return_value = storage_data
+    storage_response_mock.raise_for_status = MagicMock()
+
+    mock_get.side_effect = [parts_response_mock, storage_response_mock]
+    PartsboxService._cache = {"data": None, "timestamp": 0}
+
+    # Call the fetch_parts method for the first time
+    parts_first_call = PartsboxService.fetch_parts()
+
+    # Assert that the API was called
+    assert mock_get.call_count == 2
+
+    # Call the fetch_parts method again (should use cache)
+    parts_second_call = PartsboxService.fetch_parts()
+
+    # Assert that the API was not called again
+    assert mock_get.call_count == 2
+
+    # Assert that the cached data is returned
+    assert parts_first_call == parts_second_call
+
+    # Simulate cache expiration by modifying the timestamp
+    PartsboxService._cache["timestamp"] -= PartsboxService.CACHE_EXPIRATION + 1
+    time.sleep(1)  # Ensure time has passed
+    mock_get.side_effect = [parts_response_mock, storage_response_mock]
+
+    parts_third_call = PartsboxService.fetch_parts()
+    assert mock_get.call_count == 4
+    assert parts_third_call == parts_first_call  # Data should be the same
