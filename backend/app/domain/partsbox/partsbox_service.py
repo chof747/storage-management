@@ -97,3 +97,82 @@ class PartsboxService:
         cls._cache["timestamp"] = current_time
 
         return partsbox_items
+
+    @classmethod
+    def sort(
+        cls,
+        parts: list[PartsboxItem],
+        key: str = "name",
+        ascending: bool = True,
+    ) -> list[PartsboxItem]:
+        """
+        Sorts a list of PartsboxItem objects based on a specified attribute and order.
+        Args:
+            parts (list[PartsboxItem]): The list of PartsboxItem items to be sorted.
+            key (str, optional): The attribute name to sort by. Defaults to "name".
+            ascending (bool, optional): If True, sorts in ascending order; if False, sorts in descending order. Defaults to True.
+        Returns:
+            list[PartsboxItem]: The sorted list of PartsboxItem objects.
+        Raises:
+            ValueError: If the specified key is not a valid attribute of PartsboxItem.
+        """
+
+        # Sort parts
+        try:
+            parts.sort(key=lambda x: getattr(x, key), reverse=not ascending)
+        except AttributeError:
+            raise ValueError(f"Invalid sort_by attribute: {key}")
+
+        return parts
+
+    @classmethod
+    def paginate(
+        cls,
+        parts: list[PartsboxItem],
+        offset: int = 0,
+        limit: int = 20,
+    ) -> list[PartsboxItem]:
+        """
+        Paginates a list of PartsboxItem objects.
+        Args:
+            parts (list[PartsboxItem]): The list of PartsboxItem items to be paginated.
+            offset (int, optional): The starting index of the items to retrieve. Defaults to 0.
+            limit (int, optional): The maximum number of items to retrieve. Defaults to 20.
+        Returns:
+            list[PartsboxItem]: The paginated list of PartsboxItem objects for the specified range.
+        Raises:
+            ValueError: If the offset or limit is less than 0.
+        """
+
+        if offset < 0 or limit < 1:
+            raise ValueError(
+                "Offset must be non-negative and limit must be greater than 0."
+            )
+
+        return parts[offset : offset + limit]
+
+    @classmethod
+    def filter(
+        cls, parts: list[PartsboxItem], field: str, filter_value: str
+    ) -> list[PartsboxItem]:
+        """
+        Filters a list of PartsboxItem objects based on a specified field and filter value.
+        Args:
+            parts (list[PartsboxItem]): The list of PartsboxItem items to be filtered.
+            field (str): The attribute name to filter by.
+            filter_value (str): The value to filter the specified field by.
+        Returns:
+            list[PartsboxItem]: The filtered list of PartsboxItem objects.
+        Raises:
+            ValueError: If the specified field is not a valid attribute of PartsboxItem.
+        """
+        try:
+            filtered_parts = [
+                part
+                for part in parts
+                if filter_value.lower() in str(getattr(part, field)).lower()
+            ]
+        except AttributeError:
+            raise ValueError(f"Invalid filter field: {field}")
+
+        return filtered_parts
