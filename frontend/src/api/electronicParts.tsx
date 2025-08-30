@@ -15,3 +15,13 @@ export const getItems = async (offset: number, limit: number, filters: QueryFilt
   return await res.json();
 };
 
+export const togglePartforPrinting = async (item: PartsBoxItem): Promise<void> => {
+  const API_BASE = await getApiBase();
+  const un = item.queued_for_printing ? "un" : "";
+  const res = await fetch(`${API_BASE}/${PATH}/${un}queueforprinting/${item.id}`);
+  if (!res.ok) {
+    const error = new Error('Could not toggle printing state');
+    throw error;
+  }
+};
+
