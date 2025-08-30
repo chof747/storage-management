@@ -3,7 +3,7 @@ import { HardwareItem } from '../../types/hardwareItems';
 import { getItems, createItem, updateItem, deleteItem, toggleItemforPrinting } from '../../api/hardwareItem';
 import { getItems as getStorageItems, createPlaceholder } from '../../api/storageElement';
 import { FormField } from '../../components/common/ModelForm';
-import { FilterableTableHandle, TableColumn } from '../../components/common/FilterableTable';
+import { FilterableTableHandle, TableColumn } from '../../components/common/FilterableTableSimple';
 import { ShoppingCart as ReorderIcon, PrintOutlined, PrintDisabled } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';

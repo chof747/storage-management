@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { ResultPage } from '../../types/page';
-import { FilterableTableHandle } from './FilterableTable';
+import { FilterableTableHandle } from './FilterableTableSimple';
 
 type EntityPageProps<T> = {
   title: string;

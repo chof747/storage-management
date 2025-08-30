@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { FilterableTableHandle } from '../components/common/FilterableTable';
+import { FilterableTableHandle } from '../components/common/FilterableTableSimple';
 import { StorageType } from "../types/storageType";
 import { StorageTypeConfig } from "./configurations/storagetype";
 import ConfiguredEntityPage from "../components/common/ConfiguredEntityPage";

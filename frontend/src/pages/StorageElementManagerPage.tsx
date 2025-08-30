@@ -13,7 +13,7 @@ import { HardwareItem } from '../types/hardwareItems';
 import { getItemsByStorage, moveItemsBetweenStorages } from '../api/hardwareItem';
 import { createHardwareItemConfig } from './configurations/hardwareitem';
 import ConfiguredEntityPage, { EntityConfig } from '../components/common/ConfiguredEntityPage';
-import { FilterableTableHandle } from '../components/common/FilterableTable';
+import { FilterableTableHandle } from '../components/common/FilterableTableSimple';
 import MoveItemsDialog from './dialogs/moveitems';
 import { openLabelPrintDialog } from "../features/labelprint/useLabelPrintDialog";
 

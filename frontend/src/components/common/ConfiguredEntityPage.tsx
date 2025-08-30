@@ -1,6 +1,6 @@
 // ConfiguredEntityPage.tsx
 import EntityPage from './EntityPage';
-import FilterableTable, { FilterableTableHandle, TableColumn } from './FilterableTable';
+import FilterableTable, { FilterableTableHandle, TableColumn } from './FilterableTableSimple';
 import ModelForm, { FormField } from './ModelForm';
 import React from 'react';
 import { ResultPage } from '../../types/page';
