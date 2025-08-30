@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ConfirmDialog from './ConfirmDialog';
-import FilterPanel from './FilterPanel';
-import { ResultPage } from '../../types/page';
+import FilterPanel from './FilterPanel'
+import { ResultPage, QueryFilter } from '../../types/page';
 
 /*
 function getNestedValue(obj: any, path: string): any {
@@ -46,7 +46,7 @@ export type FilterableTableHandle<T> = {
 
 type FilterableTableProps<T> = {
   columns: TableColumn<T>[];
-  fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
+  fetchItems: (offset: number, limit: number, filters: QueryFilter[]) => Promise<ResultPage<T>>;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   getRowId: (item: T) => string | number;
@@ -69,10 +69,7 @@ function FilterableTableInner<T>({
   selectableRows = false,
   onSelectionChange,
 }: FilterableTableProps<T>, ref: React.Ref<FilterableTableHandle<T>>) {
-  const initialFilterState = columns.reduce((acc, col) => {
-    if (col.filterable) acc[col.key as string] = '';
-    return acc;
-  }, {} as Record<string, string>);
+  const initialFilterState = [] as QueryFilter[];
 
   const [items, setItems] = useState<T[]>([]);
   const [total, setTotal] = useState(0);
@@ -90,51 +87,39 @@ function FilterableTableInner<T>({
       label: col.label,
     }));
 
-  const filteredData = useMemo(() => {
-    if (!items.length) return [];
 
-    return items.filter((item) =>
-      Object.entries(filters).every(([key, value]) => {
-        const column = columns.find((col) => col.key === key);
-        const fieldKey = column?.filterKey || key;
-        const fieldValue = getNestedValue(item, fieldKey);
-        return String(fieldValue ?? '').toLowerCase().includes(value.toLowerCase());
-      })
-    );
-  }, [items, filters, columns]);
-
-  const allSelected = filteredData.length > 0 && filteredData.every((item) => selectedIds.has(getRowId(item)));
+  const allSelected = items.length > 0 && items.every((item) => selectedIds.has(getRowId(item)));
 
   const loadItems = async () => {
-    const data = await fetchItems(page * rowsPerPage, rowsPerPage);
+    const data = await fetchItems(page * rowsPerPage, rowsPerPage, filters);
     setItems(data.items);
     setTotal(data.total);
   };
 
   useEffect(() => {
     loadItems();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, filters]);
 
 
   useImperativeHandle(ref, () => ({
-    getSelectedItems: () => filteredData.filter((item: T) => selectedIds.has(getRowId(item))),
+    getSelectedItems: () => items.filter((item: T) => selectedIds.has(getRowId(item))),
     refresh: () => loadItems(),
   }));
 
-  const updateFilter = (key: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+  const updateFilter = (filters: QueryFilter[]) => {
+    setFilters(filters);
   };
 
   const updateSelection = (updatedIds: Set<string | number>) => {
     setSelectedIds(updatedIds);
     if (onSelectionChange) {
-      const selectedItems = filteredData.filter((item) => updatedIds.has(getRowId(item)));
+      const selectedItems = items.filter((item) => updatedIds.has(getRowId(item)));
       onSelectionChange(selectedItems);
     }
   };
 
   const toggleSelectAll = () => {
-    const updated = allSelected ? new Set<string | number>() : new Set(filteredData.map(getRowId));
+    const updated = allSelected ? new Set<string | number>() : new Set(items.map(getRowId));
     updateSelection(updated);
   };
 
@@ -169,7 +154,7 @@ function FilterableTableInner<T>({
 
   return (
     <>
-      <FilterPanel filters={filters} onChange={updateFilter} config={filterConfig} />
+      <FilterPanel onChange={updateFilter} config={filterConfig} />
 
       <TableContainer component={Paper}>
         <Table>
@@ -191,7 +176,7 @@ function FilterableTableInner<T>({
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData.map((item) => {
+            {items.map((item) => {
               const id = getRowId(item);
               return (
                 <TableRow key={id} hover selected={selectedIds.has(id)}>
