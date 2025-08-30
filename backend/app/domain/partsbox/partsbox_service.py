@@ -13,6 +13,7 @@ class PartsboxService:
 
     # Global cache
     _cache = {"data": None, "timestamp": 0}
+    _printing_queue = set()
     CACHE_EXPIRATION = int(os.getenv("PARTSBOX_CACHE_EXPIRATION", 3600))
 
     @classmethod
@@ -24,6 +25,11 @@ class PartsboxService:
         return r.get("data", None)
 
     @classmethod
+    def _reset(cls):
+        cls._cache = {"data": None, "timestamp": 0}
+        cls._printing_queue = set()
+
+    @classmethod
     def fetch_parts(cls, refresh_cache: bool = False) -> list[PartsboxItem]:
         """
         Fetch all parts and storage data from the Partsbox.io API,
@@ -32,13 +38,15 @@ class PartsboxService:
         current_time = time.time()
 
         if refresh_cache:
-            cls._cache = {"data": None, "timestamp": 0}
+            cls._reset
 
         # Check if cache is still valid
         if cls._cache["data"] and (
             current_time - cls._cache["timestamp"] < cls.CACHE_EXPIRATION
         ):
             return cls._cache["data"]
+        else:
+            cls._reset()
 
         headers = {
             "Authorization": f"APIKey {PartsboxService.API_KEY}",
@@ -176,3 +184,41 @@ class PartsboxService:
             raise ValueError(f"Invalid filter field: {field}")
 
         return filtered_parts
+
+    @classmethod
+    def queue_for_printing(cls, part_id: str):
+        """
+        Marks a part as currently being printed by adding its ID to the printing queue.
+        Args:
+            part_id (str): The ID of the part to mark as printing.
+        """
+        cls._printing_queue.add(part_id)
+
+    @classmethod
+    def unqueue_for_printing(cls, part_id: str):
+        """
+        Unmarks a part as currently being printed by removing its ID from the printing queue.
+        Args:
+            part_id (str): The ID of the part to unmark as printing.
+        """
+        cls._printing_queue.discard(part_id)
+
+    @classmethod
+    def is_queued_for_printing(cls, part_id: str) -> bool:
+        """
+        Checks if a part is currently marked as being printed.
+        Args:
+            part_id (str): The ID of the part to check.
+        Returns:
+            bool: True if the part is currently being printed, False otherwise.
+        """
+        return part_id in cls._printing_queue
+
+    @classmethod
+    def queued_part_ids(cls) -> set[str]:
+        """
+        Returns the set of part IDs that are currently marked as being printed.
+        Returns:
+            set[str]: A set of part IDs currently in the printing queue.
+        """
+        return cls._printing_queue

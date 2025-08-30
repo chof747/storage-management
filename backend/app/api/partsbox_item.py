@@ -28,6 +28,11 @@ def list_partsbox_items(
 
     total = len(all_items)
 
+    printing_queue = PartsboxService.queued_part_ids()
+
+    for item in all_items:
+        item.queued_for_printing = item.id in printing_queue
+
     # Sort items
     all_items = PartsboxService.sort(all_items, key=sort_by, ascending=asc)
 
@@ -35,3 +40,15 @@ def list_partsbox_items(
     paginated_items = PartsboxService.paginate(all_items, offset=offset, limit=limit)
 
     return {"total": total, "items": paginated_items}
+
+
+@router.get("/queueforprinting/{item_id}")
+def queue_for_printing(item_id: str):
+    PartsboxService.queue_for_printing(item_id)
+    return {"message": f"electronic-part {item_id} queued for label printing"}
+
+
+@router.get("/unqueueforprinting/{item_id}")
+def unqueue_for_printing(item_id: str):
+    PartsboxService.unqueue_for_printing(item_id)
+    return {"message": f"electronic-part {item_id} unqueued for label printing"}

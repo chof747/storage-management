@@ -122,3 +122,39 @@ def test_filter_fetched_parts(mock_get, mock_partsbox_data):
     filtered_parts = PartsboxService.filter(parts, "storage_place", "White-Drawer-2")
     assert len(filtered_parts) == 33
     assert all("White-Drawer-2" in part.storage_place for part in filtered_parts)
+
+
+@patch("app.domain.partsbox.partsbox_service.requests.get")
+def test_queue_for_printing(mock_get, mock_partsbox_data):
+    mock_get.side_effect = mock_partsbox_data
+    PartsboxService._cache = {"data": None, "timestamp": 0}
+    PartsboxService._printing_queue = set()
+
+    # Call the fetch_parts method
+    parts = PartsboxService.fetch_parts()
+
+    part_to_queue = parts[0]
+    PartsboxService.queue_for_printing(part_to_queue.id)
+    assert part_to_queue.id in PartsboxService._printing_queue
+
+    # Queue the same part again (should not duplicate)
+    PartsboxService.queue_for_printing(part_to_queue.id)
+    assert len(PartsboxService._printing_queue) == 1
+    assert PartsboxService.is_queued_for_printing(part_to_queue.id)
+
+    # Queue another part
+    another_part = parts[1]
+    PartsboxService.queue_for_printing(another_part.id)
+    assert another_part.id in PartsboxService._printing_queue
+    assert len(PartsboxService._printing_queue) == 2
+    assert PartsboxService.is_queued_for_printing(another_part.id)
+
+    # Check the queued parts
+    queue = PartsboxService.queued_part_ids()
+    for id in [part_to_queue.id, another_part.id]:
+        assert any(qid == id for qid in queue)
+
+    # Unqueue a part
+    PartsboxService.unqueue_for_printing(part_to_queue.id)
+    assert len(PartsboxService._printing_queue) == 1
+    assert not PartsboxService.is_queued_for_printing(part_to_queue.id)

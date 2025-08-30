@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 from app.models.partsbox_item import PartsboxItem
+from app.domain.partsbox.partsbox_service import PartsboxService
 from tests.utils.asserts import assert_dict_contains
 from tests.utils.partsbox import mock_partsbox_data
 
@@ -9,6 +10,7 @@ from tests.utils.partsbox import mock_partsbox_data
 def test_list_partsbox_items(mock_get, mock_partsbox_data, client):
     """Test Listing of Partsbox Items"""
     mock_get.side_effect = mock_partsbox_data
+    PartsboxService._reset()
 
     list_response = client.get("/api/electronic-parts/")
     data = list_response.json()
@@ -29,6 +31,7 @@ def test_list_partsbox_items(mock_get, mock_partsbox_data, client):
             "description": "8 Position 2 Row 7.62 mm (Row Spacing) 2.54 mm Pitch Through Hole Dip Socket",
             "total_stock": 2,
             "storage_place": "PartBox 1 (Black)",
+            "queued_for_printing": False,
         },
         first_item,
         exclude_paths=[],
@@ -39,6 +42,7 @@ def test_list_partsbox_items(mock_get, mock_partsbox_data, client):
 def test_list_partsbox_page(mock_get, mock_partsbox_data, client):
     """Test Listing of Partsbox Items"""
     mock_get.side_effect = mock_partsbox_data
+    PartsboxService._reset()
 
     list_response = client.get(
         "/api/electronic-parts/", params={"limit": 2, "offset": 1}
@@ -61,6 +65,7 @@ def test_list_partsbox_page(mock_get, mock_partsbox_data, client):
             "total_stock": 18,
             "storage_place": "Gridfinity ICs",
             "material_part_number": "MT3608L",
+            "queued_for_printing": False,
         },
         first_item,
         exclude_paths=[],
@@ -71,6 +76,7 @@ def test_list_partsbox_page(mock_get, mock_partsbox_data, client):
 def test_list_partsbox_sort(mock_get, mock_partsbox_data, client):
     """Test Listing of Partsbox Items"""
     mock_get.side_effect = mock_partsbox_data
+    PartsboxService._reset()
 
     list_response = client.get("/api/electronic-parts/", params={"sort_by": "name"})
     data = list_response.json()
@@ -96,6 +102,7 @@ def test_list_partsbox_sort(mock_get, mock_partsbox_data, client):
 def test_list_partsbox_filter(mock_get, mock_partsbox_data, client):
     """Test Listing of Partsbox Items"""
     mock_get.side_effect = mock_partsbox_data
+    PartsboxService._reset()
 
     list_response = client.get("/api/electronic-parts/", params={"filter": "name:YSP"})
     data = list_response.json()
@@ -131,3 +138,45 @@ def test_list_partsbox_filter(mock_get, mock_partsbox_data, client):
         "resistor" in i["name"].lower() and i["storage_place"] == "Part Box 2 (black)"
         for i in data["items"]
     )
+
+
+@patch("app.domain.partsbox.partsbox_service.requests.get")
+def test_list_partsbox_queued(mock_get, mock_partsbox_data, client):
+    """Test Listing of Partsbox Items with queued for printing status"""
+    mock_get.side_effect = mock_partsbox_data
+    PartsboxService._reset()
+
+    PartsboxService.fetch_parts()
+    PartsboxService.queue_for_printing("71cp5tyrrmjweaw6mwy6tezfks")
+
+    list_response = client.get("/api/electronic-parts/", params={"filter": "name:YSP"})
+    data = list_response.json()
+    print(data)
+
+    assert list_response.status_code == 200
+    assert data["total"] == 2
+    assert data["items"][1]["queued_for_printing"]
+    assert not data["items"][0]["queued_for_printing"]
+
+
+@patch("app.domain.partsbox.partsbox_service.requests.get")
+def test_queue_partbox_item_for_printing(mock_get, mock_partsbox_data, client):
+    """Test queueing a Partsbox item for printing"""
+    mock_get.side_effect = mock_partsbox_data
+    PartsboxService._reset()
+
+    list_response = client.get(
+        "/api/electronic-parts/queueforprinting/71cp5tyrrmjweaw6mwy6tezfks"
+    )
+    data = list_response.json()
+    assert list_response.status_code == 200
+    assert "71cp5tyrrmjweaw6mwy6tezfks queued for label printing" in data["message"]
+    assert PartsboxService.is_queued_for_printing("71cp5tyrrmjweaw6mwy6tezfks")
+
+    list_response = client.get(
+        "/api/electronic-parts/unqueueforprinting/71cp5tyrrmjweaw6mwy6tezfks"
+    )
+    data = list_response.json()
+    assert list_response.status_code == 200
+    assert "71cp5tyrrmjweaw6mwy6tezfks unqueued for label printing" in data["message"]
+    assert not PartsboxService.is_queued_for_printing("71cp5tyrrmjweaw6mwy6tezfks")

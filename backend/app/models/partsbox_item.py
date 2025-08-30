@@ -16,6 +16,7 @@ class PartsboxItem:
     total_stock: int
     storage_place: str
     material_part_number: str
+    queued_for_printing: bool = False
 
     def to_dict(self):
         """
@@ -30,4 +31,5 @@ class PartsboxItem:
             "total_stock": self.total_stock,
             "storage_place": self.storage_place,
             "material_part_number": self.material_part_number,
+            "queued_for_printing": self.queued_for_printing,
         }

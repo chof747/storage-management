@@ -13,6 +13,7 @@ class PartsboxItemBase(BaseModel):
     total_stock: int
     storage_place: str
     material_part_number: str
+    queued_for_printing: bool = False
 
     class ConfigDict:
         from_attributes = True
