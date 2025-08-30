@@ -6,6 +6,7 @@ import HardwareItemPage from './pages/HardwareItemPage';
 import StorageElementPage from './pages/StorageElementPage';
 import StorageTypePage from './pages/StorageTypePage';
 import StorageElementManagerPage from './pages/StorageElementManagerPage';
+import ElectronicPartsPage from './pages/ElectronicPartsPage';
 
 
 export default function AppRoutes() {
@@ -47,6 +48,14 @@ export default function AppRoutes() {
       element: (
         <Layout>
           <StorageTypePage />
+        </Layout>
+      )
+    },
+    {
+      path: '/electronic-parts',
+      element: (
+        <Layout>
+          <ElectronicPartsPage />
         </Layout>
       )
     },
