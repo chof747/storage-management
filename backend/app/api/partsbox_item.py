@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/electronic-parts", tags=["Partsbox Items"])
 def list_partsbox_items(
     limit: int = 10,
     offset: int = 0,
-    filters: List[str] = Query(
+    filter: List[str] = Query(
         None,
         descripiton="Filter in the format key:value. E.g., category:resistor",
     ),
@@ -21,8 +21,8 @@ def list_partsbox_items(
     all_items = PartsboxService.fetch_parts()
 
     # Filter items if search_key and search_value are provided
-    if filters:
-        for f in filters:
+    if filter:
+        for f in filter:
             key, value = f.split(":", 1)
             all_items = PartsboxService.filter(all_items, key, value)
 

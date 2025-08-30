@@ -97,7 +97,7 @@ def test_list_partsbox_filter(mock_get, mock_partsbox_data, client):
     """Test Listing of Partsbox Items"""
     mock_get.side_effect = mock_partsbox_data
 
-    list_response = client.get("/api/electronic-parts/", params={"filters": "name:YSP"})
+    list_response = client.get("/api/electronic-parts/", params={"filter": "name:YSP"})
     data = list_response.json()
     print(data)
 
@@ -109,7 +109,7 @@ def test_list_partsbox_filter(mock_get, mock_partsbox_data, client):
 
     mock_get.side_effect = mock_partsbox_data
     list_response = client.get(
-        "/api/electronic-parts/", params={"filters": ["name:resistor", "name:1k"]}
+        "/api/electronic-parts/", params={"filter": ["name:resistor", "name:1k"]}
     )
     data = list_response.json()
     print(data)
@@ -120,7 +120,7 @@ def test_list_partsbox_filter(mock_get, mock_partsbox_data, client):
     mock_get.side_effect = mock_partsbox_data
     list_response = client.get(
         "/api/electronic-parts/",
-        params={"filters": ["name:resistor", "storage_place:Part Box 2 (black)"]},
+        params={"filter": ["name:resistor", "storage_place:Part Box 2 (black)"]},
     )
     data = list_response.json()
     print(data)
