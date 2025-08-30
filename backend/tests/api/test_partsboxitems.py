@@ -97,9 +97,7 @@ def test_list_partsbox_filter(mock_get, mock_partsbox_data, client):
     """Test Listing of Partsbox Items"""
     mock_get.side_effect = mock_partsbox_data
 
-    list_response = client.get(
-        "/api/electronic-parts/", params={"search_key": "name", "search_value": "YSP"}
-    )
+    list_response = client.get("/api/electronic-parts/", params={"filters": "name:YSP"})
     data = list_response.json()
     print(data)
 
@@ -108,3 +106,28 @@ def test_list_partsbox_filter(mock_get, mock_partsbox_data, client):
     assert len(data["items"]) == 2
     assert any(i["name"] == "YSPI1050-470M" for i in data["items"])
     assert any(i["name"] == "YSPI0740-220M" for i in data["items"])
+
+    mock_get.side_effect = mock_partsbox_data
+    list_response = client.get(
+        "/api/electronic-parts/", params={"filters": ["name:resistor", "name:1k"]}
+    )
+    data = list_response.json()
+    print(data)
+
+    assert data["total"] == 2
+    assert len(data["items"]) == 2
+
+    mock_get.side_effect = mock_partsbox_data
+    list_response = client.get(
+        "/api/electronic-parts/",
+        params={"filters": ["name:resistor", "storage_place:Part Box 2 (black)"]},
+    )
+    data = list_response.json()
+    print(data)
+
+    assert data["total"] == 30
+    assert len(data["items"]) == 10
+    assert all(
+        "resistor" in i["name"].lower() and i["storage_place"] == "Part Box 2 (black)"
+        for i in data["items"]
+    )

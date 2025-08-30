@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
+from typing import List
 from app.schemas.partsbox_item import PartsBoxItemPage
 from app.domain.partsbox.partsbox_service import PartsboxService
 
@@ -9,8 +10,10 @@ router = APIRouter(prefix="/api/electronic-parts", tags=["Partsbox Items"])
 def list_partsbox_items(
     limit: int = 10,
     offset: int = 0,
-    search_key: str = "",
-    search_value: str = "",
+    filters: List[str] = Query(
+        None,
+        descripiton="Filter in the format key:value. E.g., category:resistor",
+    ),
     sort_by: str = "id",
     asc: bool = True,
 ):
@@ -18,8 +21,10 @@ def list_partsbox_items(
     all_items = PartsboxService.fetch_parts()
 
     # Filter items if search_key and search_value are provided
-    if search_key and search_value:
-        all_items = PartsboxService.filter(all_items, search_key, search_value)
+    if filters:
+        for f in filters:
+            key, value = f.split(":", 1)
+            all_items = PartsboxService.filter(all_items, key, value)
 
     total = len(all_items)
 
