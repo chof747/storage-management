@@ -4,7 +4,7 @@ from app.models.printable import Printable
 
 
 @dataclass
-class PartsboxItem(Printable):
+class PartsboxItem:
     """
     Represents a part from Partsbox.io with attributes for display and processing.
     This class is not tied to a database and is used as a plain Python object.
