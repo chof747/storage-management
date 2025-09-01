@@ -90,10 +90,20 @@ class PartsboxService:
             else:
                 storage_place = PartsboxService.STORAGE_PLACE_UNKNOWN
 
+            if (
+                "part/cad-keys" in part.keys()
+                and isinstance(part["part/cad-keys"], list)
+                and len(part["part/cad-keys"]) > 0
+            ):
+                label = part["part/cad-keys"][0]
+            else:
+                label = ""
+
             partsbox_item = PartsboxItem(
                 id=part["part/id"],
                 name=part["part/name"],
                 description=part["part/description"] or "",
+                label=label,
                 material_part_number=(part["part/mpn"] if "part/mpn" in part else ""),
                 total_stock=total_stock,
                 storage_place=storage_place,

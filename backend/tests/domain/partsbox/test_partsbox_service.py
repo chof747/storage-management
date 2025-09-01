@@ -23,6 +23,7 @@ def test_fetch_parts_more_than_one(mock_get, mock_partsbox_data):
     assert parts[0].id == "063tfs8qa0jkc8berhdkswwv4m"
     assert parts[0].name == "MT3608L Boost Converter"
     assert parts[0].material_part_number == "MT3608L"
+    assert parts[0].label == "M36"
     assert parts[0].description == "Boost Converter (2.5A, <=20V LCSC: C2832326) (M36)"
 
 

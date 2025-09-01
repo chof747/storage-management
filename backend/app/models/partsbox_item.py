@@ -12,6 +12,7 @@ class PartsboxItem(Printable):
 
     id: str
     name: str
+    label: str
     description: str
     total_stock: int
     storage_place: str
@@ -26,6 +27,7 @@ class PartsboxItem(Printable):
         return {
             "id": self.id,
             "name": self.name,
+            "label": self.label,
             "description": self.description,
             "total_stock": self.total_stock,
             "storage_place": self.storage_place,

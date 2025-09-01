@@ -10,6 +10,7 @@ class PartsboxItemBase(BaseModel):
     id: str
     name: str
     description: str
+    label: str
     total_stock: int
     storage_place: str
     material_part_number: str

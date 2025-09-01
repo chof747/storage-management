@@ -7,6 +7,9 @@
       "part/description": "Boost Converter (2.5A, <=20V LCSC: C2832326) (M36)",
       "part/manufacturer": "Xi'an Aerosemi Tech",
       "part/footprint": "SOT-23-6",
+      "part/cad-keys": [
+        "M36"
+      ],
       "part/stock": [
         {
           "stock/comments": "LCSC Order: 2403130226",
