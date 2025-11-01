@@ -14,7 +14,7 @@ def list_partsbox_items(
         None,
         descripiton="Filter in the format key:value. E.g., category:resistor",
     ),
-    sort_by: str = "id",
+    sort_by: str = "name",
     asc: bool = True,
 ):
 

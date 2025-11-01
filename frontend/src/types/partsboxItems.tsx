@@ -1,6 +1,7 @@
 export interface PartsBoxItem {
   id?: string;
   name: string;
+  label: string;
   description: string;
   storage_place: string;
   total_stock: number;

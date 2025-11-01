@@ -8,9 +8,12 @@ import { useRef } from "react";
 const tableColumns: TableColumn<PartsBoxItem>[] = [
   { key: 'name', label: 'Name', filterable: true },
   { key: 'description', label: 'Description' },
+  { key: 'label', label: 'Label', filterable: true },
   { key: 'storage_place', label: 'Place', filterable: true },
   { key: 'total_stock', label: 'Stock' },
 ];
+
+
 
 
 export default function ElectronicsPartsPage() {
