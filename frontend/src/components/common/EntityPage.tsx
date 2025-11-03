@@ -7,13 +7,13 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { ResultPage } from '../../types/page';
-import { FilterableTableHandle } from './FilterableTable';
+import { QueryFilter, ResultPage } from '../../types/page';
+import { FilterableTableHandle } from './FilterableTableSimple';
 
 type EntityPageProps<T> = {
   title: string;
   toolbar: boolean;
-  fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
+  fetchItems: (offset: number, limit: number, filters: QueryFilter[]) => Promise<ResultPage<T>>;
   createItem: (item: T) => Promise<T>;
   updateItem: (item: T) => Promise<T>;
   deleteItem: (id: number) => Promise<void>;
@@ -23,7 +23,7 @@ type EntityPageProps<T> = {
     onSuccess: (doAnother: boolean) => void;
   }>;
   TableComponent: React.ComponentType<{
-    fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
+    fetchItems: (offset: number, limit: number, filters: QueryFilter[]) => Promise<ResultPage<T>>;
     onEdit: (item: T) => void;
     onDelete: (id: number) => void;
   }>;

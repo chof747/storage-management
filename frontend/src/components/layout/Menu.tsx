@@ -4,6 +4,7 @@ import BuildIcon from '@mui/icons-material/Build';
 import { Inventory, Home } from "@mui/icons-material";
 import LabelPrinting from '@mui/icons-material/LocalPrintshopTwoTone';
 import CategoryIcon from '@mui/icons-material/Category';
+import MemoryIcon from '@mui/icons-material/Memory';
 import { openLabelPrintDialog } from "../../features/labelprint/useLabelPrintDialog";
 import MenuActionItem from "./menu/MenuActionItem";
 
@@ -15,6 +16,7 @@ export const MenuDrawer = () => {
       <MenuItem path="/hardware" text="Hardware" Icon={BuildIcon} />
       <MenuItem path="/storage" text="Storage" Icon={Inventory} />
       <MenuItem path="/storage_type" text="Storage Types" Icon={CategoryIcon} />
+      <MenuItem path="/electronic-parts" text="Electronic Parts" Icon={MemoryIcon} />
       <MenuActionItem text="Print Labels ..." Icon={LabelPrinting} onClick={openLabelPrintDialog} />
     </List>
   );

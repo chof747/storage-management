@@ -1,12 +1,14 @@
-import { ResultPage } from "../types/page";
+import { ResultPage, QueryFilter } from "../types/page";
 import { StorageElement } from "../types/storageElements";
 import { getApiBase } from "./endpoint";
+import { buildFilterParams } from "./common";
 
 const PATH = "storage";
 
-export const getItems = async (offset: number, limit: number, id: number = 0): Promise<ResultPage<StorageElement>> => {
+export const getItems = async (offset: number, limit: number, filters: QueryFilter[], id: number = 0): Promise<ResultPage<StorageElement>> => {
   const API_BASE = await getApiBase();
-  const res = await fetch(`${API_BASE}/${PATH}/${id > 0 ? id + "/" : ""}?offset=${offset}&limit=${limit}`);
+  var filterparams = buildFilterParams(filters);
+  const res = await fetch(`${API_BASE}/${PATH}/${id > 0 ? id + "/" : ""}?offset=${offset}&limit=${limit}${filterparams}`);
   return await res.json();
 };
 

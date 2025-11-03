@@ -159,6 +159,53 @@ def test_list_hardware_items_with_offset_and_limit(client):
     )
 
 
+def test_list_hwitems_with_filter(client):
+
+    list_response = client.get(
+        "/api/items/",
+        params={
+            "filter": "hwtype:Screw",
+        },
+    )
+    assert list_response.status_code == 200
+    response = list_response.json()
+
+    total = response["total"]
+    items = response["items"]
+    assert total == 1
+    assert len(items) == 1
+
+    assert_dict_contains(
+        "asserting returned hw item is the first",
+        {
+            "id": 1,
+            "hwtype": "Screws",
+            "label": "Button Head Screw",
+            "main_metric": "M3",
+            "secondary_metric": "BH",
+            "length": 5.0,
+            "reorder": True,
+            "reorder_link": "http://amazon.de",
+            "detailed_description": "Metal screws with button heads",
+            "storage_element_id": 1,
+            "queued_for_printing": True,
+        },
+        items[0],
+        exclude_paths="root['storage_element']",
+    )
+
+
+def test_get_hwitem_bystorage(client):
+    response = client.get("/api/items/bystorage/", params={"storage": 1})
+    assert response.status_code == 200
+    data = response.json()
+    total = data["total"]
+    items = data["items"]
+    assert total == 2
+    assert len(items) == 2
+    assert all(i["storage_element"]["id"] == 1 for i in items)
+
+
 def test_update_hwitem_value(client, db_session):
     new_values = {
         "hwtype": "Bolt",

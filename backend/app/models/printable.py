@@ -13,3 +13,10 @@ class Printable:
 
     def unset_for_printing(self):
         self.queued_for_printing = False
+
+    @property
+    def queued(self) -> bool:
+        try:
+            return bool(self.queued_for_printing)
+        except TypeError:
+            return False

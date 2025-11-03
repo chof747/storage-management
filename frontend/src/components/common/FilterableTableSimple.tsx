@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ConfirmDialog from './ConfirmDialog';
-import FilterPanel from './FilterPanel'
-import { ResultPage, QueryFilter } from '../../types/page';
+import FilterPanel from './FilterPanelSimple';
+import { QueryFilter, ResultPage } from '../../types/page';
 
 /*
 function getNestedValue(obj: any, path: string): any {
@@ -87,8 +87,20 @@ function FilterableTableInner<T>({
       label: col.label,
     }));
 
+  const filteredData = useMemo(() => {
+    if (!items.length) return [];
 
-  const allSelected = items.length > 0 && items.every((item) => selectedIds.has(getRowId(item)));
+    return items.filter((item) =>
+      Object.entries(filters).every(([key, value]) => {
+        const column = columns.find((col) => col.key === key);
+        const fieldKey = column?.filterKey || key;
+        const fieldValue = getNestedValue(item, fieldKey);
+        return String(fieldValue ?? '').toLowerCase().includes(value.toLowerCase());
+      })
+    );
+  }, [items, filters, columns]);
+
+  const allSelected = filteredData.length > 0 && filteredData.every((item) => selectedIds.has(getRowId(item)));
 
   const loadItems = async () => {
     const data = await fetchItems(page * rowsPerPage, rowsPerPage, filters);
@@ -98,28 +110,28 @@ function FilterableTableInner<T>({
 
   useEffect(() => {
     loadItems();
-  }, [page, rowsPerPage, filters]);
+  }, [page, rowsPerPage]);
 
 
   useImperativeHandle(ref, () => ({
-    getSelectedItems: () => items.filter((item: T) => selectedIds.has(getRowId(item))),
+    getSelectedItems: () => filteredData.filter((item: T) => selectedIds.has(getRowId(item))),
     refresh: () => loadItems(),
   }));
 
-  const updateFilter = (filters: QueryFilter[]) => {
-    setFilters(filters);
+  const updateFilter = (key: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const updateSelection = (updatedIds: Set<string | number>) => {
     setSelectedIds(updatedIds);
     if (onSelectionChange) {
-      const selectedItems = items.filter((item) => updatedIds.has(getRowId(item)));
+      const selectedItems = filteredData.filter((item) => updatedIds.has(getRowId(item)));
       onSelectionChange(selectedItems);
     }
   };
 
   const toggleSelectAll = () => {
-    const updated = allSelected ? new Set<string | number>() : new Set(items.map(getRowId));
+    const updated = allSelected ? new Set<string | number>() : new Set(filteredData.map(getRowId));
     updateSelection(updated);
   };
 
@@ -154,7 +166,7 @@ function FilterableTableInner<T>({
 
   return (
     <>
-      <FilterPanel onChange={updateFilter} config={filterConfig} />
+      <FilterPanel filters={filters} onChange={updateFilter} config={filterConfig} />
 
       <TableContainer component={Paper}>
         <Table>
@@ -176,7 +188,7 @@ function FilterableTableInner<T>({
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((item) => {
+            {filteredData.map((item) => {
               const id = getRowId(item);
               return (
                 <TableRow key={id} hover selected={selectedIds.has(id)}>

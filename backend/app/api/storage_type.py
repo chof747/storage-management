@@ -28,8 +28,8 @@ def list_items(
     q: SQLQuery = db.query(StorageType)
     q = q.filter(StorageType.id == id) if id is not None else q
 
-    total = q.count()
-    return {"total": total, "items": pagination(q).all()}
+    total, query = pagination(q)
+    return {"total": total, "items": query.all()}
 
 
 @router.post("/", response_model=StorageTypeInDB)

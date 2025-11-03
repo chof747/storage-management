@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Collapse,
   IconButton,
   Paper,
@@ -12,6 +13,7 @@ import {
   ExpandMore,
 } from '@mui/icons-material';
 import { useState } from 'react';
+import { QueryFilter } from '../../types/page';
 
 type FilterConfig = {
   key: string;
@@ -20,13 +22,41 @@ type FilterConfig = {
 };
 
 type Props = {
-  filters: Record<string, string>;
-  onChange: (key: string, value: string) => void;
+  onChange: (filters: QueryFilter[]) => void;
   config: FilterConfig[];
 };
 
-export default function FilterPanel({ filters, onChange, config }: Props) {
+export default function FilterPanel({ onChange, config }: Props) {
   const [open, setOpen] = useState(false);
+  const [values, setValues] = useState<Record<string, string>>({});
+
+  const handleFieldChange = (key: string, value: string) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const applyFilters = () => {
+    const filters: QueryFilter[] = [];
+    for (const key in values) {
+      if (values[key]) {
+        filters.push({ key, value: values[key] });
+      }
+    }
+    onChange(filters);
+  }
+
+  var filterFields = config.map((field) => (
+    <TextField
+      key={field.key}
+      label={field.label}
+      size="small"
+      variant="outlined"
+      sx={{ fontSize: '0.8rem', width: 200 }}
+      InputProps={{ sx: { fontSize: '0.8rem' } }}
+      InputLabelProps={{ sx: { fontSize: '0.75rem' } }}
+      value={values[field.key] ?? ""}
+      onChange={(e) => handleFieldChange(field.key, e.target.value)}
+    />
+  ))
 
   return (
     <>
@@ -45,22 +75,14 @@ export default function FilterPanel({ filters, onChange, config }: Props) {
       <Collapse in={open}>
         <Paper sx={{ p: 2, mb: 2 }}>
           <Box display="flex" gap={2} flexWrap="wrap">
-            {config.map((field) => (
-              <TextField
-                key={field.key}
-                label={field.label}
-                size="small"
-                variant="outlined"
-                value={filters[field.key] ?? ''}
-                onChange={(e) => onChange(field.key, e.target.value)}
-                sx={{ fontSize: '0.8rem', width: 200 }}
-                InputProps={{ sx: { fontSize: '0.8rem' } }}
-                InputLabelProps={{ sx: { fontSize: '0.75rem' } }}
-              />
-            ))}
+            {
+              filterFields
+            }
+            <Button variant="outlined" onClick={applyFilters}>
+              Apply</Button>
           </Box>
         </Paper>
-      </Collapse>
+      </Collapse >
     </>
   );
 }
