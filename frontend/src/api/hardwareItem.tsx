@@ -1,12 +1,14 @@
 import { HardwareItem } from "../types/hardwareItems";
-import { ResultPage } from "../types/page";
+import { QueryFilter, ResultPage } from "../types/page";
 import { getApiBase } from "./endpoint";
+import { buildFilterParams } from "./common";
 
 const PATH = '/items';
 
-export const getItems = async (offset: number, limit: number): Promise<ResultPage<HardwareItem>> => {
+export const getItems = async (offset: number, limit: number, filters: QueryFilter[]): Promise<ResultPage<HardwareItem>> => {
   const API_BASE = await getApiBase();
-  const res = await fetch(`${API_BASE}${PATH}/?offset=${offset}&limit=${limit}`);
+  const filterParams = buildFilterParams(filters);
+  const res = await fetch(`${API_BASE}${PATH}/?offset=${offset}&limit=${limit}${filterParams}`);
   return await res.json();
 };
 

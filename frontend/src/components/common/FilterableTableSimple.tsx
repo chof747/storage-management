@@ -14,7 +14,7 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ConfirmDialog from './ConfirmDialog';
 import FilterPanel from './FilterPanelSimple';
-import { ResultPage } from '../../types/page';
+import { QueryFilter, ResultPage } from '../../types/page';
 
 /*
 function getNestedValue(obj: any, path: string): any {
@@ -46,7 +46,7 @@ export type FilterableTableHandle<T> = {
 
 type FilterableTableProps<T> = {
   columns: TableColumn<T>[];
-  fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
+  fetchItems: (offset: number, limit: number, filters: QueryFilter[]) => Promise<ResultPage<T>>;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   getRowId: (item: T) => string | number;
@@ -69,10 +69,7 @@ function FilterableTableInner<T>({
   selectableRows = false,
   onSelectionChange,
 }: FilterableTableProps<T>, ref: React.Ref<FilterableTableHandle<T>>) {
-  const initialFilterState = columns.reduce((acc, col) => {
-    if (col.filterable) acc[col.key as string] = '';
-    return acc;
-  }, {} as Record<string, string>);
+  const initialFilterState = [] as QueryFilter[];
 
   const [items, setItems] = useState<T[]>([]);
   const [total, setTotal] = useState(0);
@@ -106,7 +103,7 @@ function FilterableTableInner<T>({
   const allSelected = filteredData.length > 0 && filteredData.every((item) => selectedIds.has(getRowId(item)));
 
   const loadItems = async () => {
-    const data = await fetchItems(page * rowsPerPage, rowsPerPage);
+    const data = await fetchItems(page * rowsPerPage, rowsPerPage, filters);
     setItems(data.items);
     setTotal(data.total);
   };

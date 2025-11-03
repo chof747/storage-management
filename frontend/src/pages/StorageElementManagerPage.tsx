@@ -28,7 +28,7 @@ export default function StorageElementManagerPage() {
 
 
   const loadElement = async (id: number) => {
-    const elements: ResultPage<StorageElement> = await getItems(0, 1, id);
+    const elements: ResultPage<StorageElement> = await getItems(0, 1, [], id);
     if (1 == elements.total) {
       setElement(elements.items[0]);
     }

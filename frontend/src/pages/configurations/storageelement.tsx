@@ -3,7 +3,7 @@ import { StorageElement } from '../../types/storageElements';
 import { getItems, createItem, updateItem, deleteItem } from '../../api/storageElement';
 import { getItems as getStorageTypeItems, createPlaceholder } from '../../api/storageType';
 import { FormField } from '../../components/common/ModelForm';
-import { TableColumn } from '../../components/common/FilterableTableSimple';
+import { TableColumn } from '../../components/common/FilterableTable';
 import { IconButton, Tooltip } from '@mui/material';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
 import { SettingsOutlined } from '@mui/icons-material';
