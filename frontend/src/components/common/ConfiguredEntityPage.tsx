@@ -3,14 +3,14 @@ import EntityPage from './EntityPage';
 import FilterableTable, { FilterableTableHandle, TableColumn } from './FilterableTable';
 import ModelForm, { FormField } from './ModelForm';
 import React from 'react';
-import { ResultPage } from '../../types/page';
+import { QueryFilter, ResultPage } from '../../types/page';
 
 export type EntityConfig<T extends object> = {
   title: string;
   toolbar: boolean;
   selectitems?: boolean;
   onSelectionChange?: (selectedItems: T[]) => void;
-  fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
+  fetchItems: (offset: number, limit: number, filters: QueryFilter[]) => Promise<ResultPage<T>>;
   createItem: (item: T) => Promise<T>;
   updateItem: (item: T) => Promise<T>;
   deleteItem: (id: number) => Promise<void>;
@@ -25,7 +25,7 @@ export type EntityConfig<T extends object> = {
 };
 
 type TableComponentProps<T> = {
-  fetchItems: (offset: number, limit: number) => Promise<ResultPage<T>>;
+  fetchItems: (offset: number, limit: number, filters: QueryFilter[]) => Promise<ResultPage<T>>;
   onEdit: (item: T) => void;
   onDelete: (item: number) => void;
   onRefresh?: () => void;

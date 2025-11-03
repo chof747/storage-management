@@ -3,7 +3,7 @@ import ConfiguredEntityPage from '../components/common/ConfiguredEntityPage';
 import { storageElementConfig } from './configurations/storageelement';
 import { StorageElement } from '../types/storageElements';
 import { useRef } from 'react';
-import { FilterableTableHandle } from '../components/common/FilterableTable';
+import { FilterableTableHandle } from '../components/common/FilterableTableSimple';
 
 
 export default function StorageElementPage() {

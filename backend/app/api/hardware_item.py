@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from typing import List
 
 from app.dependencies import get_db
 from app.models.hardware_item import HardwareItem
@@ -10,17 +11,19 @@ from app.schemas.hardware_item import (
     HardwareItemPage,
     HardwareItemsMoveRequest,
 )
-from .pagination import page_parameters
+from app.api.pagination import page_parameters
 
 
 router = APIRouter(prefix="/api/items", tags=["Hardware Items"])
 
 
 @router.get("/", response_model=HardwareItemPage)
-def list_items(pagination=Depends(page_parameters), db: Session = Depends(get_db)):
-
-    total = db.query(HardwareItem).count()
-    return {"total": total, "items": pagination(db.query(HardwareItem)).all()}
+def list_items(
+    pagination=Depends(page_parameters),
+    db: Session = Depends(get_db),
+):
+    total, query = pagination(db.query(HardwareItem))
+    return {"total": total, "items": query.all()}
 
 
 @router.get("/bystorage", response_model=HardwareItemPage)
@@ -29,7 +32,8 @@ def list_items_bystorage(
 ):
 
     q = db.query(HardwareItem).filter(HardwareItem.storage_element_id == storage)
-    return {"total": q.count(), "items": pagination(q).all()}
+    total, query = pagination(q)
+    return {"total": total, "items": query.all()}
 
 
 @router.post("/", response_model=HardwareItemInDB)

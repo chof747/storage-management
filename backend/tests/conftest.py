@@ -14,7 +14,7 @@ from app.domain.printing import PrintStrategyBase
 from tests.utils.db_seed_loader import load_seeds_from_dir
 
 # Load .env variables
-load_dotenv()
+load_dotenv(dotenv_path=(Path(__file__).parent.parent / ".env").as_posix())
 APITEST_DATABASE_PATH = os.getenv("APITEST_DATABASE_PATH", None)
 if APITEST_DATABASE_PATH:
     path = Path(__file__).parent.parent.parent / APITEST_DATABASE_PATH
@@ -41,10 +41,10 @@ def override_get_db():
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
 
-    print(APITEST_DATABASE_URL)
-    print("Tables before drop_all:", Base.metadata.tables.keys())
+    # print(APITEST_DATABASE_URL)
+    # print("Tables before drop_all:", Base.metadata.tables.keys())
     Base.metadata.drop_all(bind=test_engine)
-    print("Tables before create_all:", Base.metadata.tables.keys())
+    # print("Tables before create_all:", Base.metadata.tables.keys())
     Base.metadata.create_all(bind=test_engine)
 
     from app.models import StorageElement, HardwareItem, StorageType

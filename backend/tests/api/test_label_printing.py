@@ -6,7 +6,10 @@ from app.domain.printing.spec_print_strategy import register_yml_strategy
 
 from app.models.hardware_item import HardwareItem
 from app.models.storage_type import StorageType
+from app.domain.partsbox.partsbox_service import PartsboxService
 from tests.utils.pdf_test_utils import pdf_text
+from tests.utils.partsbox import mock_partsbox_data
+from unittest.mock import patch
 
 
 @pytest.fixture
@@ -16,7 +19,10 @@ def load_strategy():
     return True
 
 
-def test_print_labels_pdf_generation(client, pdf_text, db_session, load_strategy):
+@patch("app.domain.partsbox.partsbox_service.requests.get")
+def test_print_labels_pdf_generation(
+    mock_get, client, pdf_text, db_session, load_strategy, mock_partsbox_data
+):
     request_data = {
         "sheets": [
             {"start_pos": {"row": 1, "col": 1}},
@@ -24,6 +30,9 @@ def test_print_labels_pdf_generation(client, pdf_text, db_session, load_strategy
         ],
         "strategy": "GridfinityYml",
     }
+
+    PartsboxService._cache = {"data": None, "timestamp": 0}
+    mock_get.side_effect = mock_partsbox_data
 
     st = db_session.get(StorageType, 1)
     st.printing_strategy = "GridfinityYml"

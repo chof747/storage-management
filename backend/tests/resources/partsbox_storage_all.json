@@ -1,0 +1,156 @@
+{
+  "partsbox.status/category": "ok",
+  "partsbox.status/message": "OK",
+  "data": [
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "312h6mgh1aj3jbp5hs63yczpxp",
+      "storage/name": "White-Drawer-3",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "07q782m3f0g27at47vtxx4wy3a",
+      "storage/name": "Gridfinity Resistors",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "6rzs3rq1p2jd9bsv6rnpgyjb68",
+      "storage/name": "White-Drawer-2",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "1hs0dac9stgmka8emkxfejswz6",
+      "storage/name": "Gridfinity Caps",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "7zskz0xy8wgtx813nb07m758gv",
+      "storage/name": "Mirror Cupboard",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "f13rgmhaxwj1cbvp7fs3r4wk81",
+      "storage/name": "Ordered (not received yet)",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/id": "3aa9et3ftg4f6a8f5s1g68p0mf",
+      "storage/name": "Parts Sorting Cupbard (blue)",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7"
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "5xy9k8x4y8jk4b0xr202zwv36t",
+      "storage/name": "Gridfinity Shelf (next to blue sorter)",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "38388actjyktjavgmxabxtgjzr",
+      "storage/name": "Gridfinity ICs",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "37p31ms2b4kcw88z8hpkmbfan4",
+      "storage/name": "Delivery-Box (not sorted)",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "dcecz6p5najv694cs5xtnpcpzx",
+      "storage/name": "Gridfinity Cuboard",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/full?": false,
+      "storage/single-part?": false,
+      "storage/tags": [],
+      "storage/name": "Gridfinity IC Storage Box (White Drawer)",
+      "storage/existing-parts-only?": false,
+      "storage/id": "e792xjn0jjgd4834wben9gpbhc",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/archived?": true,
+      "storage/description": ""
+    },
+    {
+      "storage/id": "cwk4sj3g7j4f6a8f5s1g68p0mf",
+      "storage/name": "Parts Box 3 (white)",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7"
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "bxz18kx2vthf88vygbspr49en5",
+      "storage/name": "White-Drawer-1",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/description": "",
+      "storage/existing-parts-only?": false,
+      "storage/full?": false,
+      "storage/id": "9vp8xxdwn6jq4agtxmwr1sfexk",
+      "storage/name": "Connector Box",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7",
+      "storage/single-part?": false,
+      "storage/tags": []
+    },
+    {
+      "storage/id": "b7xa8r3fxm4f6a8f5s1g68p0mf",
+      "storage/name": "Part Box 2 (black)",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7"
+    },
+    {
+      "storage/id": "encm3j3ftw4f6a8f5s1g68p0mf",
+      "storage/name": "PartBox 1 (Black)",
+      "storage/owner": "4k3kzyt54ak8c8vd15d32r2aq7"
+    }
+  ]
+}

@@ -49,5 +49,5 @@ def load_seeds_from_dir(session: Session, seed_dir: Path, model_map: dict[str, T
     for filename, model in model_map.items():
         csv_file = seed_dir / f"{filename}.csv"
         if csv_file.exists():
-            print(f"Seeding {filename} from {csv_file}")
+            # print(f"Seeding {filename} from {csv_file}")
             load_csv_to_model(session, csv_file, model)

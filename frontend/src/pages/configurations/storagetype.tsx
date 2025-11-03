@@ -2,7 +2,7 @@
 import { StorageType } from '../../types/storageType';
 import { getItems, createItem, updateItem, deleteItem } from '../../api/storageType';
 import { FormField } from '../../components/common/ModelForm';
-import { TableColumn } from '../../components/common/FilterableTable';
+import { TableColumn } from '../../components/common/FilterableTableSimple';
 import { EntityConfig } from '../../components/common/ConfiguredEntityPage';
 import { getPrintStrategies } from '../../api/printStrategy';
 

@@ -88,6 +88,30 @@ def test_list_storage_elements_with_offset_and_limit(client):
     )
 
 
+def test_list_storage_elements_with_filter(client):
+    response = client.get("/api/storage/", params={"filter": "location:Basement/White"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total"] == 1
+    items = data["items"]
+    assert len(items) == 1
+    assert_dict_contains(
+        "validating filtered storage element",
+        {
+            "id": 1,
+            "name": "WD 1",
+            "location": "Basement/White",
+            "position": "1",
+            "storage_type_id": 1,
+            "description": "White Drawer number 1",
+        },
+        items[0],
+        [
+            "root['storage_type']",
+        ],
+    )
+
+
 def test_get_storage_element_by_id(client):
     response = client.get("/api/storage/", params={"id": 1})
     assert response.status_code == 200
