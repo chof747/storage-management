@@ -44,6 +44,20 @@ export default function FilterPanel({ onChange, config }: Props) {
     onChange(filters);
   }
 
+  const clearFilters = () => {
+    setValues({});
+    onChange([]);
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      applyFilters();
+    }
+    else if (e.key === 'Escape') {
+      clearFilters();
+    }
+  }
+
   var filterFields = config.map((field) => (
     <TextField
       key={field.key}
@@ -55,6 +69,7 @@ export default function FilterPanel({ onChange, config }: Props) {
       InputLabelProps={{ sx: { fontSize: '0.75rem' } }}
       value={values[field.key] ?? ""}
       onChange={(e) => handleFieldChange(field.key, e.target.value)}
+      onKeyDown={handleKeyDown}
     />
   ))
 
@@ -80,6 +95,8 @@ export default function FilterPanel({ onChange, config }: Props) {
             }
             <Button variant="outlined" onClick={applyFilters}>
               Apply</Button>
+            <Button variant="outlined" onClick={clearFilters}>
+              Clear</Button>
           </Box>
         </Paper>
       </Collapse >
