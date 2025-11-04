@@ -3,8 +3,12 @@ from app.api import api_router
 from app.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from app.logging import setup_logging
 
 from app.lifespan import shut_down, start_up
+
+
+setup_logging()
 
 
 @asynccontextmanager
