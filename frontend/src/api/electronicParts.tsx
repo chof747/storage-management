@@ -23,3 +23,11 @@ export const togglePartforPrinting = async (item: PartsBoxItem): Promise<void> =
   }
 };
 
+export const resetCache = async (): Promise<void> => {
+  const API_BASE = await getApiBase();
+  const res = await fetch(`${API_BASE}/${PATH}/clear-cache/`);
+  if (!res.ok) {
+    const error = new Error('Could not reset cache');
+    throw error;
+  }
+};

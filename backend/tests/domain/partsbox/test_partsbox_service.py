@@ -159,3 +159,16 @@ def test_queue_for_printing(mock_get, mock_partsbox_data):
     PartsboxService.unqueue_for_printing(part_to_queue.id)
     assert len(PartsboxService._printing_queue) == 1
     assert not PartsboxService.is_queued_for_printing(part_to_queue.id)
+
+
+def test_clear_cache():
+    # Pre-populate the cache
+    PartsboxService._cache = {"data": ["some", "data"], "timestamp": time.time()}
+    PartsboxService._printing_queue = {"part1", "part2"}
+
+    # Clear the cache
+    PartsboxService.clear_cache()
+
+    # Assert that the cache and printing queue are reset
+    assert PartsboxService._cache == {"data": None, "timestamp": 0}
+    assert PartsboxService._printing_queue == set()

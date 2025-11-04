@@ -1,8 +1,8 @@
-import { getItems, togglePartforPrinting } from "../api/electronicParts";
+import { getItems, togglePartforPrinting, resetCache } from "../api/electronicParts";
 import FilterableTable, { TableColumn, FilterableTableHandle } from "../components/common/FilterableTable";
 import { PartsBoxItem } from "../types/partsboxItems";
-import { IconButton, Tooltip } from '@mui/material';
-import { PrintOutlined, PrintDisabled } from '@mui/icons-material';
+import { IconButton, Tooltip, Button } from '@mui/material';
+import { PrintOutlined, PrintDisabled, Replay } from '@mui/icons-material';
 import { useRef } from "react";
 
 const tableColumns: TableColumn<PartsBoxItem>[] = [
@@ -14,14 +14,13 @@ const tableColumns: TableColumn<PartsBoxItem>[] = [
 ];
 
 
-
-
 export default function ElectronicsPartsPage() {
   const tableRef = useRef<FilterableTableHandle<PartsBoxItem>>(null!) as React.RefObject<FilterableTableHandle<PartsBoxItem>>;
 
   return (
     <>
       <h2>Electronic Parts</h2>
+
       <FilterableTable<PartsBoxItem>
         ref={tableRef}
         fetchItems={getItems}
@@ -41,6 +40,13 @@ export default function ElectronicsPartsPage() {
         )
         }
       />
+      <div><Button
+        startIcon={<Replay />}
+        onClick={async () => {
+          await resetCache();
+          tableRef.current?.refresh();
+        }
+        }>Reload</Button></div>
     </>
   );
 }

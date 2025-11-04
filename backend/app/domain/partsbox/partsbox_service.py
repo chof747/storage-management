@@ -1,8 +1,11 @@
 import requests
 import os
 import time
+import logging
 
 from app.models.partsbox_item import PartsboxItem
+
+LOG = logging.getLogger("partsbox_service")
 
 
 class PartsboxService:
@@ -30,6 +33,22 @@ class PartsboxService:
         cls._printing_queue = set()
 
     @classmethod
+    def _get_header(cls):
+        return {
+            "Authorization": f"APIKey {PartsboxService.API_KEY}",
+            "Content-Type": "application/json",
+        }
+
+    @classmethod
+    def _build_url(cls, endpoint: str) -> str:
+        return f"{PartsboxService.BASE_URL}{endpoint}"
+
+    @classmethod
+    def clear_cache(cls):
+        cls._reset()
+        LOG.info("Partsbox cache cleared on request.")
+
+    @classmethod
     def fetch_parts(cls, refresh_cache: bool = False) -> list[PartsboxItem]:
         """
         Fetch all parts and storage data from the Partsbox.io API,
@@ -39,6 +58,7 @@ class PartsboxService:
 
         if refresh_cache:
             cls._reset
+            LOG.info("Refreshing Partsbox cache cleared for initialization.")
 
         # Check if cache is still valid
         if cls._cache["data"] and (
@@ -48,26 +68,23 @@ class PartsboxService:
         else:
             cls._reset()
 
-        headers = {
-            "Authorization": f"APIKey {PartsboxService.API_KEY}",
-            "Content-Type": "application/json",
-        }
+        headers = cls._get_header()
 
         # Fetch all parts
-        parts_response = requests.get(
-            f"{PartsboxService.BASE_URL}/part/all", headers=headers
-        )
+        parts_response = requests.get(cls._build_url("/part/all"), headers=headers)
         parts_response.raise_for_status()
         parts_data = cls._validate_results(parts_response.json())
 
         # Fetch all storage
-        storage_response = requests.get(
-            f"{PartsboxService.BASE_URL}/storage/all", headers=headers
-        )
+        storage_response = requests.get(cls._build_url("/storage/all"), headers=headers)
         storage_response.raise_for_status()
         storage_data = cls._validate_results(
             storage_response.json()
         )  # Assuming the API returns JSON
+
+        LOG.info(
+            f"Fetched {len(parts_data)} parts and {len(storage_data)} storage locations from Partsbox API."
+        )
 
         # Build PartsboxItem instances
         partsbox_items = []
@@ -115,6 +132,15 @@ class PartsboxService:
         cls._cache["timestamp"] = current_time
 
         return partsbox_items
+
+    @classmethod
+    def get_header(cls):
+        headers = {
+            "Authorization": f"APIKey {PartsboxService.API_KEY}",
+            "Content-Type": "application/json",
+        }
+
+        return headers
 
     @classmethod
     def sort(
@@ -232,3 +258,19 @@ class PartsboxService:
             set[str]: A set of part IDs currently in the printing queue.
         """
         return cls._printing_queue
+
+    @classmethod
+    def update_part_label(cls, part_id: str, new_label: str) -> bool:
+        """
+        Updates the label of a part in Partsbox.
+        Args:
+            part_id (str): The ID of the part to update.
+            new_label (str): The new label to set for the part.
+        Returns:
+            bool: True if the update was successful, False otherwise.
+
+        The routine takes the new/updated label and sends a request to the Partsbox API by
+        changing the 'part/cad-keys' field to the new label.
+        """
+
+        #
