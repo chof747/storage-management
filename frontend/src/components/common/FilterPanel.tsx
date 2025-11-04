@@ -14,6 +14,7 @@ import {
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { QueryFilter } from '../../types/page';
+import { clear } from 'console';
 
 type FilterConfig = {
   key: string;
@@ -42,6 +43,11 @@ export default function FilterPanel({ onChange, config }: Props) {
       }
     }
     onChange(filters);
+  }
+
+  const clearFilters = () => {
+    setValues({});
+    onChange([]);
   }
 
   var filterFields = config.map((field) => (
@@ -80,6 +86,8 @@ export default function FilterPanel({ onChange, config }: Props) {
             }
             <Button variant="outlined" onClick={applyFilters}>
               Apply</Button>
+            <Button variant="outlined" onClick={clearFilters}>
+              Clear</Button>
           </Box>
         </Paper>
       </Collapse >
