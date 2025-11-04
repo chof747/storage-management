@@ -49,6 +49,15 @@ export default function FilterPanel({ onChange, config }: Props) {
     onChange([]);
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      applyFilters();
+    }
+    else if (e.key === 'Escape') {
+      clearFilters();
+    }
+  }
+
   var filterFields = config.map((field) => (
     <TextField
       key={field.key}
@@ -60,6 +69,7 @@ export default function FilterPanel({ onChange, config }: Props) {
       InputLabelProps={{ sx: { fontSize: '0.75rem' } }}
       value={values[field.key] ?? ""}
       onChange={(e) => handleFieldChange(field.key, e.target.value)}
+      onKeyDown={handleKeyDown}
     />
   ))
 
