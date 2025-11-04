@@ -52,3 +52,9 @@ def queue_for_printing(item_id: str):
 def unqueue_for_printing(item_id: str):
     PartsboxService.unqueue_for_printing(item_id)
     return {"message": f"electronic-part {item_id} unqueued for label printing"}
+
+
+@router.get("/clear-cache")
+def clear_cache():
+    PartsboxService.clear_cache()
+    return {"message": "Partsbox items cache cleared"}
