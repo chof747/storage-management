@@ -14,7 +14,6 @@ import {
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { QueryFilter } from '../../types/page';
-import { clear } from 'console';
 
 type FilterConfig = {
   key: string;
