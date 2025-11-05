@@ -103,7 +103,9 @@ function FilterableTableInner<T>({
 
   useImperativeHandle(ref, () => ({
     getSelectedItems: () => items.filter((item: T) => selectedIds.has(getRowId(item))),
-    refresh: () => loadItems(),
+    async refresh() {
+      await loadItems();
+    }
   }));
 
   const updateFilter = (filters: QueryFilter[]) => {

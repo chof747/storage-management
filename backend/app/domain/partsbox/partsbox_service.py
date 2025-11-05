@@ -194,6 +194,10 @@ class _PartsboxServiceImpl:
         )
         if getattr(response, "status_code", None) == 200:
             LOG.info(f"Updated label for part {part_id} to '{new_label}'")
+            # update cache if present
+            if self._cache["data"] is not None:
+                part = [p for p in self._cache["data"] if p.id == part_id][0]
+                part.label = new_label
             return True
         else:
             LOG.error(

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query
 from typing import List
-from app.schemas.partsbox_item import PartsBoxItemPage
+from app.schemas.partsbox_item import PartsBoxItemPage, PartsBoxItemLabelUpdate
 from app.domain.partsbox.partsbox_service import PartsboxService
 
 router = APIRouter(prefix="/api/electronic-parts", tags=["Partsbox Items"])
@@ -40,6 +40,15 @@ def list_partsbox_items(
     paginated_items = PartsboxService.paginate(all_items, offset=offset, limit=limit)
 
     return {"total": total, "items": paginated_items}
+
+
+@router.put("/update-label/{item_id}")
+def update_part_label(item_id: str, item: PartsBoxItemLabelUpdate):
+    success = PartsboxService.update_part_label(item_id, item.label)
+    if success:
+        return {"message": f"Label for part {item_id} updated to '{item.label}'"}
+    else:
+        return {"message": f"Failed to update label for part {item_id}"}, 500
 
 
 @router.get("/queueforprinting/{item_id}")
