@@ -1,4 +1,5 @@
 import os
+import socket
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -96,3 +97,11 @@ def client(db_session: Session):
 
     app.dependency_overrides[dependencies.get_db] = override_get_db
     return TestClient(app)
+
+
+def pytest_runtest_setup(item):
+    if "requires_internet" in item.keywords:
+        try:
+            socket.create_connection(("8.8.8.8", 53), timeout=3)
+        except OSError:
+            pytest.skip("Skipping test: no internet connection available")

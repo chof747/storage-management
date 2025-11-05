@@ -9,7 +9,7 @@ from tests.utils.partsbox import mock_partsbox_data
 
 @patch("app.domain.partsbox.partsbox_service.requests.get")
 def test_fetch_parts_more_than_one(mock_get, mock_partsbox_data):
-    PartsboxService._cache = {"data": None, "timestamp": 0}
+    PartsboxService._get_impl()._cache = {"data": None, "timestamp": 0}
     mock_get.side_effect = mock_partsbox_data
 
     # Call the fetch_parts method
@@ -46,7 +46,7 @@ def test_fetch_parts_real_service():
 @patch("app.domain.partsbox.partsbox_service.requests.get")
 def test_fetch_parts_cache(mock_get, mock_partsbox_data):
     mock_get.side_effect = mock_partsbox_data
-    PartsboxService._cache = {"data": None, "timestamp": 0}
+    PartsboxService._get_impl()._cache = {"data": None, "timestamp": 0}
 
     # Call the fetch_parts method for the first time
     parts_first_call = PartsboxService.fetch_parts()
@@ -64,7 +64,9 @@ def test_fetch_parts_cache(mock_get, mock_partsbox_data):
     assert parts_first_call == parts_second_call
 
     # Simulate cache expiration by modifying the timestamp
-    PartsboxService._cache["timestamp"] -= PartsboxService.CACHE_EXPIRATION + 1
+    PartsboxService._get_impl()._cache["timestamp"] -= (
+        PartsboxService._get_impl().CACHE_EXPIRATION + 1
+    )
     time.sleep(1)  # Ensure time has passed
     mock_get.side_effect = mock_partsbox_data
 
@@ -77,7 +79,7 @@ def test_fetch_parts_cache(mock_get, mock_partsbox_data):
 def test_get_parts_sorted_and_paginated(mock_get, mock_partsbox_data):
 
     mock_get.side_effect = mock_partsbox_data
-    PartsboxService._cache = {"data": None, "timestamp": 0}
+    PartsboxService._get_impl()._cache = {"data": None, "timestamp": 0}
 
     # Call the fetch_parts method
     parts = PartsboxService.paginate(
@@ -108,7 +110,7 @@ def test_get_parts_sorted_and_paginated(mock_get, mock_partsbox_data):
 @patch("app.domain.partsbox.partsbox_service.requests.get")
 def test_filter_fetched_parts(mock_get, mock_partsbox_data):
     mock_get.side_effect = mock_partsbox_data
-    PartsboxService._cache = {"data": None, "timestamp": 0}
+    PartsboxService._get_impl()._cache = {"data": None, "timestamp": 0}
 
     # Call the fetch_parts method
     parts = PartsboxService.fetch_parts()
@@ -128,26 +130,26 @@ def test_filter_fetched_parts(mock_get, mock_partsbox_data):
 @patch("app.domain.partsbox.partsbox_service.requests.get")
 def test_queue_for_printing(mock_get, mock_partsbox_data):
     mock_get.side_effect = mock_partsbox_data
-    PartsboxService._cache = {"data": None, "timestamp": 0}
-    PartsboxService._printing_queue = set()
+    PartsboxService._get_impl()._cache = {"data": None, "timestamp": 0}
+    PartsboxService._get_impl()._printing_queue = set()
 
     # Call the fetch_parts method
     parts = PartsboxService.fetch_parts()
 
     part_to_queue = parts[0]
     PartsboxService.queue_for_printing(part_to_queue.id)
-    assert part_to_queue.id in PartsboxService._printing_queue
+    assert part_to_queue.id in PartsboxService._get_impl()._printing_queue
 
     # Queue the same part again (should not duplicate)
     PartsboxService.queue_for_printing(part_to_queue.id)
-    assert len(PartsboxService._printing_queue) == 1
+    assert len(PartsboxService._get_impl()._printing_queue) == 1
     assert PartsboxService.is_queued_for_printing(part_to_queue.id)
 
     # Queue another part
     another_part = parts[1]
     PartsboxService.queue_for_printing(another_part.id)
-    assert another_part.id in PartsboxService._printing_queue
-    assert len(PartsboxService._printing_queue) == 2
+    assert another_part.id in PartsboxService._get_impl()._printing_queue
+    assert len(PartsboxService._get_impl()._printing_queue) == 2
     assert PartsboxService.is_queued_for_printing(another_part.id)
 
     # Check the queued parts
@@ -157,18 +159,21 @@ def test_queue_for_printing(mock_get, mock_partsbox_data):
 
     # Unqueue a part
     PartsboxService.unqueue_for_printing(part_to_queue.id)
-    assert len(PartsboxService._printing_queue) == 1
+    assert len(PartsboxService._get_impl()._printing_queue) == 1
     assert not PartsboxService.is_queued_for_printing(part_to_queue.id)
 
 
 def test_clear_cache():
     # Pre-populate the cache
-    PartsboxService._cache = {"data": ["some", "data"], "timestamp": time.time()}
-    PartsboxService._printing_queue = {"part1", "part2"}
+    PartsboxService._get_impl()._cache = {
+        "data": ["some", "data"],
+        "timestamp": time.time(),
+    }
+    PartsboxService._get_impl()._printing_queue = {"part1", "part2"}
 
     # Clear the cache
     PartsboxService.clear_cache()
 
     # Assert that the cache and printing queue are reset
-    assert PartsboxService._cache == {"data": None, "timestamp": 0}
-    assert PartsboxService._printing_queue == set()
+    assert PartsboxService._get_impl()._cache == {"data": None, "timestamp": 0}
+    assert PartsboxService._get_impl()._printing_queue == set()

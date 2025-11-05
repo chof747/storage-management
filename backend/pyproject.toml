@@ -51,5 +51,6 @@ packages = ["app", "alembic"]
 pythonpath = ["."]
 norecursedirs = ["__pypackages__"]
 markers = [
-  "integration: mark a test as an integration test"
+  "integration: mark a test as an integration test",
+  "requires_internet: mark a test as requiring internet access",
 ]
