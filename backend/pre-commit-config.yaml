@@ -1,4 +1,3 @@
-
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -13,3 +12,12 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: pdm run pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        types: [python]
