@@ -8,34 +8,16 @@ import { useRef } from "react";
 
 export default function ElectronicsPartsPage() {
 
-  const obtainNewLabel = async (row: PartsBoxItem, current: string): string => {
-    const newLabel = prompt("Enter new label", String(current));
-    if (newLabel !== null) {
-      row.label = newLabel;
-    }
-    else {
-      row.label = '';
-    }
-    await updatePartLabel(row.id!, row.label);
-    tableRef.current?.refresh();
-    return row.label
-  }
-
-  const renderLabel = (value: string | number | boolean | undefined, row: PartsBoxItem): React.ReactNode => {
-    return <>
-      {
-        <div onClick={() => {
-          obtainNewLabel(row, value as string);
-        }}> {value ? value : <i>(none)</i>}
-        </div>
-      }
-    </>
-  }
-
   const tableColumns: TableColumn<PartsBoxItem>[] = [
     { key: 'name', label: 'Name', filterable: true },
     { key: 'description', label: 'Description' },
-    { key: 'label', label: 'Label', filterable: true, render: renderLabel },
+    {
+      key: 'label', label: 'Label', filterable: true, editable: true,
+      onEditCommit: async (row, newValue) => {
+        await updatePartLabel(row.id!, String(newValue ?? ''));
+        // Table calls loadItems() after commit; nothing else needed here.
+      },
+    },
     { key: 'storage_place', label: 'Place', filterable: true },
     { key: 'total_stock', label: 'Stock' },
   ];
