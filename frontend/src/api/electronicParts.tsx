@@ -23,6 +23,28 @@ export const togglePartforPrinting = async (item: PartsBoxItem): Promise<void> =
   }
 };
 
+export const updatePartLabel = async (partId: string, newLabel: string): Promise<void> => {
+  const API_BASE = await getApiBase();
+  const payload = {
+    "id": partId,
+    "label": newLabel ? newLabel : ""
+  }
+  const res = await fetch(`${API_BASE}/${PATH}/update-label/${partId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const error = new Error('Could not update part label');
+    throw error;
+
+  };
+  return await res.json();
+}
+
 export const resetCache = async (): Promise<void> => {
   const API_BASE = await getApiBase();
   const res = await fetch(`${API_BASE}/${PATH}/clear-cache/`);

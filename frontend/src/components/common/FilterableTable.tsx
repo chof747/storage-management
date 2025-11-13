@@ -14,6 +14,7 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ConfirmDialog from './ConfirmDialog';
 import FilterPanel from './FilterPanel'
+import InlineCellEdit from "./InlineCellEdit";
 import { ResultPage, QueryFilter } from '../../types/page';
 
 /*
@@ -36,8 +37,17 @@ export type TableColumn<T> = {
   label: string;
   filterable?: boolean;
   filterKey?: string;
+  editable?: boolean;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
+  onEditCommit?: (row: T, newValue: unknown) => Promise<void>;
 };
+
+type EditingState<T> = {
+  rowId: string | number;
+  colKey: keyof T;
+  value: unknown;
+  committing?: boolean;
+} | null;
 
 export type FilterableTableHandle<T> = {
   getSelectedItems: () => T[];
@@ -79,6 +89,7 @@ function FilterableTableInner<T>({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
+  const [editing, setEditing] = useState<EditingState<T>>(null);
 
   const filterConfig = columns
     .filter((col) => col.filterable)
@@ -103,8 +114,41 @@ function FilterableTableInner<T>({
 
   useImperativeHandle(ref, () => ({
     getSelectedItems: () => items.filter((item: T) => selectedIds.has(getRowId(item))),
-    refresh: () => loadItems(),
+    async refresh() {
+      await loadItems();
+    }
   }));
+
+  const startEdit = (row: T, col: TableColumn<T>) => {
+    if (!col.editable) return;
+    const rowId = getRowId(row);
+    setEditing({
+      rowId,
+      colKey: col.key,
+      value: (row[col.key] ?? '') as unknown
+    });
+  };
+
+  const commitEdit = async (row: T, col: TableColumn<T>, newValue: unknown) => {
+    if (!col.onEditCommit) {
+      setEditing(null);
+      return;
+    }
+    const rowId = getRowId(row);
+    setEditing((prev) => prev ? { ...prev, committing: true } : prev);
+
+    try {
+      await col.onEditCommit(row, newValue);
+      await loadItems();
+      setEditing(null);
+    } catch (e) {
+      setEditing((prev) => prev ? { ...prev, committing: false } : prev);
+      // You might want to show a toast/snackbar here
+      console.error('Edit commit failed:', e);
+    }
+  };
+
+  const cancelEdit = () => setEditing(null);
 
   const updateFilter = (filters: QueryFilter[]) => {
     setFilters(filters);
@@ -151,6 +195,45 @@ function FilterableTableInner<T>({
     setItemToDelete(null);
   };
 
+  const generateSelectingCell = (id: string | number) => {
+    if (selectableRows) {
+      return (
+        <TableCell padding="checkbox">
+          <Checkbox
+            checked={selectedIds.has(id)}
+            onChange={() => toggleSelectRow(id)}
+          />
+        </TableCell>
+      )
+    } else {
+      return null;
+    }
+  }
+
+  const generateCell = (row: T, col: TableColumn<T>) => {
+    const cellValue = row[col.key];
+    if (!col.editable) {
+      return (
+        <TableCell key={col.key as string} sx={{ py: 0.5 }}>
+          {col.render ? col.render(cellValue, row) : String(cellValue ?? '')}
+        </TableCell>
+      );
+    } else {
+      return (
+        <TableCell key={String(col.key)} sx={{ py: 0.5 }}>
+          <InlineCellEdit
+            value={cellValue}
+            editable
+            renderDisplay={(v) => (col.render ? col.render(v, row) : String(v ?? ""))}
+            onCommit={async (newVal) => {
+              await col.onEditCommit?.(row, newVal);
+              await loadItems();
+            }}
+          />
+        </TableCell>
+      );
+    }
+  }
 
   return (
     <>
@@ -180,19 +263,11 @@ function FilterableTableInner<T>({
               const id = getRowId(item);
               return (
                 <TableRow key={id} hover selected={selectedIds.has(id)}>
-                  {selectableRows && (
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={selectedIds.has(id)}
-                        onChange={() => toggleSelectRow(id)}
-                      />
-                    </TableCell>
-                  )}
-                  {columns.map((col) => (
-                    <TableCell key={col.key as string} sx={{ py: 0.5 }}>
-                      {col.render ? col.render(item[col.key], item) : String(item[col.key] ?? '')}
-                    </TableCell>
-                  ))}
+
+                  {generateSelectingCell(id)}
+
+                  {columns.map((col) => generateCell(item, col))}
+
                   {(onEdit || onDelete || customActions) && (
                     <TableCell align="right" sx={{ py: 0.5 }}>
                       {onEdit && (

@@ -9,6 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      # Make the backend behave like in your docker-compose / local env
+      PARTSBOX_BASE_URL: https://partsbox.com/api/1
+      PARTSBOX_API_KEY: ${{ secrets.PARTSBOX_API_KEY }}
 
     steps:
       - name: Checkout code

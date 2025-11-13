@@ -142,6 +142,46 @@ def test_list_partsbox_filter(mock_get, mock_partsbox_data, client):
     )
 
 
+@patch("app.domain.partsbox.partsbox_service.requests.post")
+@patch("app.domain.partsbox.partsbox_service.requests.get")
+def test_update_partsbox_item_label(mock_get, mock_post, mock_partsbox_data, client):
+    """Test Updating of Partsbox Item Label"""
+
+    mock_get.side_effect = mock_partsbox_data
+    PartsboxService._reset()
+
+    assert all(
+        [
+            p.label != "NewLabel123"
+            for p in PartsboxService.fetch_parts()
+            if p.id == "51kng3zb58jwh9p4wwsv5rpnge"
+        ]
+    )
+    mock_post.return_value.status_code = 200
+    mock_post.return_value.json = lambda: {"status": "success"}
+
+    update_response = client.put(
+        "/api/electronic-parts/update-label/51kng3zb58jwh9p4wwsv5rpnge",
+        json={"id": "51kng3zb58jwh9p4wwsv5rpnge", "label": "NewLabel123"},
+    )
+    data = update_response.json()
+    print(data)
+
+    assert update_response.status_code == 200
+    assert (
+        "Label for part 51kng3zb58jwh9p4wwsv5rpnge updated to 'NewLabel123'"
+        in data["message"]
+    )
+
+    assert all(
+        [
+            p.label == "NewLabel123"
+            for p in PartsboxService.fetch_parts()
+            if p.id == "51kng3zb58jwh9p4wwsv5rpnge"
+        ]
+    )
+
+
 @patch("app.domain.partsbox.partsbox_service.requests.get")
 def test_list_partsbox_queued(mock_get, mock_partsbox_data, client):
     """Test Listing of Partsbox Items with queued for printing status"""

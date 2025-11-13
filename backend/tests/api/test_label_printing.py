@@ -31,7 +31,7 @@ def test_print_labels_pdf_generation(
         "strategy": "GridfinityYml",
     }
 
-    PartsboxService._cache = {"data": None, "timestamp": 0}
+    PartsboxService._get_impl()._cache = {"data": None, "timestamp": 0}
     mock_get.side_effect = mock_partsbox_data
 
     st = db_session.get(StorageType, 1)

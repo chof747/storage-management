@@ -20,6 +20,14 @@ class PartsboxItemBase(BaseModel):
         from_attributes = True
 
 
+class PartsBoxItemLabelUpdate(BaseModel):
+    id: str
+    label: str
+
+    class ConfigDict:
+        from_attributes = True
+
+
 class PartsBoxItemPage(BaseModel):
     items: List[PartsboxItemBase]
     total: int
