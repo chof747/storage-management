@@ -7,7 +7,7 @@ def test_create_storage_type(client, db_session):
     new_type = {
         "name": "Crate",
         "description": "plastic storage crate",
-        "printing_strategy": "Storage Box",
+        "printing_strategies": {"hwitems": "Storage Box"},
     }
     response = client.post("/api/storagetype/", json=new_type)
     assert response.status_code == 200, response.content
@@ -35,7 +35,7 @@ def test_list_storage_types(client):
             "id": 1,
             "name": "Gridfinity Tray",
             "description": "A samla tray of gridfinity",
-            "printing_strategy": "Storage Box",
+            "printing_strategies": {"hwitems": "Storage Box"},
         },
         data["items"][0],
     )
@@ -58,7 +58,7 @@ def test_get_storage_type_by_id(client):
     data = response.json()
     assert data["total"] == 1
     assert data["items"][0]["id"] == 1
-    assert data["items"][0]["printing_strategy"] == "Storage Box"
+    assert data["items"][0]["printing_strategies"] == {"hwitems": "Storage Box"}
 
 
 def test_update_storage_type(client, db_session):
@@ -77,7 +77,7 @@ def test_update_storage_type(client, db_session):
 
 def test_printing_strategy_validation(client):
     new_data = {
-        "printing_strategy": "whatever",
+        "printing_strategies": {"hwitems": "whatever"},
     }
     response = client.put("/api/storagetype/1", json=new_data)
     assert response.status_code == 422, response.content
@@ -85,8 +85,8 @@ def test_printing_strategy_validation(client):
 
     assert len(details) == 1
     assert details[0]["type"] == "value_error"
-    assert details[0]["loc"] == ["body", "printing_strategy"]
-    assert "Value error, Invalid label printer specified: whatever" in details[0]["msg"]
+    assert details[0]["loc"] == ["body", "printing_strategies"]
+    assert "Invalid label printer specified: whatever" in details[0]["msg"]
 
 
 def test_delete_storage_type_with_violation(client):

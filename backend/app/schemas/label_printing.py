@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List
+from app.schemas.printing_strategy import PrintingSubjectEnum
 
 
 class StartPosition(BaseModel):
@@ -14,3 +15,4 @@ class LabelSheet(BaseModel):
 class LabelPrintRequest(BaseModel):
     sheets: List[LabelSheet]
     strategy: str
+    subject: PrintingSubjectEnum

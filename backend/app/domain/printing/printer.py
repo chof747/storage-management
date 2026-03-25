@@ -1,4 +1,6 @@
 from typing import Dict, List, Union
+
+from app.schemas.printing_strategy import PrintingSubjectEnum
 from .label_sheet import LabelSheet
 from .print_strategy import PrintStrategyBase
 from app.models.printable import Printable
@@ -42,6 +44,12 @@ class Printer:
         self.__sheets = sheets
         self.__items: List[Printable] = []
         self.__maxlabels = sum(sheet.available_labels for sheet in sheets)
+
+    def isPrinting(self, subject: PrintingSubjectEnum) -> bool:
+        """
+        Check if the printer is able to print labels for the provided subject
+        """
+        return subject in self.__strategy.subjects
 
     def add(self, items: List[Printable]) -> int:
         """Adds items to the list of items to print

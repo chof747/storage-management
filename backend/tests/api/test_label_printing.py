@@ -29,13 +29,14 @@ def test_print_labels_pdf_generation(
             {"start_pos": {"row": 2, "col": 3}},
         ],
         "strategy": "GridfinityYml",
+        "subject": "hwitems",
     }
 
     PartsboxService._get_impl()._cache = {"data": None, "timestamp": 0}
     mock_get.side_effect = mock_partsbox_data
 
     st = db_session.get(StorageType, 1)
-    st.printing_strategy = "GridfinityYml"
+    st.printing_strategies = {"hwitems": "GridfinityYml"}
     db_session.commit()
 
     response = client.post("/api/print/label", json=request_data)

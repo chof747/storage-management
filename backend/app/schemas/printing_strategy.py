@@ -1,5 +1,6 @@
 from typing import List
 from pydantic import BaseModel
+from enum import Enum
 
 
 class LabelSpecification(BaseModel):
@@ -40,8 +41,15 @@ class Finish(BaseModel):
     copies: int
 
 
+class PrintingSubjectEnum(str, Enum):
+    HARDWARE = "hwitems"
+    ELECTRONIC_PART = "electronic-parts"
+    FILAMENT = "filaments"
+
+
 class PrintingStrategyDefinition(BaseModel):
     name: str
+    subjects: List[PrintingSubjectEnum] = [PrintingSubjectEnum.HARDWARE]
     label_specification: LabelSpecification
     label_font: LabelFont
     label_margins: LabelMargins

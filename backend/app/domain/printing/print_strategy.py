@@ -1,9 +1,11 @@
-from typing import Dict
+from typing import Dict, List
 from .. import StrategyMeta
 from abc import ABC, abstractmethod
 from labels import Specification, Sheet
 from reportlab.graphics.shapes import Drawing
 from reportlab.pdfbase.pdfmetrics import stringWidth
+from app.schemas.printing_strategy import PrintingSubjectEnum
+from typing import Type
 
 
 class PrintStrategyBase(ABC, metaclass=StrategyMeta):
@@ -11,6 +13,7 @@ class PrintStrategyBase(ABC, metaclass=StrategyMeta):
     labelspecs: Specification | None = None  # Add this line for label specs
     draw_border: bool = False
     copies: int = 1
+    subjects: List[PrintingSubjectEnum] = [PrintingSubjectEnum.HARDWARE]
 
     @classmethod
     def create_printing_strategy(
@@ -77,3 +80,27 @@ def get_all_printing_strategies() -> list[str]:
     return [
         cls.name for cls in PrintStrategyBase._registry if not cls.name.startswith("__")
     ]
+
+
+def find_print_strategy(name: str) -> Type[PrintStrategyBase] | None:
+    for cls in PrintStrategyBase._registry:
+        if cls.name == name and not cls.name.startswith("__"):
+            return cls
+    return None
+
+
+def get_strategy_subjects(name: str) -> List[PrintingSubjectEnum]:
+    strategy_cls = find_print_strategy(name)
+    if strategy_cls is None:
+        return []
+
+    subjects = getattr(strategy_cls, "subjects", []) or []
+    normalized_subjects: List[PrintingSubjectEnum] = []
+    for subject in subjects:
+        try:
+            normalized_subjects.append(
+                subject if isinstance(subject, PrintingSubjectEnum) else PrintingSubjectEnum(subject)
+            )
+        except ValueError:
+            continue
+    return normalized_subjects

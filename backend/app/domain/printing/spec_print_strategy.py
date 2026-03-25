@@ -3,7 +3,7 @@ from typing import Dict, List
 from . import PrintStrategyBase
 from yaml import safe_load
 from labels import Specification
-from app.schemas.printing_strategy import PrintingStrategyDefinition
+from app.schemas.printing_strategy import PrintingStrategyDefinition, PrintingSubjectEnum
 from jinja2 import Template
 from reportlab.graphics import shapes
 
@@ -19,6 +19,7 @@ class SpecPrintStrategy(PrintStrategyBase):
         self.draw_border = self.__specifications.label_content.draw_border
         self.copies = self.__specifications.finish.copies
         self.content_template = Template(self.__specifications.label_content.template)
+        self.subjects = self.__specifications.subjects
 
     def __compile_lines(self, item: Dict[str, str | None]) -> List[str]:
         """Generate the lines of the labels based on the provided template"""
@@ -87,12 +88,18 @@ def register_yml_strategy(path: str):
 
     strategy_name = spec_data.get("name")
     class_name = strategy_name
+    raw_subjects = spec_data.get("subjects", [PrintingSubjectEnum.HARDWARE])
+    subjects = [
+        s if isinstance(s, PrintingSubjectEnum) else PrintingSubjectEnum(s)
+        for s in raw_subjects
+    ]
 
     strategy_class = type(
         class_name,
         (SpecPrintStrategy,),
         {
             "name": strategy_name,
+            "subjects": subjects,
             "__module__": __name__,
             "__init__": lambda self: super(
                 self.__class__,

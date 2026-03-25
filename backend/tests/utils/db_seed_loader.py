@@ -1,8 +1,9 @@
 import csv
+import json
 from typing import Type
 from pathlib import Path
 from sqlalchemy.orm import Session
-from sqlalchemy import Boolean, Float, Integer, String, inspect
+from sqlalchemy import Boolean, Float, Integer, String, JSON, inspect
 
 
 def parse_value(value: str, column_type):
@@ -22,6 +23,8 @@ def parse_value(value: str, column_type):
         return int(value)
     elif isinstance(column_type, String) and "NULL" == value:
         return None
+    elif isinstance(column_type, JSON):
+        return json.loads(value) if value else None
     return value  # default to string
 
 
