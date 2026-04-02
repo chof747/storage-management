@@ -37,7 +37,7 @@ This change does **not** primarily aim to redesign the domain model. Functional 
 
 - Developers can either:
   - connect to a local PostgreSQL instance, or
-  - start PostgreSQL via Docker / Compose for local development.
+  - connect to a separately managed local PostgreSQL Docker/Compose setup (outside this repository).
 - The application should no longer depend on SQLite-specific defaults.
 
 ### Test
@@ -45,6 +45,8 @@ This change does **not** primarily aim to redesign the domain model. Functional 
 - Automated tests start or connect to a dedicated PostgreSQL container.
 - Test database schema is initialized through Alembic migrations or a controlled schema setup step.
 - Tests should isolate state between test runs, ideally by creating a dedicated test database or resetting the schema between runs.
+- Local test runs should use a test-only Compose setup (for example `docker-compose.test.yml`) and not depend on the shared local development PostgreSQL instance.
+- CI test runs should use a GitHub Actions PostgreSQL `services` container for fully self-contained verification.
 
 ## Design Principles
 
@@ -52,10 +54,13 @@ This change does **not** primarily aim to redesign the domain model. Functional 
 
 The backend should centralize database configuration in one place and treat the SQLAlchemy database URL as the primary switch between environments.
 
+For PostgreSQL schema isolation, use a dedicated schema setting (`DB_SCHEMA`) so application tables are kept outside the shared `public` schema.
+
 Examples:
 
 - `postgresql+psycopg://user:password@dbhost:5432/storage_management`
 - `postgresql+psycopg://test:test@localhost:5432/storage_management_test`
+- `DB_SCHEMA=storage_management`
 
 The code should avoid hardcoded SQLite file paths except possibly in legacy migration utilities.
 
@@ -120,11 +125,11 @@ Make PostgreSQL the supported runtime database.
   - `POSTGRES_PASSWORD`
 - Decide whether the application uses a single `DATABASE_URL` or builds it from separate variables.
 - Add local/dev container support, preferably via Docker Compose or equivalent.
-- Document bootstrap steps for creating the PostgreSQL database and application user.
+- Document minimal external local PostgreSQL requirements and connection setup.
 
 ### Deliverable
 
-A documented PostgreSQL configuration approach that works for development, testing, and production.
+A documented PostgreSQL configuration approach that works for development, testing, and production, including connection to an external local Docker PostgreSQL instance.
 
 ## WP3 - Adapt backend DB management code
 
@@ -233,6 +238,8 @@ Run automated tests against PostgreSQL in a reproducible way.
 - Apply Alembic migrations to the test database.
 - Run tests.
 - Tear down the container or reset the database afterwards.
+- In CI, use GitHub Actions `services` for PostgreSQL.
+- Locally, use a repository-managed test-only Compose service on a non-conflicting host port (for example `5433`).
 
 ### Notes
 

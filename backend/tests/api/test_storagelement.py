@@ -112,6 +112,17 @@ def test_list_storage_elements_with_filter(client):
     )
 
 
+def test_list_storage_elements_filter_treats_value_as_literal(client):
+    response = client.get(
+        "/api/storage/",
+        params={"filter": "location:Basement%' OR 1=1 --"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total"] == 0
+    assert data["items"] == []
+
+
 def test_get_storage_element_by_id(client):
     response = client.get("/api/storage/", params={"id": 1})
     assert response.status_code == 200
