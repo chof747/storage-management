@@ -1,14 +1,14 @@
 # Stage 1: Build the frontend app
-FROM node:22-slim AS build
+FROM node:22.14-slim AS build
 
 # Set working directory
 WORKDIR /app
 
-# Copy package definition and lock file first (to cache deps separately)
+# Copy package definition and lock file first (cache dependency layer)
 COPY package.json package-lock.json ./
 
 # Install dependencies (including devDependencies for build tools)
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 
 # Copy the rest of the frontend source code
 COPY . .
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Serve static files with a minimal Nginx image
-FROM nginx:alpine AS production
+FROM nginx:1.27-alpine AS production
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
