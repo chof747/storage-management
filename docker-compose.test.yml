@@ -1,0 +1,21 @@
+services:
+  postgres-test:
+    image: postgres:16
+    container_name: storage-management-postgres-test
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: storage_management_test
+    volumes:
+      - storage_management_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d storage_management_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  storage_management_test_data:
