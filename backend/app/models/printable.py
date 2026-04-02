@@ -5,7 +5,7 @@ class Printable:
     """Mixin Class that allows to handle printable items"""
 
     queued_for_printing = Column(
-        Boolean, default=False, nullable=False, server_default=text("0")
+        Boolean, default=False, nullable=False, server_default=text("false")
     )
 
     def set_for_printing(self):

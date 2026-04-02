@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from pydantic import BaseModel
 from fastapi import Query
-from sqlalchemy import text
+from sqlalchemy import String, cast
 from sqlalchemy.orm import Query as SQLQuery
 
 
@@ -13,9 +13,13 @@ class PageQueryParameters(BaseModel):
     )
 
     def filtering(self, query: SQLQuery) -> SQLQuery:
+        entity = query.column_descriptions[0].get("entity")
         for f in self.filter or []:
             key, value = f.split(":", 1)
-            query = query.filter(text(f"`{key}` LIKE '%{value}%'"))
+            column = getattr(entity, key, None)
+            if column is None:
+                raise ValueError(f"Invalid filter field: {key}")
+            query = query.filter(cast(column, String).ilike(f"%{value}%"))
         return query
 
     def __call__(self, query: SQLQuery) -> Tuple[int, SQLQuery]:

@@ -1,6 +1,19 @@
 node_modules
-.eslintrc.json
-.prettierrc
+dist
+
+# Local environment and editor artifacts
+.env
+.env.*
+!.env.sample
+.DS_Store
 .vscode
+
+# VCS and metadata
+.git
 .gitignore
+
+# Tooling and docs not required for image build
+.eslintrc.json
+.eslintignore
+.prettierrc
 Dockerfile

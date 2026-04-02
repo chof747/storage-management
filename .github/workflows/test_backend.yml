@@ -9,6 +9,26 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: storage_management_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d storage_management_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql+psycopg://test:test@localhost:5432/storage_management_test
+      DB_SCHEMA: storage_management_test
+      TEST_DATABASE_URL: postgresql+psycopg://test:test@localhost:5432/storage_management_test
+      TEST_DB_SCHEMA: storage_management_test
 
     steps:
       - name: Checkout code
@@ -25,6 +45,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install pdm
           pdm install -G dev
+
+      - name: Wait for PostgreSQL
+        working-directory: backend
+        run: |
+          pdm run python - <<'PY'
+          import time
+          import psycopg
+
+          dsn = "postgresql://test:test@localhost:5432/storage_management_test"
+          for _ in range(30):
+              try:
+                  with psycopg.connect(dsn):
+                      print("postgres ready")
+                      break
+              except Exception:
+                  time.sleep(1)
+          else:
+              raise RuntimeError("PostgreSQL did not become ready in time")
+          PY
+
+      - name: Run migrations
+        working-directory: backend
+        run: pdm run migrate
 
       - name: Run tests
         working-directory: backend
