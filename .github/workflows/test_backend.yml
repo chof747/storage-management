@@ -25,6 +25,8 @@ jobs:
           --health-retries 10
 
     env:
+      DATABASE_URL: postgresql+psycopg://test:test@localhost:5432/storage_management_test
+      DB_SCHEMA: storage_management_test
       TEST_DATABASE_URL: postgresql+psycopg://test:test@localhost:5432/storage_management_test
       TEST_DB_SCHEMA: storage_management_test
 
