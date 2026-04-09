@@ -1,12 +1,15 @@
 services:
   backend:
-    image: ghcr.io/chof747/storagemanager_backend:test
+    build:
+      context: ./backend
+    image: storagemanager_backend:local
     ports:
       - "8000:8000"
     volumes:
       - ./data/backend/:/data
     environment:
-      - DATABASE_URL=sqlite:////data/test.db
+      - DATABASE_URL=postgresql+psycopg://pgdev_user:pgdev_pass@host.docker.internal:5432/postgres
+      - DB_SCHEMA=storage_management_uat
       - PRINT_STRATEGIES_PATH=/data/print-strategies
       - PARTSBOX_BASE_URL=https://partsbox.com/api/1
       - PARTSBOX_API_KEY=partsboxapi_4k3kzyt54ak8c8vd15d32r2aq7cb4171d88aace8dbd6715acc8b41fab188755d
@@ -17,7 +20,9 @@ services:
           - storeman_backend
 
   frontend:
-    image: ghcr.io/chof747/storagemanager_frontend:test
+    build:
+      context: ./frontend
+    image: storagemanager_frontend:local
     volumes:
       - ./frontend/.env:/app/.env
       - ./frontend/public/config.json:/usr/share/nginx/html/config.json

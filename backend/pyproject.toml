@@ -1,8 +1,8 @@
 
 [project]
 name = "storage_manager"
-version = "0.7.0"
-requires-python = ">=3.9"
+version = "0.6.1"
+requires-python = ">=3.14"
 dependencies = [
     "fastapi", 
     "uvicorn[standard]", 
@@ -17,6 +17,7 @@ dependencies = [
     "pyyaml>=6.0.2",
     "dotenv>=0.9.9",
     "requests>=2.32.5",
+    "psycopg>=3.3.3",
 ]
 
 [dependency-groups]
@@ -36,16 +37,17 @@ dev = [
 
 [tool.pdm.scripts]
 migrate = "alembic upgrade head"
-migrationtest = "alembic/migration_test.sh"
+migrationtest = "db_migrations/migration_test.sh"
 makemigration = "alembic revision --autogenerate -m"
 init_db = "python -m app.scripts.init_db"
 serve= "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+test_postgres = "sh scripts/test_postgres.sh"
 
 [tool.pdm]
-package = [{include = "app"},   { include = "alembic" }]
+package = [{include = "app"},   { include = "db_migrations" }]
 
 [tool.setuptools]
-packages = ["app", "alembic"]
+packages = ["app", "db_migrations"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
